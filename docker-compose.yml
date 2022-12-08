@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  web:
+    image: kinduff/dogapi.dog:latest
+    restart: unless-stopped
+    environment:
+      - REDIS_URL=redis://redis
+      - DATABASE_URL=postgres://postgres:postgres@postgres
+      - RAILS_SERVE_STATIC_FILES=true
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - web
+      - internal
+    links:
+      - postgres:postgres
+      - redis:redis
+    labels:
+      - traefik.http.routers.dogapidog.rule=Host(`dogapi.dog`)
+      - traefik.http.routers.dogapidog.tls=true
+      - traefik.http.routers.dogapidog.tls.certresolver=lets-encrypt
+      - traefik.port=80
+      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.lifecycle.post-update=bin/after_deploy
+  postgres:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - internal
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/kinduff/.docker/config.json:/config.json
+    environment:
+      - TZ=Europe/Madrid
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_POLL_INTERVAL=60
+      - WATCHTOWER_DEBUG=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LIFECYCLE_HOOKS=true
+      - WATCHTOWER_ROLLING_RESTART=true
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - internal
+
+volumes:
+  pg_data:
+  redis_data:
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false

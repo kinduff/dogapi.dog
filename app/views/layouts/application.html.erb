@@ -1,0 +1,80 @@
+<%- swagger = content_for?(:swagger) ? yield(:swagger) : nil %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= page_title %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <% if swagger %>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css" integrity="sha512-JArlzA682ixxKlWoGxYQxF+vHv527K1/NMnGbMxZERWr/16D7ZlPZUdq9+n5cA3TM030G57bSXYdN706FU9doQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <% end %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐶</text></svg>">
+
+    <meta name="title" content="<%= page_title %>">
+    <meta name="description" content="Access a collection of dog facts in a convenient JSON format with the Dog API. Perfect for website and mobile app development, the API provides quick and easy access to a wide range of dog facts.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dogapi.dog">
+    <meta property="og:title" content="<%= page_title %>">
+    <meta property="og:description" content="Access a collection of dog facts in a convenient JSON format with the Dog API. Perfect for website and mobile app development, the API provides quick and easy access to a wide range of dog facts.">
+    <meta property="og:image" content="<%= image_url 'social.jpg' %>">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://dogapi.dog">
+    <meta property="twitter:title" content="<%= page_title %>">
+    <meta property="twitter:description" content="Access a collection of dog facts in a convenient JSON format with the Dog API. Perfect for website and mobile app development, the API provides quick and easy access to a wide range of dog facts.">
+    <meta property="twitter:image" content="<%= image_url 'social.jpg' %>">
+
+    <%= javascript_include_tag :application, integrity: true %>
+    <% if swagger %>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js" integrity="sha512-8FFvTCXo6KgUt72SMpgMgMHoHnNUOPxndku0/mc+B98qIeEfZ6dpPDYJv6a1TRWHoEZeMQAKQzcwSmQixM9v2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js" integrity="sha512-D0LLkbspjpDlVcVweqnmQGAHf4evBLmiyTVFxvh+c/vnJduLdDtSwT2rHg4q9bPXIp4MtY4r6fbutZsTjnoYZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <% end %>
+  </head>
+  <body class="markdown-body">
+    <header>
+      <h1>🐶 Dog API <span>by kinduff</span></h1>
+      <p>
+        The Dog API provides dog facts as a service!
+      </p>
+      <nav>
+        <ul>
+          <li><%= link_to_unless_current "Overview", root_path %></li>
+          <li><%= link_to_unless_current "Stats", stats_path %></li>
+          <li><%= link_to_unless_current "Terms of Use", terms_path %></li>
+          <li><%= link_to_unless_current "API Docs", docs_path %></li>
+          <li><%= link_to "GitHub ⧉", "https://github.com/kinduff/dog-api", target: '_blank' %></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <%= yield %>
+    </main>
+    <footer>
+      <p><small>Dog API by kinduff, providing Dog Facts since 2016</small></p>
+    </footer>
+    <% if swagger %>
+      <script>
+        if (window.navigator.userAgent.indexOf("Edge") > -1) {
+          console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+          window.fetch = undefined;
+        }
+
+        window.onload = function () {
+          var configObject = {};
+
+          configObject.url = "<%= swagger %>";
+          configObject.dom_id = "#swagger-ui";
+          configObject.docExpansion = "full";
+          configObject.jsonEditor = false;
+          configObject.defaultModelRendering = 'schema';
+          configObject.showRequestHeaders = false;
+
+          const ui = SwaggerUIBundle(configObject);
+        }
+      </script>
+    <% end %>
+  </body>
+</html>
+

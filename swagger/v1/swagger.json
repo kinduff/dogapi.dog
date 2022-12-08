@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API V1",
+    "version": "1.0.0",
+    "description": "The Stratonauts Dog Facts API allows users to access a collection of dog facts that have been submitted by members of the public. The API is simple to use and provides a variety of options for retrieving dog facts. With the V1 version of the API, users can access dog facts in a variety of formats, including plain text and HTML.",
+    "termsOfService": "https://dogapi.dog/terms",
+    "contact": {
+      "email": "dev@dogapi.dog"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/kinduff/dogapi.dog/blob/master/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dogapi.dog/api/v1"
+    }
+  ],
+  "paths": {
+    "/facts": {
+      "get": {
+        "summary": "list facts",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "raw",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "example": {
+                    "value": {
+                      "facts": [
+                        "Two Labradors, Lucky and Flo, were the first dogs known for sniffing out pirated DVDs."
+                      ],
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

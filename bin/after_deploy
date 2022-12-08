@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+RAILS_ENV=production bin/rails db:migrate

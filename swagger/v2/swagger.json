@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API V2",
+    "version": "1.0.0",
+    "description": "The Stratonauts Dog Facts API is a powerful and flexible tool for accessing a collection of dog facts. This V2 version of the API follows the JSON API specification, allowing for seamless integration with your application. With the V2 API, users can access dog facts in a structured JSON format, making it easy to work with the data and build powerful applications. Whether you're building a website or a mobile app, the Stratonauts Dog Facts API can help you quickly and easily access a wide range of dog facts.",
+    "termsOfService": "https://dogapi.dog/terms",
+    "contact": {
+      "email": "dev@dogapi.dog"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/kinduff/dogapi.dog/blob/master/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dogapi.dog/api/v2"
+    }
+  ],
+  "paths": {
+    "/facts": {
+      "get": {
+        "summary": "list facts",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "example": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "1cd1a16d-6fe1-40ea-9dd2-c21dd0f7c24e",
+                          "type": "fact",
+                          "attributes": {
+                            "body": "Many foot disorders in dogs are caused by long toenails."
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
