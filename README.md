@@ -1,6 +1,6 @@
-# Dog Fact API
+# 🐶 Dog API
 
-This API provides a database of interesting facts about dogs. It is built using Ruby 3.1.2 and Ruby on Rails 7.0, and uses a PostgreSQL database to store the data.
+The Dog API allows users to access a collection of dog facts in a convenient JSON format. Whether you're building a website or a mobile app, the API can help you quickly and easily access a wide range of dog facts.
 
 ## Getting Started
 
