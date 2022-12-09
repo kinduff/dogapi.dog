@@ -1,10 +1,10 @@
 <% page_heading "Stats" %>
 
-<h3>Visits per hour</h3>
+<h3>Visits per day</h3>
 <%= line_chart Ahoy::Visit.group_by_day(:started_at, last: 7, current: false).count %>
 
-<h3>Requests per hour V2</h3>
+<h3>Requests per day V2</h3>
 <%= line_chart Ahoy::Event.where_event('get_facts_v2').group_by_day(:time, last: 7, current: false).count %>
 
-<h3>Requests per hour V1</h3>
+<h3>Requests per day V1</h3>
 <%= line_chart Ahoy::Event.where_event('get_facts_v1').group_by_day(:time, last: 7, current: false).count %>
