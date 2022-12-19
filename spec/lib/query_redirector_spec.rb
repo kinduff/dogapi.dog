@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe QueryRedirector do
   let(:destination) { 'https://example.com/' }
-  let(:query_redirector) { QueryRedirector.new(destination) }
+  let(:query_redirector) { described_class.new(destination) }
 
   describe '#call' do
     context 'when there are parameters present' do

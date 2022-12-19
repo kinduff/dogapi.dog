@@ -28,7 +28,7 @@ RSpec.configure do |config|
       info: {
         title: 'API V2',
         version: '1.0.0',
-        description: "The Stratonauts Dog Facts API is a powerful and flexible tool for accessing a collection of dog facts. This V2 version of the API follows the JSON API specification, allowing for seamless integration with your application. With the V2 API, users can access dog facts in a structured JSON format, making it easy to work with the data and build powerful applications. Whether you\'re building a website or a mobile app, the Stratonauts Dog Facts API can help you quickly and easily access a wide range of dog facts.",
+        description: "The Stratonauts Dog Facts API is a powerful and flexible tool for accessing a collection of dog facts. This V2 version of the API follows the JSON API specification, allowing for seamless integration with your application. With the V2 API, users can access dog facts in a structured JSON format, making it easy to work with the data and build powerful applications. Whether you're building a website or a mobile app, the Stratonauts Dog Facts API can help you quickly and easily access a wide range of dog facts.",
         termsOfService: 'https://dogapi.dog/terms',
         contact: {
           email: 'dev@dogapi.dog'
@@ -38,7 +38,7 @@ RSpec.configure do |config|
           url: 'https://github.com/kinduff/dogapi.dog/blob/master/LICENSE'
         }
       },
-      servers: [{ url: 'https://dogapi.dog/api/v2' }]
+      servers: [{ url: 'http://localhost:3000/api/v2' }]
     }
   }
 end

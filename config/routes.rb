@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
     namespace :v2 do
       resources :facts, only: :index
+      resources :breeds, only: %i[index show]
+      resources :groups, only: %i[index show]
     end
   end
 end

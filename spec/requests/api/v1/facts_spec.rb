@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'facts', type: :request, swagger_doc: 'v1/swagger.json' do
+RSpec.describe 'facts', swagger_doc: 'v1/swagger.json' do
   path '/facts' do
     get('list facts') do
       response(200, 'successful') do
