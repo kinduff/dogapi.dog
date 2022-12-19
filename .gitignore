@@ -32,3 +32,6 @@
 
 # Ignores coverage folder
 /coverage
+
+# Ignores VSCode settings file
+/.vscode
