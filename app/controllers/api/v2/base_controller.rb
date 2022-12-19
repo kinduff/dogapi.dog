@@ -4,6 +4,7 @@ module Api
   module V2
     class BaseController < Api::BaseController
       include JSONAPI::Filtering
+      include JSONAPI::Fetching
 
       after_action :track_action
 

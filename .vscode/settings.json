@@ -1,0 +1,5 @@
+{
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///home/kinduff/www/dogapi.dog/.github/workflows/deploy.yml"
+  }
+}

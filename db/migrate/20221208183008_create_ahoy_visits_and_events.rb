@@ -2,6 +2,7 @@
 
 class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[7.0]
   def change
+    # rubocop:disable Rails/CreateTableWithTimestamps
     create_table :ahoy_visits do |t|
       t.string :visit_token
       t.string :visitor_token
@@ -49,6 +50,7 @@ class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[7.0]
       t.jsonb :properties
       t.datetime :time
     end
+    # rubocop:enable Rails/CreateTableWithTimestamps
 
     add_index :ahoy_events, %i[name time]
     add_index :ahoy_events, :properties, using: :gin, opclass: :jsonb_path_ops
