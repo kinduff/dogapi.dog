@@ -3,7 +3,7 @@
   "info": {
     "title": "API V2",
     "version": "1.0.0",
-    "description": "The Stratonauts Dog Facts API is a powerful and flexible tool for accessing a collection of dog facts. This V2 version of the API follows the JSON API specification, allowing for seamless integration with your application. With the V2 API, users can access dog facts in a structured JSON format, making it easy to work with the data and build powerful applications. Whether you're building a website or a mobile app, the Stratonauts Dog Facts API can help you quickly and easily access a wide range of dog facts.",
+    "description": "The Dog API provides a wealth of information on dog breeds, groups, and fun facts. Access and integrate this data into your website or application with our easy-to-use JSON API.",
     "termsOfService": "https://dogapi.dog/terms",
     "contact": {
       "email": "dev@dogapi.dog"
@@ -176,15 +176,15 @@
                             "name": "Foundation Stock Service"
                           },
                           "relationships": {
-                            "groups": {
+                            "breeds": {
                               "data": [
                                 {
                                   "id": "b0b6810c-fb88-4987-ad0a-ae0440b04634",
-                                  "type": "group"
+                                  "type": "breed"
                                 },
                                 {
                                   "id": "38e06144-2ac3-43c0-981c-f8598eabc902",
-                                  "type": "group"
+                                  "type": "breed"
                                 }
                               ]
                             }
@@ -197,15 +197,15 @@
                             "name": "Herding Group"
                           },
                           "relationships": {
-                            "groups": {
+                            "breeds": {
                               "data": [
                                 {
                                   "id": "85d5a702-057f-42e3-a24c-b56e0aa94bf9",
-                                  "type": "group"
+                                  "type": "breed"
                                 },
                                 {
                                   "id": "eef99f80-266a-4659-a1e7-3af639010984",
-                                  "type": "group"
+                                  "type": "breed"
                                 }
                               ]
                             }
@@ -258,15 +258,15 @@
                           "name": "Foundation Stock Service"
                         },
                         "relationships": {
-                          "groups": {
+                          "breeds": {
                             "data": [
                               {
                                 "id": "b0b6810c-fb88-4987-ad0a-ae0440b04634",
-                                "type": "group"
+                                "type": "breed"
                               },
                               {
                                 "id": "4bc90a09-5406-4739-96c6-ac2161fbfa4e",
-                                "type": "group"
+                                "type": "breed"
                               }
                             ]
                           }

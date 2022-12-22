@@ -1,6 +1,6 @@
 # 🐶 Dog API
 
-The Dog API allows users to access a collection of dog facts in a convenient JSON format. Whether you're building a website or a mobile app, the API can help you quickly and easily access a wide range of dog facts.
+The **Dog API** provides information on over 340 dog breeds, 20 breed groups, and fun facts. Our data is accurate and constantly updated. Easily integrate this information into your own website or application with our user-friendly API. Get started today and discover more about the world of dogs.
 
 ## Getting Started
 

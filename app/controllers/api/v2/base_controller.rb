@@ -5,14 +5,6 @@ module Api
     class BaseController < Api::BaseController
       include JSONAPI::Filtering
       include JSONAPI::Fetching
-
-      after_action :track_action
-
-      protected
-
-      def track_action
-        ahoy.track 'get_facts_v2', request.path_parameters
-      end
     end
   end
 end

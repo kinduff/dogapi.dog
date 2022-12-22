@@ -11,7 +11,7 @@ RSpec.configure do |config|
       info: {
         title: 'API V1',
         version: '1.0.0',
-        description: 'The Stratonauts Dog Facts API allows users to access a collection of dog facts that have been submitted by members of the public. The API is simple to use and provides a variety of options for retrieving dog facts. With the V1 version of the API, users can access dog facts in a variety of formats, including plain text and HTML.',
+        description: 'The Dog Facts API allows users to access a collection of dog facts that have been submitted by members of the public. The API is simple to use and provides a variety of options for retrieving dog facts. With the V1 version of the API, users can access dog facts in a variety of formats, including plain text and HTML.',
         termsOfService: 'https://dogapi.dog/terms',
         contact: {
           email: 'dev@dogapi.dog'
@@ -28,7 +28,7 @@ RSpec.configure do |config|
       info: {
         title: 'API V2',
         version: '1.0.0',
-        description: "The Stratonauts Dog Facts API is a powerful and flexible tool for accessing a collection of dog facts. This V2 version of the API follows the JSON API specification, allowing for seamless integration with your application. With the V2 API, users can access dog facts in a structured JSON format, making it easy to work with the data and build powerful applications. Whether you're building a website or a mobile app, the Stratonauts Dog Facts API can help you quickly and easily access a wide range of dog facts.",
+        description: 'The Dog API provides a wealth of information on dog breeds, groups, and fun facts. Access and integrate this data into your website or application with our easy-to-use JSON API.',
         termsOfService: 'https://dogapi.dog/terms',
         contact: {
           email: 'dev@dogapi.dog'
