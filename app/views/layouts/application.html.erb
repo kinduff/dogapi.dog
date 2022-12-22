@@ -53,7 +53,7 @@
       <%= yield %>
     </main>
     <footer>
-      <p><small>Dog API by kinduff, providing Dog Data since 2016</small></p>
+      <p><small>Dog API by kinduff, providing Dog Data since 2016 - <%= ENV['GIT_COMMIT']&.slice(0, 7) %></small></p>
     </footer>
     <% if swagger %>
       <script>
