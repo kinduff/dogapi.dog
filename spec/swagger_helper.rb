@@ -38,7 +38,7 @@ RSpec.configure do |config|
           url: 'https://github.com/kinduff/dogapi.dog/blob/master/LICENSE'
         }
       },
-      servers: [{ url: 'http://localhost:3000/api/v2' }]
+      servers: [{ url: 'https://dogapi.dog/api/v2' }]
     }
   }
 end
