@@ -16,7 +16,8 @@ RSpec.describe 'breeds', swagger_doc: 'v2/swagger.json' do
               type: 'breed',
               attributes: {
                 name: 'Caucasian Shepherd Dog',
-                description: 'The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly. '
+                description: 'The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly. ',
+                hypoallergenic: false
               }
             },
             {
@@ -24,7 +25,8 @@ RSpec.describe 'breeds', swagger_doc: 'v2/swagger.json' do
               type: 'breed',
               attributes: {
                 name: 'Bouvier des Flandres',
-                description: "They don't build 'em like this anymore."
+                description: "They don't build 'em like this anymore.",
+                hypoallergenic: false
               }
             }
           ],
@@ -56,7 +58,8 @@ RSpec.describe 'breeds', swagger_doc: 'v2/swagger.json' do
               name: 'Caucasian Shepherd Dog',
               min_life: 15,
               max_life: 20,
-              description: 'The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.'
+              description: 'The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.',
+              hypoallergenic: false
             }
           },
           links: {

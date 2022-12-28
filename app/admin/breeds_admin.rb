@@ -27,6 +27,7 @@ Trestle.resource(:breeds) do
     number_field :male_weight_max
     number_field :female_weight_min
     number_field :female_weight_max
+    check_box :hypoallergenic
     active_storage_field :images
   end
 end
