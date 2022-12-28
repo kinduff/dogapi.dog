@@ -1,10 +1,13 @@
 <% page_heading "Stats" %>
 
 <h3>Visits per day</h3>
-<%= line_chart Ahoy::Visit.group_by_day(:started_at, last: 14, current: false).count %>
+<%= line_chart Ahoy::Visit.group_by_day(:started_at, last: 14).count %>
 
-<h3>Requests per day V2</h3>
-<%= line_chart Ahoy::Event.where_event('get_facts_v2').group_by_day(:time, last: 14, current: false).count %>
+<h3>API Calls</h3>
 
-<h3>Requests per day V1</h3>
-<%= line_chart Ahoy::Event.where_event('get_facts_v1').group_by_day(:time, last: 14, current: false).count %>
+<%= line_chart [
+  { name: 'V2 Breeds', data: Ahoy::Event.where_event('get_breeds_v2').group_by_day(:time, last: 14).count },
+  { name: 'V2 Groups', data: Ahoy::Event.where_event('get_groups_v2').group_by_day(:time, last: 14).count },
+  { name: 'V2 Facts', data: Ahoy::Event.where_event('get_facts_v2').group_by_day(:time, last: 14).count },
+  { name: 'V1 Facts', data: Ahoy::Event.where_event('get_facts_v1').group_by_day(:time, last: 14).count },
+] %>
