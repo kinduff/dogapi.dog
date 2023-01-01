@@ -13,6 +13,7 @@
       "url": "https://github.com/kinduff/dogapi.dog/blob/master/LICENSE"
     }
   },
+  "security": [],
   "servers": [
     {
       "url": "https://dogapi.dog/api/v2"
@@ -22,6 +23,8 @@
     "/breeds": {
       "get": {
         "summary": "list breeds",
+        "description":"Returns a list of all dog breeds including a name of the dog breed and a brief description",
+        "operationId": "getDogBreeds",
         "tags": [
           "Breeds"
         ],
@@ -71,6 +74,8 @@
     "/breeds/{id}": {
       "get": {
         "summary": "get breed",
+        "description":"Returns a single dog breed using an id",
+        "operationId": "getDogBreedsByID",
         "tags": [
           "Breeds"
         ],
@@ -118,6 +123,8 @@
     "/facts": {
       "get": {
         "summary": "list facts",
+        "description":"Returns a list of dog facts. Use the `limit` parameter to specify the number of facts returned. A maximum of 5 responses can be returned for a single call",
+        "operationId": "listDogFacts",
         "tags": [
           "Facts"
         ],
@@ -160,6 +167,8 @@
     "/groups": {
       "get": {
         "summary": "list groups",
+        "description":"Returns a list of all groups",
+        "operationId": "listDoggroups",
         "tags": [
           "Groups"
         ],
@@ -233,6 +242,8 @@
     "/groups/{id}": {
       "get": {
         "summary": "get group",
+        "description": "Returns a single group using an id",
+        "operationId": "getDogGroups",
         "tags": [
           "Groups"
         ],
