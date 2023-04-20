@@ -125,6 +125,9 @@ GEM
       activesupport (>= 5.0)
     groupdate (6.1.0)
       activesupport (>= 5.2)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.2)
@@ -171,6 +174,7 @@ GEM
     mini_mime (1.1.2)
     minitest (5.17.0)
     msgpack (1.6.0)
+    multi_xml (0.6.0)
     net-imap (0.3.2)
       date
       net-protocol
@@ -235,6 +239,9 @@ GEM
       activerecord (>= 6.1.5)
       activesupport (>= 6.1.5)
       i18n
+    readme-metrics (2.3.0)
+      httparty (~> 0.18)
+      rack (>= 2.2, < 4)
     redis (4.8.0)
     redis-client (0.11.2)
       connection_pool
@@ -373,6 +380,7 @@ DEPENDENCIES
   rack-mini-profiler (~> 3.0)
   rails (~> 7.0)
   ransack (~> 3.2)
+  readme-metrics (~> 2.3)
   redis (~> 4.8)
   rspec-rails (~> 6.0)
   rswag (~> 2.8)

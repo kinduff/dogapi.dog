@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
+require 'readme/metrics'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -87,4 +88,18 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Readme Metrics integration
+  # https://docs.readme.com/main/docs/ruby-api-metrics-set-up
+  options = {
+    api_key: Rails.application.credentials.readme.api_key
+  }
+
+  config.middleware.use Readme::Metrics, options do |_env|
+    {
+      api_key: 'guest',
+      label: 'Guest User',
+      email: 'guest@example.com'
+    }
+  end
 end

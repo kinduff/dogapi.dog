@@ -20,6 +20,7 @@ gem 'rack-attack', '~> 6.6'
 gem 'rack-cors', '~> 1.1', require: 'rack/cors'
 gem 'rails', '~> 7.0'
 gem 'ransack', '~> 3.2'
+gem 'readme-metrics', '~> 2.3'
 gem 'redis', '~> 4.8'
 gem 'rswag', '~> 2.8'
 gem 'rubocop-rails', '~> 2.17', require: false
