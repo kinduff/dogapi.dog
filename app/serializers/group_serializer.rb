@@ -3,7 +3,7 @@
 class GroupSerializer
   include JSONAPI::Serializer
 
-  set_type 'group'
+  set_type "group"
 
   attributes :name
   has_many :breeds

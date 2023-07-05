@@ -3,7 +3,7 @@
 class BreedSerializer
   include JSONAPI::Serializer
 
-  set_type 'breed'
+  set_type "breed"
 
   attributes :name
   attributes :description

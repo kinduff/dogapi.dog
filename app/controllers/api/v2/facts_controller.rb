@@ -6,7 +6,7 @@ module Api
       after_action :track_action
 
       def index
-        @facts = Fact.order('RANDOM()').limit(get_limit)
+        @facts = Fact.order("RANDOM()").limit(get_limit)
         render jsonapi: @facts
       end
 
@@ -14,13 +14,13 @@ module Api
 
       def get_limit
         limit = params[:limit]
-        limit.to_i.zero? || limit.to_i > 5 ? 1 : limit.to_i
+        (limit.to_i.zero? || limit.to_i > 5) ? 1 : limit.to_i
       end
 
       protected
 
       def track_action
-        ahoy.track 'get_facts_v2', request.path_parameters
+        ahoy.track "get_facts_v2", request.path_parameters
       end
     end
   end

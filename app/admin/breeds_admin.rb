@@ -2,7 +2,7 @@
 
 Trestle.resource(:breeds) do
   menu do
-    item :breeds, icon: 'fa fa-dog'
+    item :breeds, icon: "fa fa-dog"
   end
 
   search do |query|

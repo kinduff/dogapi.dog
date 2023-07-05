@@ -3,7 +3,7 @@
 class FactSerializer
   include JSONAPI::Serializer
 
-  set_type 'fact'
+  set_type "fact"
   set_id :uuid
 
   attributes :body

@@ -2,7 +2,7 @@
 
 Trestle.resource(:facts) do
   menu do
-    item :facts, icon: 'fa fa-star', priority: :first
+    item :facts, icon: "fa fa-star", priority: :first
   end
 
   search do |query|
@@ -22,7 +22,7 @@ Trestle.resource(:facts) do
   end
 
   form do |_fact|
-    text_field :uuid, label: 'UUID', readonly: true
+    text_field :uuid, label: "UUID", readonly: true
     text_area :body
   end
 end

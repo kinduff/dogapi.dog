@@ -2,7 +2,7 @@
 
 Trestle.resource(:groups) do
   menu do
-    item :groups, icon: 'fa fa-layer-group'
+    item :groups, icon: "fa fa-layer-group"
   end
 
   search do |query|

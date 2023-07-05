@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-require 'jsonapi'
+require "jsonapi"
 
 JSONAPI::Rails.install!

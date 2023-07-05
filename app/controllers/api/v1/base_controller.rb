@@ -8,7 +8,7 @@ module Api
       protected
 
       def track_action
-        ahoy.track 'get_facts_v1', request.path_parameters
+        ahoy.track "get_facts_v1", request.path_parameters
       end
     end
   end

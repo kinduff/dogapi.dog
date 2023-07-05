@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :breed do
-    name { 'MyString' }
-    description { 'MyText' }
+    name { "MyString" }
+    description { "MyText" }
     association :group
   end
 end

@@ -28,7 +28,7 @@ module Api
       protected
 
       def track_action
-        ahoy.track 'get_breeds_v2', request.path_parameters
+        ahoy.track "get_breeds_v2", request.path_parameters
       end
     end
   end

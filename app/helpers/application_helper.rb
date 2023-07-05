@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  def page_title(separator = ' - ')
-    [content_for(:title), 'Dog API by kinduff'].compact.join(separator)
+  def page_title(separator = " - ")
+    [content_for(:title), "Dog API by kinduff"].compact.join(separator)
   end
 
   def page_heading(title)
