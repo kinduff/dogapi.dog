@@ -1,17 +1,16 @@
 <% page_heading "Stats" %>
-
-<h3>Visits per day</h3>
-<%= Rails.cache.fetch('stats/visits', expires_in: 1.hour) do
-  line_chart(Ahoy::Visit.group_by_day(:started_at, last: 14).count)
-end %>
-
-<h3>API Calls</h3>
-
-<%= Rails.cache.fetch('stats/api', expires_in: 1.hour) do
-  line_chart([
-    { name: 'V2 Breeds', data: Ahoy::Event.where_event('get_breeds_v2').group_by_day(:time, last: 14).count },
-    { name: 'V2 Groups', data: Ahoy::Event.where_event('get_groups_v2').group_by_day(:time, last: 14).count },
-    { name: 'V2 Facts', data: Ahoy::Event.where_event('get_facts_v2').group_by_day(:time, last: 14).count },
-    { name: 'V1 Facts', data: Ahoy::Event.where_event('get_facts_v1').group_by_day(:time, last: 14).count },
-  ])
-end %>
+<%= Rails.cache.fetch('stats/visits', expires_in: 1.hour) do  %>
+  <h3>Visits per day (<%= number_with_delimiter(Ahoy::Visit.count) %> total)</h3>
+  <% line_chart(Ahoy::Visit.group_by_day(:started_at, last: 30).count) %>
+<% end %>
+<%= Rails.cache.fetch('stats/api', expires_in: 1.hour) do %>
+  <h3>API Calls (<%= number_with_delimiter(Ahoy::Event.count) %> total)</h3>
+  <%
+    line_chart([
+      { name: 'V2 Breeds', data: Ahoy::Event.where_event('get_breeds_v2').group_by_day(:time, last: 30).count },
+      { name: 'V2 Groups', data: Ahoy::Event.where_event('get_groups_v2').group_by_day(:time, last: 30).count },
+      { name: 'V2 Facts', data: Ahoy::Event.where_event('get_facts_v2').group_by_day(:time, last: 30).count },
+      { name: 'V1 Facts', data: Ahoy::Event.where_event('get_facts_v1').group_by_day(:time, last: 30).count },
+    ])
+  %>
+<% end %>
