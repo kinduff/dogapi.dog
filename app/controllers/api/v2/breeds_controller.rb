@@ -14,7 +14,13 @@ module Api
       end
 
       def show
-        render jsonapi: Breed.find_by(id: params.fetch(:id))
+        @breed = Breed.find_by(id: params.fetch(:id))
+
+        if @breed.nil?
+          render plain: 'Breed does not exist!'
+        else
+          render jsonapi: @breed
+        end
       end
 
       private
