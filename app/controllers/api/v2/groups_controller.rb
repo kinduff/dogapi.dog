@@ -14,7 +14,13 @@ module Api
       end
 
       def show
-        render jsonapi: Group.find_by(id: params.fetch(:id))
+        @group = Group.find_by(id: params.fetch(:id))
+
+        if @group.nil?
+          render plain: 'Group does not exist!'
+        else
+          render jsonapi: @group
+        end
       end
 
       private
