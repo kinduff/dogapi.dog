@@ -104,5 +104,18 @@ RSpec.describe "groups", swagger_doc: "v2/swagger.json" do
         run_test!
       end
     end
+
+    get("get group with non-existing id") do
+      response(404, "not-found") do
+        tags "Groups"
+        consumes "application/json"
+
+        parameter name: :id, in: :path, type: :string
+
+        let(:id) { 0 }
+
+        run_test!
+      end
+    end
   end
 end
