@@ -17,7 +17,7 @@ module Api
         @group = Group.find_by(id: params.fetch(:id))
 
         if @group.nil?
-          render plain: 'Group does not exist!'
+          head :not_found
         else
           render jsonapi: @group
         end

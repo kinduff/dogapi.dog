@@ -17,7 +17,7 @@ module Api
         @breed = Breed.find_by(id: params.fetch(:id))
 
         if @breed.nil?
-          render plain: 'Breed does not exist!'
+          head :not_found
         else
           render jsonapi: @breed
         end
