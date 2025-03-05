@@ -20,16 +20,16 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
                 hypoallergenic: false,
                 life: {
                   min: 15,
-                  max: 20,
+                  max: 20
                 },
                 male_weight: {
                   min: 50,
-                  max: 100,
+                  max: 100
                 },
                 female_weight: {
                   min: 50,
-                  max: 100,
-                },
+                  max: 100
+                }
               }
             },
             {
@@ -41,16 +41,16 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
                 hypoallergenic: false,
                 life: {
                   min: 10,
-                  max: 14,
+                  max: 14
                 },
                 male_weight: {
                   min: 30,
-                  max: 40,
+                  max: 40
                 },
                 female_weight: {
                   min: 25,
-                  max: 35,
-                },
+                  max: 35
+                }
               }
             }
           ],
@@ -88,15 +88,15 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
               name: "Caucasian Shepherd Dog",
               life: {
                 min: 15,
-                max: 20,
+                max: 20
               },
               male_weight: {
                 min: 50,
-                max: 100,
+                max: 100
               },
               female_weight: {
                 min: 50,
-                max: 100,
+                max: 100
               },
               description: "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.",
               hypoallergenic: false
