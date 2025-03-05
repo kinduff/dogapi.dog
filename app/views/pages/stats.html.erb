@@ -1,9 +1,9 @@
 <% page_heading "Stats" %>
-<h3>Visits per day (<%= number_with_delimiter(Ahoy::Visit.count) %> total)</h3>
+<h3>Visits per day</h3>
 <%= Rails.cache.fetch('stats/visits', expires_in: 1.hour) do  %>
   <% line_chart(Ahoy::Visit.group_by_day(:started_at, last: 30).count) %>
 <% end %>
-<h3>API Calls (<%= number_with_delimiter(Ahoy::Event.count) %> total)</h3>
+<h3>API Calls</h3>
 <%= Rails.cache.fetch('stats/api', expires_in: 1.hour) do %>
   <%
     line_chart([
