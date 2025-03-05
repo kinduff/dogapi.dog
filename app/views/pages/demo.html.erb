@@ -1,0 +1,81 @@
+<div data-controller="dogs">
+  <button data-action="click->dogs#listBreeds">List Breeds</button>
+  <div data-dogs-target="breedsUrl"></div>
+  <ul data-dogs-target="breedList"></ul>
+
+  <div>
+    <label for="breedId">Breed ID:</label>
+    <input type="text" id="breedId" data-dogs-target="breedId">
+    <button data-action="click->dogs#getBreed">Get Breed</button>
+    <div data-dogs-target="breedUrl"></div>
+  </div>
+  <div data-dogs-target="breedDetail"></div>
+</div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/borama/stimulus@3e9d54b06bf3dd0d654c140b653c2a731445e45a/stimulus.umd.js"></script>
+<script type="text/javascript">
+
+const application = Stimulus.Application.start()
+
+application.register("dogs", class extends Stimulus.Controller {
+  static targets = ['breedList', 'breedId', 'breedDetail', 'breedsUrl', 'breedUrl'];
+
+  async listBreeds() {
+    const url = 'https://dogapi.dog/api/v2/breeds';
+    this.breedsUrlTarget.innerHTML = `URL: <a href="${url}" target="_blank">${url}</a>`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      this.breedListTarget.innerHTML = data.data
+        .map(breed => `
+          <li data-id="${breed.id}" data-action="click->dogs#breedClicked" style="cursor: pointer;">
+            ${breed.id} - ${breed.attributes.name}
+          </li>`)
+        .join('');
+    } catch (error) {
+      console.error('Error fetching breeds:', error);
+    }
+  }
+
+  breedClicked(event) {
+    const breedId = event.target.dataset.id;
+    this.breedIdTarget.value = breedId;
+    this.getBreed();
+  }
+
+  async getBreed() {
+    const breedId = this.breedIdTarget.value;
+
+    if (!breedId) {
+      alert('Please enter a breed ID.');
+      return;
+    }
+
+    const url = `https://dogapi.dog/api/v2/breeds/${breedId}`;
+    this.breedUrlTarget.innerHTML = `URL: <a href="${url}" target="_blank">${url}</a>`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const breed = data.data.attributes;
+      this.breedDetailTarget.innerHTML = `
+        <h3>${breed.name}</h3>
+        <p>${breed.description}</p>
+        <p>
+          Hypoallergenic: ${breed.hypoallergenic ? 'Yes' : 'No'} |
+          Life Span: ${breed.life.min} - ${breed.life.max} years
+        </p>
+        <p>
+          Male Weight: ${breed.male_weight.min} - ${breed.male_weight.max} kg |
+          Female Weight: ${breed.female_weight.min} - ${breed.female_weight.max} kg
+        </p>
+      `;
+    } catch (error) {
+      console.error('Error fetching breed details:', error);
+    }
+  }
+
+})
+
+
+  </script>

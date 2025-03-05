@@ -8,7 +8,7 @@ module Api
       after_action :track_action
 
       def index
-        jsonapi_paginate(Breed.all) do |paginated|
+        jsonapi_paginate(Breed.order(:name)) do |paginated|
           render jsonapi: paginated
         end
       end
@@ -29,6 +29,12 @@ module Api
         per_page = pagination_params[:size].to_f.to_i
         per_page = 10 if per_page > 10 || per_page < 1
         per_page
+      end
+
+      def jsonapi_meta(resources)
+        pagination = jsonapi_pagination_meta(resources)
+
+        { pagination: pagination } if pagination.present?
       end
 
       protected

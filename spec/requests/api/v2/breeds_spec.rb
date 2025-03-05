@@ -16,8 +16,20 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
               type: "breed",
               attributes: {
                 name: "Caucasian Shepherd Dog",
-                description: "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly. ",
-                hypoallergenic: false
+                description: "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.",
+                hypoallergenic: false,
+                life: {
+                  min: 15,
+                  max: 20,
+                },
+                male_weight: {
+                  min: 50,
+                  max: 100,
+                },
+                female_weight: {
+                  min: 50,
+                  max: 100,
+                },
               }
             },
             {
@@ -26,10 +38,28 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
               attributes: {
                 name: "Bouvier des Flandres",
                 description: "They don't build 'em like this anymore.",
-                hypoallergenic: false
+                hypoallergenic: false,
+                life: {
+                  min: 10,
+                  max: 14,
+                },
+                male_weight: {
+                  min: 30,
+                  max: 40,
+                },
+                female_weight: {
+                  min: 25,
+                  max: 35,
+                },
               }
             }
           ],
+          meta: {
+            pagination: {
+              current: 1,
+              records: 9
+            }
+          },
           links: {
             self: "https://dogapi.dog/api/v2/breeds",
             current: "https://dogapi.dog/api/v2/breeds?page[number]=1",
@@ -56,8 +86,18 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
             type: "breed",
             attributes: {
               name: "Caucasian Shepherd Dog",
-              min_life: 15,
-              max_life: 20,
+              life: {
+                min: 15,
+                max: 20,
+              },
+              male_weight: {
+                min: 50,
+                max: 100,
+              },
+              female_weight: {
+                min: 50,
+                max: 100,
+              },
               description: "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.",
               hypoallergenic: false
             }

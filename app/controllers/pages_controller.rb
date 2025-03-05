@@ -14,6 +14,9 @@ class PagesController < ApplicationController
   def docs
   end
 
+  def demo
+  end
+
   def api_v1
   end
 
