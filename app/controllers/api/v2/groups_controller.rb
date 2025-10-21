@@ -5,8 +5,6 @@ module Api
     class GroupsController < Api::V2::BaseController
       include JSONAPI::Pagination
 
-      after_action :track_action
-
       def index
         jsonapi_paginate(Group.all) do |paginated|
           render jsonapi: paginated
@@ -29,12 +27,6 @@ module Api
         per_page = pagination_params[:size].to_f.to_i
         per_page = 10 if per_page > 10 || per_page < 1
         per_page
-      end
-
-      protected
-
-      def track_action
-        ahoy.track "get_groups_v2", request.path_parameters
       end
     end
   end

@@ -9,7 +9,6 @@ Rails.application.routes.draw do
 
   root to: "pages#index"
   get "/terms", to: "pages#terms", as: :terms
-  get "/stats", to: "pages#stats", as: :stats
   get "/docs", to: "pages#docs", as: :docs
   get "/demo", to: "pages#demo", as: :demo
   get "/docs/api-v1", to: "pages#api_v1", as: :api_v1

@@ -5,10 +5,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.6"
 
-gem "ahoy_matey", "~> 4.1"
 gem "aws-sdk-s3", "~> 1.117", require: false
-gem "bootsnap", "~> 1.15", require: false
-gem "chartkick", "~> 4.2"
+gem "bootsnap"
 gem "groupdate", "~> 6.1"
 gem "image_processing", "~> 1.12"
 gem "jbuilder", "~> 2.11"

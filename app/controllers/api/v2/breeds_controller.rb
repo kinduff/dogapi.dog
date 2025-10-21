@@ -5,8 +5,6 @@ module Api
     class BreedsController < Api::V2::BaseController
       include JSONAPI::Pagination
 
-      after_action :track_action
-
       def index
         jsonapi_paginate(Breed.order(:name)) do |paginated|
           render jsonapi: paginated
@@ -35,12 +33,6 @@ module Api
         pagination = jsonapi_pagination_meta(resources)
 
         {pagination: pagination} if pagination.present?
-      end
-
-      protected
-
-      def track_action
-        ahoy.track "get_breeds_v2", request.path_parameters
       end
     end
   end
