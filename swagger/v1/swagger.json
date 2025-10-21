@@ -28,8 +28,24 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
-            }
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 1
+            },
+            "description": "Number of facts to return (max 5, defaults to 1)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 1
+            },
+            "description": "Number of facts to return (max 5, defaults to 1) - alias for 'number'"
           },
           {
             "name": "raw",
@@ -37,7 +53,8 @@
             "required": false,
             "schema": {
               "type": "boolean"
-            }
+            },
+            "description": "Return plain text instead of JSON"
           }
         ],
         "responses": {
