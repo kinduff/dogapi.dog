@@ -22,8 +22,29 @@
     "/breeds": {
       "get": {
         "summary": "list breeds",
-        "tags": [
-          "Breeds"
+        "tags": ["Breeds"],
+        "parameters": [
+          {
+            "name": "page[number]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "page[size]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "description": "Number of records per page (max 1000)"
+          }
         ],
         "responses": {
           "200": {
@@ -101,9 +122,7 @@
     "/breeds/{id}": {
       "get": {
         "summary": "get breed with non-existing id",
-        "tags": [
-          "Breeds"
-        ],
+        "tags": ["Breeds"],
         "parameters": [
           {
             "name": "id",
@@ -161,9 +180,7 @@
     "/facts": {
       "get": {
         "summary": "list facts",
-        "tags": [
-          "Facts"
-        ],
+        "tags": ["Facts"],
         "parameters": [
           {
             "name": "limit",
@@ -203,8 +220,29 @@
     "/groups": {
       "get": {
         "summary": "list groups",
-        "tags": [
-          "Groups"
+        "tags": ["Groups"],
+        "parameters": [
+          {
+            "name": "page[number]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "page[size]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "description": "Number of records per page (max 1000)"
+          }
         ],
         "responses": {
           "200": {
@@ -276,9 +314,7 @@
     "/groups/{id}": {
       "get": {
         "summary": "get group with non-existing id",
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "parameters": [
           {
             "name": "id",

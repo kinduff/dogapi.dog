@@ -25,7 +25,7 @@ module Api
 
       def jsonapi_page_size(pagination_params)
         per_page = pagination_params[:size].to_f.to_i
-        per_page = 10 if per_page > 10 || per_page < 1
+        per_page = 1000 if per_page > 1000 || per_page < 1
         per_page
       end
 
