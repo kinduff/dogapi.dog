@@ -2,159 +2,276 @@
 //= require_self
 
 :root {
-	--background-main: #fefefe;
-	--background-element: #eee;
-	--background-inverted: #282a36;
-	--text-main: #1f1f1f;
-	--text-alt: #333;
-	--text-inverted: #fefefe;
-	--border-element: #282a36;
-	--theme: #7a283a;
-	--theme-light: hsl(0, 25%, 65%);
-	--theme-dark: hsl(0, 25%, 45%);
+    --background-main: #fefefe;
+    --background-element: #eee;
+    --background-inverted: #282a36;
+    --text-main: #1f1f1f;
+    --text-alt: #333;
+    --text-inverted: #fefefe;
+    --border-element: #282a36;
+    --theme: #7a283a;
+    --theme-light: hsl(0, 25%, 65%);
+    --theme-dark: hsl(0, 25%, 45%);
 }
 
 html {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-	font-size: 125%;
-	line-height: 1.6;
-	word-break: break-word;
+    font-family:
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        Ubuntu,
+        Cantarell,
+        Noto Sans,
+        sans-serif;
+    font-size: 125%;
+    line-height: 1.6;
+    word-break: break-word;
 }
 
 body {
-	min-height: 100%;
-	overflow-x: hidden;
+    min-height: 100%;
+    overflow-x: hidden;
 }
 h1 span {
-	font-size: 0.4em;
-	font-style: italic;
-	font-weight: normal;
-	line-height: 1.3;
-	margin-top: 0.3em;
+    font-size: 0.4em;
+    font-style: italic;
+    font-weight: normal;
+    line-height: 1.3;
+    margin-top: 0.3em;
 }
 
 header h1 {
-	margin: 1.2rem 0 0;
+    margin: 1.2rem 0 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-	margin: 3.2rem 0 0.8em;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 3.2rem 0 0.8em;
 }
 
 h1 {
-	font-size: 2.441rem;
-	line-height: 1.1;
+    font-size: 2.441rem;
+    line-height: 1.1;
 }
 
 h2 {
-	font-size: 1.953rem;
-	line-height: 1.15;
+    font-size: 1.953rem;
+    line-height: 1.15;
 }
 
 h3 {
-	font-size: 1.563rem;
-	line-height: 1.2;
+    font-size: 1.563rem;
+    line-height: 1.2;
 }
 
 h4 {
-	font-size: 1.25rem;
-	line-height: 1.3;
+    font-size: 1.25rem;
+    line-height: 1.3;
 }
 
 h5 {
-	font-size: 1rem;
-	line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
 h6 {
-	font-size: 1rem;
-	line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
-header, main, footer {
-	margin: auto;
-	max-width: 40rem;
-  padding: 0 2rem;
+header,
+main,
+footer {
+    margin: auto;
+    max-width: 40rem;
+    padding: 0 2rem;
 }
 
-nav, p, ul, ol {
-	margin: 0.6rem 0 1.2rem;
+nav,
+p,
+ul,
+ol {
+    margin: 0.6rem 0 1.2rem;
 }
 
 img {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 nav {
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-  }
-
-  li {
-    display: inline-block;
-    margin-right: 10px;
-  }
-
-  @media (max-width: 600px) {
     ul {
-      display: block;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
     }
 
     li {
-      padding: 10px 0;
-      display: block;
+        display: inline-block;
+        margin-right: 10px;
     }
-  }
+
+    @media (max-width: 600px) {
+        ul {
+            display: block;
+        }
+
+        li {
+            padding: 10px 0;
+            display: block;
+        }
+    }
 }
 
 body {
-	background: #fefefe;
-	color: #1f1f1f;
+    background: #fefefe;
+    color: #1f1f1f;
 }
 
 a {
-	color: #7a283a;
-	text-decoration: underline;
+    color: #7a283a;
+    text-decoration: underline;
 }
 
 a:hover {
-	color: hsl(0, 25%, 65%);
+    color: hsl(0, 25%, 65%);
 }
 
 a:active {
-	color: hsl(0, 25%, 45%);
+    color: hsl(0, 25%, 45%);
 }
 
 :focus {
-	outline: 3px solid hsl(0, 25%, 65%);
-	outline-offset: 3px;
+    outline: 3px solid hsl(0, 25%, 65%);
+    outline-offset: 3px;
 }
 
 ::-moz-selection {
-	background: hsl(0, 25%, 65%);
-	color: #fefefe;
+    background: hsl(0, 25%, 85%);
+    color: #fefefe;
 }
 
 ::selection {
-	background: hsl(0, 25%, 65%);
-	color: #fefefe;
+    background: hsl(0, 25%, 65%);
+    color: #fefefe;
 }
 
 .swagger-ui {
-	.information-container, .scheme-container, .wrapper {
-		padding: 0;
-	}
+    .information-container,
+    .scheme-container,
+    .wrapper {
+        padding: 0;
+    }
 
-	.scheme-container {
-		box-shadow: none;
-	}
+    .scheme-container {
+        box-shadow: none;
+    }
 }
 
 blockquote {
-	border-left: 0.3rem solid #7a283a;
-	margin: 0.6rem 0 1.2rem 0;
-	padding-left: 2rem;
+    border-left: 0.3rem solid #7a283a;
+    margin: 0.6rem 0 1.2rem 0;
+    padding-left: 2rem;
+}
+
+// Demo page styles
+.demo-section {
+    margin: 2rem 0;
+}
+
+.demo-controls {
+    margin: 1rem 0;
+}
+
+.demo-input {
+    margin: 0 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+.demo-input-small {
+    width: 60px;
+}
+
+.demo-input-medium {
+    width: 80px;
+}
+
+.demo-input-large {
+    width: 300px;
+}
+
+.demo-button {
+    margin-left: 15px;
+    padding: 8px 15px;
+    background: var(--theme);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.demo-button:hover {
+    background: var(--theme-dark);
+}
+
+.demo-button-secondary {
+    margin-left: 5px;
+    padding: 8px 15px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.demo-button-secondary:hover {
+    background: #545b62;
+}
+
+.demo-url {
+    background: #f6f8fa;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.9em;
+    margin: 10px 0;
+    border-radius: 3px;
+}
+
+.demo-response {
+    background: #f6f8fa;
+    padding: 15px;
+    overflow-x: auto;
+    max-height: 400px;
+    font-size: 0.8em;
+    border-radius: 3px;
+}
+
+.demo-response-short {
+    max-height: 300px;
+}
+
+.demo-hint {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+    font-size: 0.8em;
+    display: none;
+}
+
+.demo-hint.show {
+    display: block;
+}
+
+// Code block overrides for demo
+pre code {
+    font-size: 0.8em !important;
+}
+
+.demo-code {
+    font-size: 0.8em;
 }
