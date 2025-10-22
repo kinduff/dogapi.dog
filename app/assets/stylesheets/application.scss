@@ -246,13 +246,13 @@ blockquote {
     background: #f6f8fa;
     padding: 15px;
     overflow-x: auto;
-    max-height: 400px;
-    font-size: 0.8em;
+    max-height: 600px;
+    font-size: 0.8em !important;
     border-radius: 3px;
 }
 
 .demo-response-short {
-    max-height: 300px;
+    max-height: 600px;
 }
 
 .demo-hint {
@@ -273,5 +273,5 @@ pre code {
 }
 
 .demo-code {
-    font-size: 0.8em;
+    font-size: 0.8em !important;
 }
