@@ -2,5 +2,6 @@
 
 module Api
   class BaseController < ApplicationController
+    include UmamiTrackable
   end
 end
