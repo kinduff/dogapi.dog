@@ -11,8 +11,8 @@ gem "groupdate", "~> 6.1"
 gem "image_processing", "~> 1.12"
 gem "jbuilder", "~> 2.11"
 gem "jsonapi.rb", "~> 2.0"
-gem "pg_search", "~> 2.3"
 gem "pg", "~> 1.4"
+gem "pg_search", "~> 2.3"
 gem "puma", "~> 6"
 gem "rack-attack", "~> 6.6"
 gem "rack-cors", "~> 1.1", require: "rack/cors"
@@ -24,11 +24,12 @@ gem "rswag", "~> 2.8"
 gem "sassc-rails", "~> 2.1"
 gem "sidekiq", "~> 7.1"
 gem "sprockets-rails", "~> 3.4"
+gem "trestle", "~> 0.9"
 gem "trestle-active_storage", github: "kinduff/trestle-active_storage"
 gem "trestle-auth", "~> 0.4"
 gem "trestle-search", "~> 0.4"
-gem "trestle", "~> 0.9"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
+gem "umami-ruby", "~> 0.1.3"
 
 group :development, :test do
   gem "debug", "~> 1.7", platforms: %i[mri mingw x64_mingw]
