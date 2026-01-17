@@ -296,7 +296,8 @@ GEM
     readme-metrics (2.4.1)
       httparty (~> 0.18)
       rack (>= 2.2, < 4)
-    redis (4.8.1)
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
     redis-client (0.26.1)
       connection_pool
     regexp_parser (2.11.3)
@@ -459,7 +460,7 @@ DEPENDENCIES
   rails (~> 8.1)
   ransack (~> 4.4)
   readme-metrics (~> 2.3)
-  redis (~> 4.8)
+  redis (~> 5.4)
   rspec-rails (~> 6.0)
   rswag (~> 2.8)
   sassc-rails (~> 2.1)
