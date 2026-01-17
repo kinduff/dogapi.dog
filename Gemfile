@@ -24,10 +24,6 @@ gem "rswag", "~> 2.8"
 gem "sassc-rails", "~> 2.1"
 gem "sidekiq", "~> 7.1"
 gem "sprockets-rails", "~> 3.4"
-gem "trestle", "~> 0.9"
-gem "trestle-active_storage", github: "kinduff/trestle-active_storage"
-gem "trestle-auth", "~> 0.4"
-gem "trestle-search", "~> 0.4"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "umami-ruby", "~> 0.1.3"
 

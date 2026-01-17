@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/kinduff/trestle-active_storage.git
-  revision: 9ff590af93af7f638a98749e5fa067d4d6cc3168
-  specs:
-    trestle-active_storage (3.0.1)
-      rails (>= 5.2)
-      trestle (~> 0.9.0, >= 0.9.3)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -109,7 +101,6 @@ GEM
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
-    bcrypt (3.1.20)
     benchmark (0.4.1)
     bigdecimal (3.3.1)
     bindex (0.8.1)
@@ -179,18 +170,6 @@ GEM
     jsonapi.rb (2.1.1)
       jsonapi-serializer
       rack
-    kaminari (1.2.2)
-      activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.2.2)
-      kaminari-activerecord (= 1.2.2)
-      kaminari-core (= 1.2.2)
-    kaminari-actionview (1.2.2)
-      actionview
-      kaminari-core (= 1.2.2)
-    kaminari-activerecord (1.2.2)
-      activerecord
-      kaminari-core (= 1.2.2)
-    kaminari-core (1.2.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -432,16 +411,6 @@ GEM
     thor (1.4.0)
     tilt (2.6.1)
     timeout (0.4.3)
-    trestle (0.9.9)
-      activemodel (>= 5.2.0)
-      kaminari (>= 1.1.0)
-      railties (>= 5.2.0)
-      sprockets-rails (>= 2.0.0)
-    trestle-auth (0.4.4)
-      bcrypt (~> 3.1.7)
-      trestle (~> 0.9.0, >= 0.9.3)
-    trestle-search (0.4.3)
-      trestle (~> 0.9.0, >= 0.9.3)
     tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -502,10 +471,6 @@ DEPENDENCIES
   sprockets-rails (~> 3.4)
   sqlite3 (~> 1.5)
   standard (~> 1.29)
-  trestle (~> 0.9)
-  trestle-active_storage!
-  trestle-auth (~> 0.4)
-  trestle-search (~> 0.4)
   tzinfo-data
   umami-ruby (~> 0.1.3)
   web-console (~> 4.2)
