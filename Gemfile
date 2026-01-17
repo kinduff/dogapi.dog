@@ -40,7 +40,7 @@ group :development do
 end
 
 group :test do
-  gem "shoulda-matchers", "~> 5.3"
+  gem "shoulda-matchers", "~> 7.0"
   gem "simplecov", "~> 0.21", require: false
   gem "sqlite3", "~> 1.5"
 end
