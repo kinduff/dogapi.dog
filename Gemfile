@@ -21,7 +21,7 @@ gem "ransack", "~> 4.4"
 gem "redis", "~> 5.4"
 gem "rswag", "~> 2.8"
 gem "sassc-rails", "~> 2.1"
-gem "sidekiq", "~> 7.1"
+gem "sidekiq", "~> 8.1"
 gem "sprockets-rails", "~> 3.4"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "umami-ruby", "~> 0.1.3"
