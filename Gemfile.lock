@@ -230,7 +230,7 @@ GEM
       date
       stringio
     public_suffix (7.0.2)
-    puma (6.6.1)
+    puma (7.2.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.4)
@@ -447,7 +447,7 @@ DEPENDENCIES
   jsonapi.rb (~> 2.0)
   pg (~> 1.4)
   pg_search (~> 2.3)
-  puma (~> 6)
+  puma (~> 7)
   rack-attack (~> 6.6)
   rack-cors (~> 1.1)
   rack-mini-profiler (~> 4.0)
