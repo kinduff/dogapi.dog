@@ -24,7 +24,7 @@ gem "sassc-rails", "~> 2.1"
 gem "sidekiq", "~> 7.1"
 gem "sprockets-rails", "~> 3.4"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
-gem "umami-ruby", "~> 0.1.3"
+gem "umami-ruby", "~> 0.2.0"
 
 group :development, :test do
   gem "debug", "~> 1.11", platforms: %i[mri mingw x64_mingw]
