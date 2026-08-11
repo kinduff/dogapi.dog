@@ -6,7 +6,7 @@ module Api
       include JSONAPI::Pagination
 
       def index
-        jsonapi_paginate(Group.all) do |paginated|
+        jsonapi_paginate(Group.includes(:breeds)) do |paginated|
           render jsonapi: paginated
         end
       end
