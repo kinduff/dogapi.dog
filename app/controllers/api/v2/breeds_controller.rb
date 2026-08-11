@@ -5,6 +5,8 @@ module Api
     class BreedsController < Api::V2::BaseController
       include JSONAPI::Pagination
 
+      before_action :cache_publicly
+
       def index
         jsonapi_paginate(Breed.order(:name)) do |paginated|
           render jsonapi: paginated

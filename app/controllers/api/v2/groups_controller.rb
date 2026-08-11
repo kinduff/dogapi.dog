@@ -5,6 +5,8 @@ module Api
     class GroupsController < Api::V2::BaseController
       include JSONAPI::Pagination
 
+      before_action :cache_publicly
+
       def index
         jsonapi_paginate(Group.includes(:breeds)) do |paginated|
           render jsonapi: paginated

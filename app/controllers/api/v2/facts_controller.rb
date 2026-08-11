@@ -3,6 +3,8 @@
 module Api
   module V2
     class FactsController < Api::V2::BaseController
+      before_action :do_not_cache
+
       def index
         @facts = Fact.random(get_limit)
         render jsonapi: @facts

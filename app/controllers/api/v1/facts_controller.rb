@@ -3,6 +3,8 @@
 module Api
   module V1
     class FactsController < Api::V1::BaseController
+      before_action :do_not_cache
+
       def index
         @facts = Fact.random(get_limit)
         if params[:raw] == "true"
