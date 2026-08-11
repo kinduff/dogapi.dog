@@ -146,7 +146,7 @@ fetch(`https://dogapi.dog/api/v2/groups/${groupId}`)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <script src="https://unpkg.com/@hotwired/stimulus/dist/stimulus.umd.js"></script>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
 const application = Stimulus.Application.start();
 
 application.register("demo", class extends Stimulus.Controller {
