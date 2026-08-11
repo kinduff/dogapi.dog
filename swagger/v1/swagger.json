@@ -22,6 +22,10 @@
     "/facts": {
       "get": {
         "summary": "list facts",
+        "tags": [
+          "Facts"
+        ],
+        "description": "Returns random dog facts in the classic (deprecated) format.\n\n`number` and `limit` are aliases for the same thing and are clamped to\n1..5: anything missing, zero, negative or non-numeric returns a single\nfact, and anything above 5 returns 5.\n\nWith `raw=true` the response is the plain text of one fact rather than\nJSON, and it is a 404 when no facts exist at all.\n\nEvery response is different, so these are sent with\n`Cache-Control: no-store` and must not be cached. New integrations\nshould use V2.",
         "parameters": [
           {
             "name": "number",
@@ -69,6 +73,40 @@
                         "Two Labradors, Lucky and Flo, were the first dogs known for sniffing out pirated DVDs."
                       ],
                       "success": true
+                    }
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "facts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The requested facts, one string each"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "facts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The requested facts, one string each"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
                     }
                   }
                 }

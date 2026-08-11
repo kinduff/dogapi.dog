@@ -18,11 +18,353 @@
       "url": "https://dogapi.dog/api/v2"
     }
   ],
+  "tags": [
+    {
+      "name": "Breeds",
+      "description": "Over 340 dog breeds, each one belonging to a group."
+    },
+    {
+      "name": "Groups",
+      "description": "The breed groups, each one listing the breeds it contains."
+    },
+    {
+      "name": "Facts",
+      "description": "Random dog facts."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Range": {
+        "type": "object",
+        "description": "A minimum and maximum, both optional. Empty when unknown.",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "example": 10
+          },
+          "max": {
+            "type": "integer",
+            "example": 14
+          }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "integer",
+            "description": "Current page number",
+            "example": 1
+          },
+          "next": {
+            "type": "integer",
+            "description": "Next page number, absent on the last page",
+            "example": 2
+          },
+          "last": {
+            "type": "integer",
+            "description": "Last page number",
+            "example": 2
+          },
+          "records": {
+            "type": "integer",
+            "description": "Total number of records",
+            "example": 340
+          }
+        }
+      },
+      "Breed": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "breed"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Caucasian Shepherd Dog"
+              },
+              "description": {
+                "type": "string",
+                "example": "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly."
+              },
+              "life": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Range"
+                  }
+                ],
+                "description": "Life expectancy in years"
+              },
+              "male_weight": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Range"
+                  }
+                ],
+                "description": "Male weight in kilograms"
+              },
+              "female_weight": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Range"
+                  }
+                ],
+                "description": "Female weight in kilograms"
+              },
+              "hypoallergenic": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "group"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "group"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Herding Group"
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "properties": {
+              "breeds": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "breed"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Fact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "fact"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string",
+                "example": "Two Labradors, Lucky and Flo, were the first dogs known for sniffing out pirated DVDs."
+              }
+            }
+          }
+        }
+      },
+      "BreedCollection": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Breed"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uri"
+              },
+              "current": {
+                "type": "string",
+                "format": "uri"
+              },
+              "next": {
+                "type": "string",
+                "format": "uri"
+              },
+              "last": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "BreedResource": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Breed"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "GroupCollection": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uri"
+              },
+              "current": {
+                "type": "string",
+                "format": "uri"
+              },
+              "next": {
+                "type": "string",
+                "format": "uri"
+              },
+              "last": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "GroupResource": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Group"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "FactCollection": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fact"
+            }
+          }
+        }
+      }
+    }
+  },
   "paths": {
     "/breeds": {
       "get": {
         "summary": "list breeds",
-        "tags": ["Breeds"],
+        "tags": [
+          "Breeds"
+        ],
+        "description": "Returns every breed, ordered by name and split into pages.\n\nPages hold up to 1000 records. A missing, zero, negative or oversized\n`page[size]` falls back to that maximum, so a plain request returns the\nwhole collection. Each breed links to the group it belongs to.\n\nResponses may be cached publicly for up to 5 minutes.",
         "parameters": [
           {
             "name": "page[number]",
@@ -74,6 +416,14 @@
                               "min": 50,
                               "max": 100
                             }
+                          },
+                          "relationships": {
+                            "group": {
+                              "data": {
+                                "id": "02124eb6-1baa-410c-90ea-6b8629fb0837",
+                                "type": "group"
+                              }
+                            }
                           }
                         },
                         {
@@ -95,13 +445,23 @@
                               "min": 25,
                               "max": 35
                             }
+                          },
+                          "relationships": {
+                            "group": {
+                              "data": {
+                                "id": "256db247-70ce-4f08-b6a6-60b27ce369d1",
+                                "type": "group"
+                              }
+                            }
                           }
                         }
                       ],
                       "meta": {
                         "pagination": {
                           "current": 1,
-                          "records": 9
+                          "next": 2,
+                          "last": 2,
+                          "records": 340
                         }
                       },
                       "links": {
@@ -112,6 +472,9 @@
                       }
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BreedCollection"
                 }
               }
             }
@@ -121,16 +484,21 @@
     },
     "/breeds/{id}": {
       "get": {
-        "summary": "get breed with non-existing id",
-        "tags": ["Breeds"],
+        "summary": "get breed",
+        "tags": [
+          "Breeds"
+        ],
+        "description": "Returns a single breed. Unknown and malformed ids both return 404.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Breed id"
           }
         ],
         "responses": {
@@ -146,6 +514,8 @@
                         "type": "breed",
                         "attributes": {
                           "name": "Caucasian Shepherd Dog",
+                          "description": "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.",
+                          "hypoallergenic": false,
                           "life": {
                             "min": 15,
                             "max": 20
@@ -157,9 +527,15 @@
                           "female_weight": {
                             "min": 50,
                             "max": 100
-                          },
-                          "description": "The Caucasian Shepherd dog is a serious guardian breed and should never be taken lightly.",
-                          "hypoallergenic": false
+                          }
+                        },
+                        "relationships": {
+                          "group": {
+                            "data": {
+                              "id": "02124eb6-1baa-410c-90ea-6b8629fb0837",
+                              "type": "group"
+                            }
+                          }
                         }
                       },
                       "links": {
@@ -167,12 +543,15 @@
                       }
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BreedResource"
                 }
               }
             }
           },
           "404": {
-            "description": "not-found"
+            "description": "no breed with that id"
           }
         }
       }
@@ -180,7 +559,10 @@
     "/facts": {
       "get": {
         "summary": "list facts",
-        "tags": ["Facts"],
+        "tags": [
+          "Facts"
+        ],
+        "description": "Returns random dog facts.\n\n`limit` is clamped to 1..5: anything missing, zero, negative or\nnon-numeric returns a single fact, and anything above 5 returns 5.\n\nEvery response is different, so these are sent with\n`Cache-Control: no-store` and must not be cached.",
         "parameters": [
           {
             "name": "limit",
@@ -214,6 +596,9 @@
                       ]
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FactCollection"
                 }
               }
             }
@@ -224,7 +609,10 @@
     "/groups": {
       "get": {
         "summary": "list groups",
-        "tags": ["Groups"],
+        "tags": [
+          "Groups"
+        ],
+        "description": "Returns every breed group, ordered by name and split into pages.\n\nPages hold up to 1000 records, and there are only about 20 groups, so a\nplain request returns all of them. Each group lists the breeds that\nbelong to it.\n\nResponses may be cached publicly for up to 5 minutes.",
         "parameters": [
           {
             "name": "page[number]",
@@ -300,14 +688,21 @@
                           }
                         }
                       ],
+                      "meta": {
+                        "pagination": {
+                          "current": 1,
+                          "records": 20
+                        }
+                      },
                       "links": {
                         "self": "https://dogapi.dog/api/v2/groups",
-                        "current": "https://dogapi.dog/api/v2/groups?page[number]=1",
-                        "next": "https://dogapi.dog/api/v2/groups?page[number]=2",
-                        "last": "https://dogapi.dog/api/v2/groups?page[number]=2"
+                        "current": "https://dogapi.dog/api/v2/groups?page[number]=1"
                       }
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GroupCollection"
                 }
               }
             }
@@ -317,16 +712,21 @@
     },
     "/groups/{id}": {
       "get": {
-        "summary": "get group with non-existing id",
-        "tags": ["Groups"],
+        "summary": "get group",
+        "tags": [
+          "Groups"
+        ],
+        "description": "Returns a single group. Unknown and malformed ids both return 404.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Group id"
           }
         ],
         "responses": {
@@ -363,12 +763,15 @@
                       }
                     }
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GroupResource"
                 }
               }
             }
           },
           "404": {
-            "description": "not-found"
+            "description": "no group with that id"
           }
         }
       }

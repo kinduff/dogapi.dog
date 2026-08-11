@@ -6,10 +6,23 @@ RSpec.describe "facts", swagger_doc: "v2/swagger.json" do
   path "/facts" do
     get("list facts") do
       tags "Facts"
-      response(200, "successful") do
-        consumes "application/json"
+      description <<~TEXT.strip
+        Returns random dog facts.
 
-        parameter name: :limit, in: :query, type: :integer, required: false
+        `limit` is clamped to 1..5: anything missing, zero, negative or
+        non-numeric returns a single fact, and anything above 5 returns 5.
+
+        Every response is different, so these are sent with
+        `Cache-Control: no-store` and must not be cached.
+      TEXT
+      produces "application/json"
+
+      parameter name: :limit, in: :query, required: false,
+        schema: {type: :integer, minimum: 1, maximum: 5, default: 1},
+        description: "Number of facts to return (max 5, defaults to 1)"
+
+      response(200, "successful") do
+        schema "$ref": "#/components/schemas/FactCollection"
 
         example "application/json", :example, {
           data: [
