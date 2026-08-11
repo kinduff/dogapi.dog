@@ -3,7 +3,7 @@
 module Api
   module V2
     class BreedsController < Api::V2::BaseController
-      include JSONAPI::Pagination
+      include JsonapiPaginationDefaults
 
       before_action :cache_publicly
 
@@ -21,20 +21,6 @@ module Api
         else
           render jsonapi: @breed
         end
-      end
-
-      private
-
-      def jsonapi_page_size(pagination_params)
-        per_page = pagination_params[:size].to_f.to_i
-        per_page = 1000 if per_page > 1000 || per_page < 1
-        per_page
-      end
-
-      def jsonapi_meta(resources)
-        pagination = jsonapi_pagination_meta(resources)
-
-        {pagination: pagination} if pagination.present?
       end
     end
   end
