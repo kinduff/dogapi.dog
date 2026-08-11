@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_11_213737) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_11_214735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -46,11 +46,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_213737) do
   create_table "breeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
-    t.jsonb "female_weight", default: "{}", null: false
+    t.jsonb "female_weight", default: {}, null: false
     t.uuid "group_id", null: false
     t.boolean "hypoallergenic", default: false
-    t.jsonb "life", default: "{}", null: false
-    t.jsonb "male_weight", default: "{}", null: false
+    t.jsonb "life", default: {}, null: false
+    t.jsonb "male_weight", default: {}, null: false
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_breeds_on_group_id"
