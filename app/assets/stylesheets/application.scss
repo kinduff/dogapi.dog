@@ -443,22 +443,37 @@ main.wide {
     margin: 1.2rem 0;
 }
 
+// Sits in the margin, out of flow, so it never shifts the heading it marks.
 .api-anchor {
-    float: left;
-    margin-left: -1rem;
-    padding-right: 0.3rem;
+    left: -1.1rem;
+    opacity: 0;
+    position: absolute;
     text-decoration: none;
+    transition: opacity 0.15s ease-in-out;
 
     &::before {
         color: var(--theme-light);
         content: "#";
-        visibility: hidden;
     }
 }
 
-h2:hover > .api-anchor::before,
-h3:hover > .api-anchor::before {
-    visibility: visible;
+.api-section h2,
+.api-operation h3,
+h2[id],
+h3[id] {
+    position: relative;
+}
+
+h2:hover > .api-anchor,
+h3:hover > .api-anchor,
+.api-anchor:focus {
+    opacity: 1;
+}
+
+@media (max-width: 700px) {
+    .api-anchor {
+        display: none;
+    }
 }
 
 // Interactive request panels
