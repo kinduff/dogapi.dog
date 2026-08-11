@@ -27,6 +27,7 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "umami-ruby", "~> 0.1.3"
 
 group :development, :test do
+  gem "brakeman", "~> 7.1", require: false
   gem "debug", "~> 1.11", platforms: %i[mri mingw x64_mingw]
   gem "factory_bot_rails", "~> 6.2"
   gem "rspec-rails", "~> 8.0"
