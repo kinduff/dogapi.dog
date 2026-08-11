@@ -1,4 +1,3 @@
-<%- swagger = content_for?(:swagger) ? yield(:swagger) : nil %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,9 +6,6 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <% if swagger %>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css" integrity="sha512-JArlzA682ixxKlWoGxYQxF+vHv527K1/NMnGbMxZERWr/16D7ZlPZUdq9+n5cA3TM030G57bSXYdN706FU9doQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <% end %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐶</text></svg>">
 
@@ -28,10 +24,6 @@
 
     <script defer src="https://good.lasagna.pizza/script.js" data-website-id="7980a315-6a16-4996-ac59-da18143b0eec"></script>
     <%= javascript_include_tag :application, integrity: true %>
-    <% if swagger %>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js" integrity="sha512-8FFvTCXo6KgUt72SMpgMgMHoHnNUOPxndku0/mc+B98qIeEfZ6dpPDYJv6a1TRWHoEZeMQAKQzcwSmQixM9v2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js" integrity="sha512-D0LLkbspjpDlVcVweqnmQGAHf4evBLmiyTVFxvh+c/vnJduLdDtSwT2rHg4q9bPXIp4MtY4r6fbutZsTjnoYZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <% end %>
   </head>
   <body class="markdown-body">
     <header>
@@ -49,32 +41,11 @@
         </ul>
       </nav>
     </header>
-    <main>
+    <main class="<%= yield(:main_class) %>">
       <%= yield %>
     </main>
     <footer>
       <p><small>Dog API by kinduff, providing Dog Data since 2016 - <%= ENV['GIT_COMMIT']&.slice(0, 7) %></small></p>
     </footer>
-    <% if swagger %>
-      <script nonce="<%= content_security_policy_nonce %>">
-        if (window.navigator.userAgent.indexOf("Edge") > -1) {
-          console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
-          window.fetch = undefined;
-        }
-
-        window.onload = function () {
-          var configObject = {};
-
-          configObject.url = "<%= swagger %>";
-          configObject.dom_id = "#swagger-ui";
-          configObject.docExpansion = "full";
-          configObject.jsonEditor = false;
-          configObject.defaultModelRendering = 'schema';
-          configObject.showRequestHeaders = false;
-
-          const ui = SwaggerUIBundle(configObject);
-        }
-      </script>
-    <% end %>
   </body>
 </html>

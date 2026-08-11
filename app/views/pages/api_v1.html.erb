@@ -1,4 +1,1 @@
-<% page_heading "API V1 - Docs" %>
-<% content_for :swagger, '/api-docs/v1/swagger.json' %>
-
-<div id="swagger-ui"></div>
+<%= render "pages/openapi", document: @document %>

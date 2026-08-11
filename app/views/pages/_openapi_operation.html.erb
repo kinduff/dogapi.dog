@@ -1,0 +1,67 @@
+<article class="api-operation">
+  <h3 id="<%= operation.anchor %>">
+    <a class="api-anchor" href="#<%= operation.anchor %>" aria-hidden="true"></a>
+    <span class="<%= api_method_class operation.verb %>"><%= operation.verb %></span>
+    <code class="api-path"><%= operation.path %></code>
+  </h3>
+
+  <p class="api-summary"><%= operation.summary %></p>
+
+  <%= api_text operation.description %>
+
+  <% if operation.parameters.any? %>
+    <h4>Parameters</h4>
+
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>In</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% operation.parameters.each do |parameter| %>
+          <tr>
+            <td>
+              <code><%= parameter.name %></code>
+              <% if parameter.required %><span class="api-required">required</span><% end %>
+            </td>
+            <td><%= parameter.in %></td>
+            <td>
+              <%= parameter.type %>
+              <% if parameter.constraints.any? %>
+                <span class="api-muted">(<%= parameter.constraints.join(", ") %>)</span>
+              <% end %>
+            </td>
+            <td><%= parameter.description %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <h4>Request</h4>
+  <pre class="api-code"><code><%= api_curl document, operation %></code></pre>
+
+  <h4>Responses</h4>
+
+  <% operation.responses.each do |response| %>
+    <div class="api-response">
+      <p>
+        <span class="api-status api-status-<%= response.code.to_s.first %>xx"><%= response.code %></span>
+        <%= response.description %>
+      </p>
+
+      <% fields = document.fields(response.schema) %>
+      <% if fields.any? %>
+        <%= render "pages/openapi_fields", document: document, fields: fields %>
+      <% end %>
+
+      <% if response.example %>
+        <pre class="api-code"><code><%= api_json response.example %></code></pre>
+      <% end %>
+    </div>
+  <% end %>
+</article>

@@ -1,0 +1,91 @@
+<%# page_heading below sets both the <title> and the <h1>. %>
+<% content_for :main_class, "wide" %>
+
+<%= page_heading "#{document.title} - Docs" %>
+
+<%= api_text document.summary %>
+
+<dl class="api-facts">
+  <dt>Base URL</dt>
+  <dd><code><%= document.base_url %></code></dd>
+
+  <dt>Format</dt>
+  <dd>JSON over HTTPS. No authentication, no rate limit beyond fair use.</dd>
+
+  <dt>OpenAPI</dt>
+  <dd><%= link_to document.document_path, document.document_path %></dd>
+
+  <% if document.license %>
+    <dt>License</dt>
+    <dd><%= link_to document.license["name"], document.license["url"] %></dd>
+  <% end %>
+
+  <% if document.contact_email %>
+    <dt>Contact</dt>
+    <dd><%= mail_to document.contact_email %></dd>
+  <% end %>
+</dl>
+
+<nav class="api-toc" aria-label="Endpoints">
+  <% document.sections.each do |section| %>
+    <div class="api-toc-group">
+      <strong><%= section[:name] %></strong>
+      <ul>
+        <% section[:operations].each do |operation| %>
+          <li>
+            <a href="#<%= operation.anchor %>">
+              <span class="<%= api_method_class operation.verb %>"><%= operation.verb %></span>
+              <code><%= operation.path %></code>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if document.models.any? %>
+    <div class="api-toc-group">
+      <strong>Models</strong>
+      <ul>
+        <% document.models.each do |model| %>
+          <li><a href="#<%= document.anchor_for_model(model) %>"><code><%= model %></code></a></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</nav>
+
+<% document.sections.each do |section| %>
+  <section class="api-section">
+    <h2 id="tag-<%= section[:name].parameterize %>">
+      <a class="api-anchor" href="#tag-<%= section[:name].parameterize %>" aria-hidden="true"></a>
+      <%= section[:name] %>
+    </h2>
+
+    <%= api_text section[:description] %>
+
+    <% section[:operations].each do |operation| %>
+      <%= render "pages/openapi_operation", document: document, operation: operation %>
+    <% end %>
+  </section>
+<% end %>
+
+<% if document.models.any? %>
+  <section class="api-section">
+    <h2 id="models">
+      <a class="api-anchor" href="#models" aria-hidden="true"></a>
+      Models
+    </h2>
+
+    <p>The building blocks referenced by the responses above.</p>
+
+    <% document.models.each do |model| %>
+      <h3 id="<%= document.anchor_for_model(model) %>">
+        <a class="api-anchor" href="#<%= document.anchor_for_model(model) %>" aria-hidden="true"></a>
+        <code><%= model %></code>
+      </h3>
+
+      <%= render "pages/openapi_fields", document: document, fields: document.model_fields(model) %>
+    <% end %>
+  </section>
+<% end %>

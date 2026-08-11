@@ -15,8 +15,10 @@ class PagesController < ApplicationController
   end
 
   def api_v1
+    @document = OpenapiDocument.load("v1")
   end
 
   def api_v2
+    @document = OpenapiDocument.load("v2")
   end
 end
