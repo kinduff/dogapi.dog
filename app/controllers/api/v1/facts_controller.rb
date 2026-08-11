@@ -4,7 +4,7 @@ module Api
   module V1
     class FactsController < Api::V1::BaseController
       def index
-        @facts = Fact.order("RANDOM()").limit(get_limit)
+        @facts = Fact.random(get_limit)
         if params[:raw] == "true"
           fact = @facts.first
           fact.nil? ? head(:not_found) : render(plain: fact.body)

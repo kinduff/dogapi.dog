@@ -2,7 +2,7 @@
 
 class PagesController < ApplicationController
   def index
-    @fact = Fact.order("RANDOM()").first
+    @fact = Fact.random.first
   end
 
   def terms

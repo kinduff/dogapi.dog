@@ -4,7 +4,7 @@ module Api
   module V2
     class FactsController < Api::V2::BaseController
       def index
-        @facts = Fact.order("RANDOM()").limit(get_limit)
+        @facts = Fact.random(get_limit)
         render jsonapi: @facts
       end
 
