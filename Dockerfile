@@ -1,33 +1,48 @@
-FROM ruby:3.3.6-slim
+# syntax=docker/dockerfile:1
 
-RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
-    build-essential \
-    gnupg2 \
-    libpq-dev \
-    git \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ARG RUBY_VERSION=3.3.6
+
+# Shared base: runtime dependencies only.
+FROM ruby:${RUBY_VERSION}-slim AS base
 
 ENV LANG=C.UTF-8 \
+  RAILS_ENV=production \
+  BUNDLE_DEPLOYMENT=1 \
+  BUNDLE_FROZEN=1 \
   BUNDLE_JOBS=4 \
+  BUNDLE_PATH=/usr/local/bundle \
   BUNDLE_RETRY=3 \
-  RAILS_ENV=production
-
-RUN gem update --system && gem install bundler
+  BUNDLE_WITHOUT="development test"
 
 WORKDIR /usr/src/app
 
-COPY Gemfile* ./
+RUN apt-get update -qq \
+  && apt-get install -yq --no-install-recommends libpq5 \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN bundle config frozen true \
- && bundle config jobs 4 \
- && bundle config deployment true \
- && bundle config without 'development test' \
- && bundle install
+# Build stage: compilers and headers live here and are thrown away.
+FROM base AS build
+
+RUN apt-get update -qq \
+  && apt-get install -yq --no-install-recommends \
+    build-essential \
+    libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install \
+  && rm -rf "${BUNDLE_PATH}"/ruby/*/cache
 
 COPY . .
 
 ARG SECRET_KEY_BASE=fakekeyforassets
-RUN bin/rails assets:clobber && bundle exec rails assets:precompile
+RUN bundle exec rails assets:precompile
+
+# Final image: gems and app only.
+FROM base
+
+COPY --from=build ${BUNDLE_PATH} ${BUNDLE_PATH}
+COPY --from=build /usr/src/app /usr/src/app
 
 ARG GIT_COMMIT
 ENV GIT_COMMIT=$GIT_COMMIT
