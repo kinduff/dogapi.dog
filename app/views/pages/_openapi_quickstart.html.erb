@@ -14,11 +14,13 @@
 <div class="api-columns">
   <%= render "pages/api_code",
         label: "Terminal",
+        language: "shell",
         id: "quickstart-curl",
         content: api_curl(document, first) %>
 
   <%= render "pages/api_code",
         label: "JavaScript",
+        language: "javascript",
         id: "quickstart-js",
         content: <<~JS.strip %>
           const response = await fetch(
@@ -33,7 +35,7 @@
 <% if example %>
   <p>The answer looks like this:</p>
 
-  <%= render "pages/api_code", label: "Response", content: api_json(example), tall: true %>
+  <%= render "pages/api_code", label: "Response", language: "json", content: api_json(example), tall: true %>
 <% end %>
 
 <% if document.models.any? %>

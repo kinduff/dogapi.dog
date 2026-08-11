@@ -3,6 +3,12 @@
 require "rails_helper"
 
 RSpec.describe "API reference pages" do
+  # The code blocks are syntax highlighted, so their content is split across
+  # spans. Assert on the text a reader actually sees.
+  def rendered_text
+    CGI.unescapeHTML(ActionController::Base.helpers.strip_tags(response.body))
+  end
+
   describe "GET /docs/api-v2" do
     before { get "/docs/api-v2" }
 
@@ -35,7 +41,7 @@ RSpec.describe "API reference pages" do
     end
 
     it "shows a copy-pasteable request" do
-      expect(response.body).to include("curl -s &quot;https://dogapi.dog/api/v2/breeds")
+      expect(rendered_text).to include('curl -s "https://dogapi.dog/api/v2/breeds')
     end
 
     it "shows the response example" do
@@ -84,7 +90,7 @@ RSpec.describe "API reference pages" do
     end
 
     it "shows the first request in more than one language" do
-      expect(response.body).to include("Terminal", "JavaScript", "await fetch")
+      expect(rendered_text).to include("Terminal", "JavaScript", "await fetch")
     end
 
     it "explains how to read a response" do
@@ -93,6 +99,10 @@ RSpec.describe "API reference pages" do
 
     it "numbers the lines of every code block" do
       expect(response.body).to include('<span class="code-line">')
+    end
+
+    it "highlights the examples" do
+      expect(response.body).to include('<span class="nl">"data"</span>', '<span class="kd">const</span>')
     end
 
     it "bounds the height of long examples instead of dumping them inline" do

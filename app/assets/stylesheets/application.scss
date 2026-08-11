@@ -268,9 +268,7 @@ pre code {
 // API reference
 // Sized so a pretty printed JSON line fits without wrapping, and no wider.
 // Everything that outgrows it scrolls inside its own box.
-main.wide {
-    max-width: 46rem;
-}
+
 
 .api-facts {
     background: #f6f8fa;
@@ -725,5 +723,47 @@ details.api-fields {
 
     summary {
         font-size: 0.85em;
+    }
+}
+
+// Syntax highlighting. Rouge emits these class names server side and the
+// try-it panel reuses them, so both are styled once here. Kept low contrast on
+// purpose: structure should be easier to see, not louder than the prose.
+.code-body {
+    .c, .c1, .cm {
+        color: #7d8994;
+        font-style: italic;
+    }
+
+    .k, .kd, .kn, .kr, .kt {
+        color: #7a283a;
+    }
+
+    .kc {
+        color: #b0562c;
+    }
+
+    .s, .s1, .s2, .sb, .se, .sh, .si, .sx, .dl {
+        color: #2f6f4e;
+    }
+
+    .m, .mi, .mf, .mh, .mo {
+        color: #b0562c;
+    }
+
+    .nl, .nt {
+        color: #1f4f7a;
+    }
+
+    .nb, .bp, .nx, .nv, .vg {
+        color: #4a4a55;
+    }
+
+    .o, .ow, .p {
+        color: #85909b;
+    }
+
+    .err {
+        color: inherit;
     }
 }

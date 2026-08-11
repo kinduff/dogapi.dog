@@ -17,9 +17,25 @@ module DocsHelper
     safe_join(paragraphs)
   end
 
-  # One span per line so the viewer can number them with a CSS counter.
-  def api_code_lines(text)
-    lines = text.to_s.split("\n").map { |line| tag.span(line, class: "code-line") }
+  LEXERS = {
+    "json" => Rouge::Lexers::JSON,
+    "shell" => Rouge::Lexers::Shell,
+    "javascript" => Rouge::Lexers::Javascript
+  }.freeze
+
+  # One span per line so the viewer can number them with a CSS counter, each
+  # line highlighted on its own. Lexing per line keeps the markup well formed
+  # whatever the content does; the blocks here never carry a token that spans
+  # more than one line.
+  def api_code_lines(text, language = nil)
+    lexer = LEXERS[language.to_s]&.new
+    formatter = Rouge::Formatters::HTML.new if lexer
+
+    lines = text.to_s.split("\n", -1).map do |line|
+      content = lexer ? formatter.format(lexer.lex(line)).html_safe : line # rubocop:disable Rails/OutputSafety
+
+      tag.span(content, class: "code-line")
+    end
 
     safe_join(lines, "\n")
   end

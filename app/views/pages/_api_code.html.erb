@@ -6,6 +6,7 @@
 <% id ||= nil %>
 <% label ||= nil %>
 <% tall = local_assigns.fetch(:tall, false) %>
+<% language = local_assigns[:language] %>
 
 <figure class="code">
   <% if label %>
@@ -17,5 +18,5 @@
     </figcaption>
   <% end %>
 
-  <pre class="code-body <%= "code-body-tall" if tall %>"><%= tag.code(api_code_lines(content), id: id) %></pre>
+  <pre class="code-body <%= "code-body-tall" if tall %>"><%= tag.code(api_code_lines(content, language), id: id) %></pre>
 </figure>

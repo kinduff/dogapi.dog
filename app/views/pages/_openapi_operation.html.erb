@@ -29,6 +29,7 @@
 
   <%= render "pages/api_code",
         label: "Request",
+        language: "shell",
         id: "#{operation.anchor}-curl",
         content: api_curl(document, operation) %>
 
@@ -88,6 +89,7 @@
       <% if example %>
         <%= render "pages/api_code",
               label: "Example",
+              language: "json",
               id: "#{operation.anchor}-example-#{response.code}",
               content: api_json(example),
               tall: true %>

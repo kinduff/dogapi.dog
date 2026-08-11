@@ -40,19 +40,38 @@
     return text;
   }
 
+  function escapeHtml(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Same token classes Rouge emits server side, so one stylesheet covers both
+  // the examples and the live responses.
+  function highlightJson(line) {
+    return escapeHtml(line).replace(
+      /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)|([{}\[\],:])/g,
+      function (match, string, colon, constant, number, punctuation) {
+        if (string) {
+          return colon
+            ? '<span class="nl">' + string + "</span>" + '<span class="p">' + colon + "</span>"
+            : '<span class="s2">' + string + "</span>";
+        }
+        if (constant) return '<span class="kc">' + constant + "</span>";
+        if (number) return '<span class="mi">' + number + "</span>";
+        if (punctuation) return '<span class="p">' + punctuation + "</span>";
+
+        return match;
+      }
+    );
+  }
+
   // Mirrors the server rendered viewer: one span per line, so the CSS counter
   // keeps numbering the response the same way it numbers the examples.
-  function renderLines(element, text) {
-    element.textContent = "";
-
-    text.split("\n").forEach(function (line, index, lines) {
-      var span = document.createElement("span");
-      span.className = "code-line";
-      span.textContent = line;
-      element.appendChild(span);
-
-      if (index < lines.length - 1) element.appendChild(document.createTextNode("\n"));
+  function renderLines(element, text, highlight) {
+    var html = text.split("\n").map(function (line) {
+      return '<span class="code-line">' + (highlight ? highlightJson(line) : escapeHtml(line)) + "</span>";
     });
+
+    element.innerHTML = html.join("\n");
   }
 
   function show(form, className, message) {
@@ -81,7 +100,8 @@
           var kind = response.ok ? "2xx" : String(response.status).charAt(0) + "xx";
 
           show(form, "api-status-" + kind, response.status + " " + response.statusText + " · " + elapsed + " ms");
-          renderLines(body, formatBody(text, response.headers.get("content-type")));
+          var contentType = response.headers.get("content-type");
+          renderLines(body, formatBody(text, contentType), contentType && contentType.indexOf("json") !== -1);
         });
       })
       .catch(function (error) {
