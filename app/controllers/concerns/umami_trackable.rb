@@ -17,14 +17,12 @@ module UmamiTrackable
 
     # The poors man sidekiq
     Thread.new do
-      begin
-        Rails.application.config.umami_client.send_event(event_payload(event_data))
-        Rails.logger.debug "Umami event tracked: #{event_data[:event_name]}"
-      rescue StandardError => e
-        Rails.logger.error "Failed to track Umami event: #{e.message}"
-      end
+      Rails.application.config.umami_client.send_event(event_payload(event_data))
+      Rails.logger.debug "Umami event tracked: #{event_data[:event_name]}"
+    rescue => e
+      Rails.logger.error "Failed to track Umami event: #{e.message}"
     end
-  rescue StandardError => e
+  rescue => e
     Rails.logger.error "Error preparing Umami tracking: #{e.message}"
   end
 

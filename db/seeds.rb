@@ -3,8 +3,8 @@
 puts "Started seeding the database..."
 
 FACTS = [
-  'More than 1 in 3 American families own a dog',
-  'A dog\'s nose print is unique, just like a human\'s fingerprint',
+  "More than 1 in 3 American families own a dog",
+  "A dog's nose print is unique, just like a human's fingerprint",
   'Dogs have a unique way of showing affection, called a "butt wag," where they wag their tail and wiggle their rear end.',
   'Old England, the word "hound" was used to refer to all types of dogs.',
   "A dog's nose is so sensitive that they can detect minute changes in the earth's magnetic field"
