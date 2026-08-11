@@ -5,11 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.6"
 
-gem "aws-sdk-s3", "~> 1.229", require: false
 gem "bootsnap", "~> 1.25"
-gem "groupdate", "~> 6.8"
-gem "image_processing", "~> 1.14"
-gem "jbuilder", "~> 2.15"
 gem "jsonapi.rb", "~> 2.0"
 gem "pg", "~> 1.4"
 gem "pg_search", "~> 2.3"
@@ -17,7 +13,6 @@ gem "puma", "~> 8.0"
 gem "rack-attack", "~> 6.6"
 gem "rack-cors", "~> 3.0", require: "rack/cors"
 gem "rails", "~> 8.1"
-gem "ransack", "~> 4.4"
 gem "redis", "~> 6.0"
 gem "rswag", "~> 2.8"
 gem "sassc-rails", "~> 2.1"
@@ -42,5 +37,4 @@ end
 group :test do
   gem "shoulda-matchers", "~> 7.0"
   gem "simplecov", "~> 1.1", require: false
-  gem "sqlite3", "~> 2.9"
 end

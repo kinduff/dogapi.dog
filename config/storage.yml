@@ -5,11 +5,3 @@ test:
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
-
-backblaze:
-  service: S3
-  access_key_id: <%= Rails.application.credentials.dig(:backblaze, :access_key_id) %>
-  secret_access_key: <%= Rails.application.credentials.dig(:backblaze, :secret_access_key) %>
-  endpoint: <%= Rails.application.credentials.dig(:backblaze, :endpoint) %>
-  region: <%= Rails.application.credentials.dig(:backblaze, :region) %>
-  bucket: <%= Rails.application.credentials.dig(:backblaze, :bucket) %>
