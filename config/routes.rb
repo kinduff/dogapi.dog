@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   mount Rswag::Api::Engine => "/api-docs"
   # mount Sidekiq::Web => '/admin/sidekiq'
 
+  get "up" => "rails/health#show", :as => :rails_health_check
+
   root to: "pages#index"
   get "/terms", to: "pages#terms", as: :terms
   get "/docs", to: "pages#docs", as: :docs

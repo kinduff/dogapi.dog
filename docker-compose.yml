@@ -8,6 +8,18 @@ services:
       - REDIS_URL=redis://redis
       - DATABASE_URL=postgres://postgres:postgres@postgres
       - RAILS_SERVE_STATIC_FILES=true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "ruby",
+          "-e",
+          "require 'net/http'; exit(Net::HTTP.get_response(URI('http://127.0.0.1:3000/up')).code == '200' ? 0 : 1)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       - postgres
       - redis
