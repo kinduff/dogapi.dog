@@ -10,18 +10,9 @@ module UmamiTrackable
   private
 
   def track_api_request
-    Rails.logger.debug "Umami enabled: #{umami_enabled?}"
     return unless umami_enabled?
 
-    event_data = build_event_data
-
-    # The poors man sidekiq
-    Thread.new do
-      Rails.application.config.umami_client.send_event(event_payload(event_data))
-      Rails.logger.debug "Umami event tracked: #{event_data[:event_name]}"
-    rescue => e
-      Rails.logger.error "Failed to track Umami event: #{e.message}"
-    end
+    UmamiEventJob.perform_later(event_payload(build_event_data))
   rescue => e
     Rails.logger.error "Error preparing Umami tracking: #{e.message}"
   end
