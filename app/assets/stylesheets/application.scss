@@ -266,10 +266,10 @@ pre code {
 }
 
 // API reference
-// The reference needs a little more room than prose, but not so much that it
-// stops being the same site. Tables and code blocks scroll inside it.
+// Sized so a pretty printed JSON line fits without wrapping, and no wider.
+// Everything that outgrows it scrolls inside its own box.
 main.wide {
-    max-width: 48rem;
+    max-width: 46rem;
 }
 
 .api-facts {
@@ -439,22 +439,6 @@ main.wide {
     }
 }
 
-.api-code {
-    background: #f6f8fa;
-    border-radius: 3px;
-    font-size: 0.8em;
-    margin: 0.6rem 0 1.4rem;
-    overflow-x: auto;
-    padding: 0.9rem 1rem;
-    white-space: pre;
-    word-break: normal;
-
-    code {
-        font-size: inherit !important;
-        white-space: pre;
-    }
-}
-
 .api-response {
     margin: 1.2rem 0;
 }
@@ -478,23 +462,6 @@ h3:hover > .api-anchor::before {
 }
 
 // Interactive request panels
-.api-code-block {
-    position: relative;
-
-    .api-button {
-        opacity: 0;
-        position: absolute;
-        right: 0.4rem;
-        top: 0.4rem;
-        transition: opacity 0.15s ease-in-out;
-    }
-
-    &:hover .api-button,
-    .api-button:focus {
-        opacity: 1;
-    }
-}
-
 .api-button {
     background: var(--theme);
     border: 1px solid var(--theme);
@@ -599,4 +566,144 @@ h3:hover > .api-anchor::before {
 .api-status-5xx {
     background: #fbe3e4;
     color: #7a283a;
+}
+
+// Read-only code viewer: fixed height, scrolls, numbered lines.
+.code {
+    background: #f6f8fa;
+    border: 1px solid #e6e9ec;
+    border-radius: 3px;
+    margin: 0.8rem 0 1.4rem;
+    overflow: hidden;
+}
+
+.code-head {
+    align-items: center;
+    background: #eef1f4;
+    border-bottom: 1px solid #e6e9ec;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    padding: 0.3rem 0.5rem 0.3rem 0.8rem;
+}
+
+.code-label {
+    color: var(--text-alt);
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.code-body {
+    counter-reset: code-line;
+    font-size: 0.8em;
+    line-height: 1.5;
+    margin: 0;
+    max-height: 14rem;
+    overflow: auto;
+    padding: 0.7rem 0;
+    white-space: pre;
+    word-break: normal;
+
+    code {
+        display: block;
+        font-size: inherit !important;
+        white-space: pre;
+    }
+}
+
+.code-body-tall {
+    max-height: 22rem;
+}
+
+.code-line {
+    display: block;
+    padding: 0 1rem 0 3.2rem;
+    position: relative;
+
+    &::before {
+        color: #9aa4ae;
+        content: counter(code-line);
+        counter-increment: code-line;
+        font-size: 0.85em;
+        left: 0;
+        position: absolute;
+        text-align: right;
+        user-select: none;
+        width: 2.4rem;
+    }
+
+    &:hover {
+        background: #eef1f4;
+    }
+}
+
+.api-columns {
+    display: grid;
+    gap: 0 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+
+.api-glossary {
+    margin: 1rem 0 1.4rem;
+
+    dt {
+        margin-top: 0.7rem;
+    }
+
+    dd {
+        color: var(--text-alt);
+        margin: 0.1rem 0 0;
+    }
+}
+
+.api-note {
+    background: #f6f8fa;
+    border-left: 0.2rem solid var(--theme);
+    border-radius: 0 3px 3px 0;
+    padding: 0.7rem 1rem;
+}
+
+.api-parameters {
+    list-style: none;
+    margin: 0.8rem 0 1.4rem;
+    padding: 0;
+
+    li {
+        border-bottom: 1px solid var(--background-element);
+        padding: 0.6rem 0;
+    }
+
+    li:last-child {
+        border-bottom: 0;
+    }
+
+    p {
+        color: var(--text-alt);
+        font-size: 0.9em;
+        margin: 0.2rem 0 0;
+    }
+}
+
+details.api-response,
+details.api-fields {
+    margin: 0.6rem 0;
+
+    summary {
+        cursor: pointer;
+        padding: 0.3rem 0;
+    }
+
+    summary:hover {
+        color: var(--theme);
+    }
+}
+
+details.api-fields {
+    margin-bottom: 1.4rem;
+
+    summary {
+        font-size: 0.85em;
+    }
 }

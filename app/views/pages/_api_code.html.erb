@@ -1,0 +1,21 @@
+<%#
+  A small read-only code viewer: fixed height, scrolls, numbered lines, and a
+  copy button. `label` names what the block is, `id` is needed when something
+  else has to point at the content (the copy button, the try-it output).
+%>
+<% id ||= nil %>
+<% label ||= nil %>
+<% tall = local_assigns.fetch(:tall, false) %>
+
+<figure class="code">
+  <% if label %>
+    <figcaption class="code-head">
+      <span class="code-label"><%= label %></span>
+      <% if id %>
+        <button type="button" class="api-button api-button-quiet" data-api-copy="<%= id %>">Copy</button>
+      <% end %>
+    </figcaption>
+  <% end %>
+
+  <pre class="code-body <%= "code-body-tall" if tall %>"><%= tag.code(api_code_lines(content), id: id) %></pre>
+</figure>

@@ -1,0 +1,86 @@
+<% first = document.operations.first %>
+<% example = api_short_example(first) %>
+
+<h2 id="quick-start">
+  <a class="api-anchor" href="#quick-start" aria-hidden="true"></a>
+  Quick start
+</h2>
+
+<p>
+  Ask for something and read what comes back. This works in a terminal, in the
+  browser console, or from any language that can make an HTTP request.
+</p>
+
+<div class="api-columns">
+  <%= render "pages/api_code",
+        label: "Terminal",
+        id: "quickstart-curl",
+        content: api_curl(document, first) %>
+
+  <%= render "pages/api_code",
+        label: "JavaScript",
+        id: "quickstart-js",
+        content: <<~JS.strip %>
+          const response = await fetch(
+            "#{document.base_url}#{first.path}"
+          );
+          const body = await response.json();
+
+          console.log(body);
+        JS
+</div>
+
+<% if example %>
+  <p>The answer looks like this:</p>
+
+  <%= render "pages/api_code", label: "Response", content: api_json(example), tall: true %>
+<% end %>
+
+<% if document.models.any? %>
+  <h3 id="reading-a-response">
+    <a class="api-anchor" href="#reading-a-response" aria-hidden="true"></a>
+    Reading a response
+  </h3>
+
+  <p>
+    Responses follow <%= link_to "JSON:API", "https://jsonapi.org", target: "_blank", rel: "noopener" %>,
+    so the shape is the same everywhere. Once you can read one, you can read all
+    of them:
+  </p>
+
+  <dl class="api-glossary">
+    <dt><code>data</code></dt>
+    <dd>
+      What you asked for — an array for a list, a single object for one record.
+    </dd>
+
+    <dt><code>id</code> and <code>type</code></dt>
+    <dd>
+      Every record carries both. The <code>id</code> is a UUID: treat it as an
+      opaque string and never try to guess or build one.
+    </dd>
+
+    <dt><code>attributes</code></dt>
+    <dd>
+      The actual values — a breed's name, description, weight and so on.
+    </dd>
+
+    <dt><code>relationships</code></dt>
+    <dd>
+      Pointers to other records, as <code>id</code> + <code>type</code> pairs
+      rather than the whole nested object. Follow one by requesting that record
+      by its id.
+    </dd>
+
+    <dt><code>meta</code> and <code>links</code></dt>
+    <dd>
+      Information about the response itself: which page you are on, how many
+      records exist, and the URLs of the next and last pages.
+    </dd>
+  </dl>
+
+  <p class="api-note">
+    So a breed's name lives at <code>body.data[0].attributes.name</code>, and the
+    group it belongs to at <code>body.data[0].relationships.group.data.id</code>.
+  </p>
+<% end %>

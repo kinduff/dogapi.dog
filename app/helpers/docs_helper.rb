@@ -17,6 +17,13 @@ module DocsHelper
     safe_join(paragraphs)
   end
 
+  # One span per line so the viewer can number them with a CSS counter.
+  def api_code_lines(text)
+    lines = text.to_s.split("\n").map { |line| tag.span(line, class: "code-line") }
+
+    safe_join(lines, "\n")
+  end
+
   def api_json(value)
     JSON.pretty_generate(value)
   end
@@ -51,6 +58,27 @@ module DocsHelper
     return api_example_id(operation) if parameter.in == "path"
 
     parameter.constraints.find { |constraint| constraint.start_with?("default ") }&.delete_prefix("default ")
+  end
+
+  # Where a parameter goes, said plainly.
+  def api_parameter_place(parameter)
+    case parameter.in
+    when "path" then "in the URL"
+    when "query" then "after the ?"
+    else parameter.in
+    end
+  end
+
+  # The first response example for an operation, trimmed to a couple of records
+  # so the block stays readable next to the explanation.
+  def api_short_example(operation, keep: 1)
+    example = operation.responses.find { |response| response.code == "200" }&.example
+    return if example.blank?
+
+    data = example["data"]
+    return example unless data.is_a?(Array) && data.size > keep
+
+    example.merge("data" => data.first(keep))
   end
 
   private

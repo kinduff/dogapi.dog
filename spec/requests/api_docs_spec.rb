@@ -79,6 +79,42 @@ RSpec.describe "API reference pages" do
       expect(response.body).to include('<div class="api-table-scroll">')
     end
 
+    it "opens with a quick start before the reference" do
+      expect(response.body.index("Quick start")).to be < response.body.index("Endpoints")
+    end
+
+    it "shows the first request in more than one language" do
+      expect(response.body).to include("Terminal", "JavaScript", "await fetch")
+    end
+
+    it "explains how to read a response" do
+      expect(response.body).to include("Reading a response", "relationships", "body.data[0].attributes.name")
+    end
+
+    it "numbers the lines of every code block" do
+      expect(response.body).to include('<span class="code-line">')
+    end
+
+    it "bounds the height of long examples instead of dumping them inline" do
+      expect(response.body).to include("code-body-tall")
+    end
+
+    it "folds the long field tables away behind a summary" do
+      expect(response.body).to include("<summary>Every field, explained</summary>")
+    end
+
+    it "opens the success case and leaves the error case folded" do
+      success = response.body.index('<details class="api-response" open>')
+      folded = response.body.index('<details class="api-response" >')
+
+      expect(success).to be_present
+      expect(folded).to be_present
+    end
+
+    it "says where each parameter goes in plain words" do
+      expect(response.body).to include("after the ?", "in the URL")
+    end
+
     it "uses the wide variant of the site layout" do
       expect(response.body).to include('<main class="wide">')
     end

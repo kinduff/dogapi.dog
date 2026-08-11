@@ -12,8 +12,11 @@
   <dt>Base URL</dt>
   <dd><code><%= document.base_url %></code></dd>
 
-  <dt>Format</dt>
-  <dd>JSON over HTTPS. No authentication, no rate limit beyond fair use.</dd>
+  <dt>Auth</dt>
+  <dd>None. No key, no sign up — just send the request.</dd>
+
+  <dt>Returns</dt>
+  <dd>JSON<%= ", following the JSON:API convention" if document.models.any? %>.</dd>
 
   <dt>OpenAPI</dt>
   <dd><%= link_to document.document_path, document.document_path %></dd>
@@ -24,10 +27,22 @@
   <% end %>
 
   <% if document.contact_email %>
-    <dt>Contact</dt>
+    <dt>Questions</dt>
     <dd><%= mail_to document.contact_email %></dd>
   <% end %>
 </dl>
+
+<%= render "pages/openapi_quickstart", document: document %>
+
+<h2 id="endpoints">
+  <a class="api-anchor" href="#endpoints" aria-hidden="true"></a>
+  Endpoints
+</h2>
+
+<p>
+  Every endpoint below can be run straight from this page — fill in the fields
+  and press <em>Send request</em>. The examples show what comes back.
+</p>
 
 <nav class="api-toc" aria-label="Endpoints">
   <% document.sections.each do |section| %>
@@ -48,7 +63,7 @@
 
   <% if document.models.any? %>
     <div class="api-toc-group">
-      <strong>Models</strong>
+      <strong>Reference</strong>
       <ul>
         <% document.models.each do |model| %>
           <li><a href="#<%= document.anchor_for_model(model) %>"><code><%= model %></code></a></li>
@@ -77,10 +92,15 @@
   <section class="api-section">
     <h2 id="models">
       <a class="api-anchor" href="#models" aria-hidden="true"></a>
-      Models
+      Object reference
     </h2>
 
-    <p>The building blocks referenced by the responses above.</p>
+    <p>
+      The objects the responses are built from. <code>Breed</code>,
+      <code>Group</code> and <code>Fact</code> are the things themselves;
+      <code>Range</code> and <code>PaginationMeta</code> are small helpers that
+      show up inside them.
+    </p>
 
     <% document.models.each do |model| %>
       <h3 id="<%= document.anchor_for_model(model) %>">

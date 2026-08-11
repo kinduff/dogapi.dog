@@ -40,6 +40,21 @@
     return text;
   }
 
+  // Mirrors the server rendered viewer: one span per line, so the CSS counter
+  // keeps numbering the response the same way it numbers the examples.
+  function renderLines(element, text) {
+    element.textContent = "";
+
+    text.split("\n").forEach(function (line, index, lines) {
+      var span = document.createElement("span");
+      span.className = "code-line";
+      span.textContent = line;
+      element.appendChild(span);
+
+      if (index < lines.length - 1) element.appendChild(document.createTextNode("\n"));
+    });
+  }
+
   function show(form, className, message) {
     var output = form.querySelector("[data-api-output]");
     var status = form.querySelector("[data-api-status]");
@@ -57,7 +72,7 @@
 
     urlLabel.textContent = url;
     show(form, "api-status-pending", "…");
-    body.textContent = "";
+    renderLines(body, "");
 
     fetch(url, { headers: { Accept: "application/json" } })
       .then(function (response) {
@@ -66,12 +81,12 @@
           var kind = response.ok ? "2xx" : String(response.status).charAt(0) + "xx";
 
           show(form, "api-status-" + kind, response.status + " " + response.statusText + " · " + elapsed + " ms");
-          body.textContent = formatBody(text, response.headers.get("content-type"));
+          renderLines(body, formatBody(text, response.headers.get("content-type")));
         });
       })
       .catch(function (error) {
         show(form, "api-status-4xx", "Request failed");
-        body.textContent = String(error);
+        renderLines(body, String(error));
       });
   }
 

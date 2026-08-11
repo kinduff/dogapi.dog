@@ -12,45 +12,25 @@
   <% if operation.parameters.any? %>
     <h4>Parameters</h4>
 
-    <div class="api-table-scroll">
-      <table class="api-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>In</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% operation.parameters.each do |parameter| %>
-            <tr>
-              <td>
-                <code><%= parameter.name %></code>
-                <% if parameter.required %><span class="api-required">required</span><% end %>
-              </td>
-              <td><%= parameter.in %></td>
-              <td>
-                <%= parameter.type %>
-                <% if parameter.constraints.any? %>
-                  <span class="api-muted">(<%= parameter.constraints.join(", ") %>)</span>
-                <% end %>
-              </td>
-              <td><%= parameter.description %></td>
-            </tr>
+    <ul class="api-parameters">
+      <% operation.parameters.each do |parameter| %>
+        <li>
+          <code><%= parameter.name %></code>
+          <span class="api-muted"><%= parameter.type %>, <%= api_parameter_place parameter %></span>
+          <% if parameter.required %><span class="api-required">required</span><% end %>
+          <% if parameter.constraints.any? %>
+            <span class="api-muted">— <%= parameter.constraints.join(", ") %></span>
           <% end %>
-        </tbody>
-      </table>
-    </div>
+          <p><%= parameter.description %></p>
+        </li>
+      <% end %>
+    </ul>
   <% end %>
 
-  <h4>Request</h4>
-
-  <div class="api-code-block">
-    <pre class="api-code"><code id="<%= operation.anchor %>-curl"><%= api_curl document, operation %></code></pre>
-    <button type="button" class="api-button api-button-quiet"
-            data-api-copy="<%= operation.anchor %>-curl">Copy</button>
-  </div>
+  <%= render "pages/api_code",
+        label: "Request",
+        id: "#{operation.anchor}-curl",
+        content: api_curl(document, operation) %>
 
   <form class="api-try"
         data-api-try
@@ -85,31 +65,41 @@
     </fieldset>
 
     <div class="api-try-output" data-api-output hidden>
-      <p>
-        <span class="api-status" data-api-status></span>
-        <code class="api-try-url" data-api-url></code>
-      </p>
-      <pre class="api-code"><code data-api-body></code></pre>
+      <figure class="code">
+        <figcaption class="code-head">
+          <span class="api-status" data-api-status></span>
+          <code class="api-try-url" data-api-url></code>
+        </figcaption>
+        <pre class="code-body code-body-tall"><code data-api-body></code></pre>
+      </figure>
     </div>
   </form>
 
-  <h4>Responses</h4>
+  <h4>What comes back</h4>
 
-  <% operation.responses.each do |response| %>
-    <div class="api-response">
-      <p>
+  <% operation.responses.each_with_index do |response, index| %>
+    <details class="api-response" <%= "open" if index.zero? %>>
+      <summary>
         <span class="api-status api-status-<%= response.code.to_s.first %>xx"><%= response.code %></span>
         <%= response.description %>
-      </p>
+      </summary>
+
+      <% example = (response.code == "200") ? api_short_example(operation, keep: 2) : response.example %>
+      <% if example %>
+        <%= render "pages/api_code",
+              label: "Example",
+              id: "#{operation.anchor}-example-#{response.code}",
+              content: api_json(example),
+              tall: true %>
+      <% end %>
 
       <% fields = document.fields(response.schema) %>
       <% if fields.any? %>
-        <%= render "pages/openapi_fields", document: document, fields: fields %>
+        <details class="api-fields">
+          <summary>Every field, explained</summary>
+          <%= render "pages/openapi_fields", document: document, fields: fields %>
+        </details>
       <% end %>
-
-      <% if response.example %>
-        <pre class="api-code"><code><%= api_json response.example %></code></pre>
-      <% end %>
-    </div>
+    </details>
   <% end %>
 </article>
