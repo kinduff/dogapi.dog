@@ -192,9 +192,6 @@ GEM
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
-    pg_search (2.3.8)
-      activerecord (>= 7.2)
-      activesupport (>= 7.2)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
@@ -397,7 +394,6 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2)
   jsonapi.rb (~> 2.0)
   pg (~> 1.4)
-  pg_search (~> 2.3)
   puma (~> 8.0)
   rack-attack (~> 6.6)
   rack-cors (~> 3.0)

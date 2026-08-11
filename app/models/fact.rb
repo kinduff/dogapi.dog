@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 class Fact < ApplicationRecord
-  include PgSearch::Model
-
   IDS_CACHE_KEY = "facts/ids"
   IDS_CACHE_TTL = 1.hour
-
-  pg_search_scope :search_by_body, against: :body, using: {tsearch: {prefix: true}}
 
   after_commit :expire_cached_ids, on: [:create, :destroy]
 
