@@ -1,29 +1,31 @@
-<table class="api-table">
-  <thead>
-    <tr>
-      <th>Field</th>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% fields.each do |field| %>
+<div class="api-table-scroll">
+  <table class="api-table">
+    <thead>
       <tr>
-        <td><code><%= field.path %></code></td>
-        <td>
-          <% if field.reference %>
-            <a href="#<%= document.anchor_for_model(field.reference) %>"><%= field.type %></a>
-          <% else %>
-            <%= field.type %>
-          <% end %>
-        </td>
-        <td>
-          <%= field.description %>
-          <% if field.example %>
-            <span class="api-muted">e.g. <code><%= field.example %></code></span>
-          <% end %>
-        </td>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Description</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% fields.each do |field| %>
+        <tr>
+          <td><code><%= field.path %></code></td>
+          <td>
+            <% if field.reference %>
+              <a href="#<%= document.anchor_for_model(field.reference) %>"><%= field.type %></a>
+            <% else %>
+              <%= field.type %>
+            <% end %>
+          </td>
+          <td>
+            <%= field.description %>
+            <% if field.example %>
+              <span class="api-muted">e.g. <code><%= field.example %></code></span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,5 +1,8 @@
 <%# page_heading below sets both the <title> and the <h1>. %>
 <% content_for :main_class, "wide" %>
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "api_docs", defer: true %>
+<% end %>
 
 <%= page_heading "#{document.title} - Docs" %>
 

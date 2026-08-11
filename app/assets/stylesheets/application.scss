@@ -266,8 +266,10 @@ pre code {
 }
 
 // API reference
+// The reference needs a little more room than prose, but not so much that it
+// stops being the same site. Tables and code blocks scroll inside it.
 main.wide {
-    max-width: 58rem;
+    max-width: 48rem;
 }
 
 .api-facts {
@@ -405,10 +407,16 @@ main.wide {
     font-size: 0.85em;
 }
 
+.api-table-scroll {
+    -webkit-overflow-scrolling: touch;
+    margin: 1rem 0 1.6rem;
+    overflow-x: auto;
+}
+
 .api-table {
     border-collapse: collapse;
     font-size: 0.85em;
-    margin: 1rem 0 1.6rem;
+    min-width: 32rem;
     width: 100%;
 
     th,
@@ -467,4 +475,128 @@ main.wide {
 h2:hover > .api-anchor::before,
 h3:hover > .api-anchor::before {
     visibility: visible;
+}
+
+// Interactive request panels
+.api-code-block {
+    position: relative;
+
+    .api-button {
+        opacity: 0;
+        position: absolute;
+        right: 0.4rem;
+        top: 0.4rem;
+        transition: opacity 0.15s ease-in-out;
+    }
+
+    &:hover .api-button,
+    .api-button:focus {
+        opacity: 1;
+    }
+}
+
+.api-button {
+    background: var(--theme);
+    border: 1px solid var(--theme);
+    border-radius: 3px;
+    color: var(--text-inverted);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8em;
+    padding: 0.4em 0.9em;
+
+    &:hover {
+        background: var(--theme-dark);
+        border-color: var(--theme-dark);
+    }
+}
+
+.api-button-quiet {
+    background: transparent;
+    border-color: #ccc;
+    color: var(--text-alt);
+
+    &:hover {
+        background: var(--background-element);
+        border-color: #bbb;
+        color: var(--text-main);
+    }
+}
+
+.api-try {
+    margin: 1.4rem 0 1.8rem;
+
+    fieldset {
+        border: 1px solid var(--background-element);
+        border-radius: 3px;
+        padding: 0.4rem 1rem 1rem;
+    }
+
+    legend {
+        font-size: 0.8em;
+        letter-spacing: 0.04em;
+        padding: 0 0.4rem;
+        text-transform: uppercase;
+    }
+}
+
+.api-try-fields {
+    display: grid;
+    gap: 0.6rem 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    margin-bottom: 0.9rem;
+}
+
+.api-try-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    label {
+        font-family: monospace;
+        font-size: 0.8em;
+    }
+
+    input {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-family: inherit;
+        font-size: 0.85em;
+        min-width: 0;
+        padding: 0.4em 0.5em;
+    }
+}
+
+.api-try-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.api-try-output {
+    margin-top: 1rem;
+
+    p {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.4rem;
+    }
+}
+
+.api-try-url {
+    font-size: 0.75em;
+    word-break: break-all;
+}
+
+.api-status-pending {
+    background: var(--background-element);
+    color: var(--text-alt);
+}
+
+.api-status-5xx {
+    background: #fbe3e4;
+    color: #7a283a;
 }

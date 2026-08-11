@@ -50,6 +50,35 @@ RSpec.describe "API reference pages" do
       expect(response.body).not_to include("cdnjs.cloudflare.com", "swagger-ui", "jsdelivr")
     end
 
+    it "serves the interactive panel script from this origin" do
+      expect(response.body).to match(%r{src="/assets/api_docs-\w+\.js"})
+    end
+
+    it "offers a try it form per operation" do
+      expect(response.body.scan("data-api-try").size).to eq(5)
+    end
+
+    it "points the forms at this origin rather than the canonical host" do
+      expect(response.body).to include('data-base="/api/v2"', 'data-path="/breeds/{id}"')
+    end
+
+    it "builds an input for every parameter" do
+      expect(response.body).to include('data-param="page[size]"', 'data-in="query"')
+      expect(response.body).to include('data-param="id"', 'data-in="path"')
+    end
+
+    it "prefills a path parameter with the documented example" do
+      expect(response.body).to include('data-default="f9643a80-af1d-422a-9f15-18d466822053"')
+    end
+
+    it "lets the curl example be copied" do
+      expect(response.body).to include('data-api-copy="get-breeds-curl"')
+    end
+
+    it "keeps wide content scrollable instead of stretching the page" do
+      expect(response.body).to include('<div class="api-table-scroll">')
+    end
+
     it "uses the wide variant of the site layout" do
       expect(response.body).to include('<main class="wide">')
     end

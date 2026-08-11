@@ -37,6 +37,22 @@ module DocsHelper
     "api-method api-method-#{verb.downcase}"
   end
 
+  # The path prefix of the documented server, e.g. "/api/v2". Try-it requests
+  # use it against the current origin instead of the canonical host.
+  def api_base_path(document)
+    URI.parse(document.base_url.to_s).path
+  rescue URI::InvalidURIError
+    ""
+  end
+
+  # What a try-it field starts with: the documented example for a path id, the
+  # declared default for a query parameter, otherwise blank.
+  def api_try_default(_document, operation, parameter)
+    return api_example_id(operation) if parameter.in == "path"
+
+    parameter.constraints.find { |constraint| constraint.start_with?("default ") }&.delete_prefix("default ")
+  end
+
   private
 
   def api_example_id(operation)

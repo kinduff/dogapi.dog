@@ -12,38 +12,86 @@
   <% if operation.parameters.any? %>
     <h4>Parameters</h4>
 
-    <table class="api-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>In</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% operation.parameters.each do |parameter| %>
+    <div class="api-table-scroll">
+      <table class="api-table">
+        <thead>
           <tr>
-            <td>
-              <code><%= parameter.name %></code>
-              <% if parameter.required %><span class="api-required">required</span><% end %>
-            </td>
-            <td><%= parameter.in %></td>
-            <td>
-              <%= parameter.type %>
-              <% if parameter.constraints.any? %>
-                <span class="api-muted">(<%= parameter.constraints.join(", ") %>)</span>
-              <% end %>
-            </td>
-            <td><%= parameter.description %></td>
+            <th>Name</th>
+            <th>In</th>
+            <th>Type</th>
+            <th>Description</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% operation.parameters.each do |parameter| %>
+            <tr>
+              <td>
+                <code><%= parameter.name %></code>
+                <% if parameter.required %><span class="api-required">required</span><% end %>
+              </td>
+              <td><%= parameter.in %></td>
+              <td>
+                <%= parameter.type %>
+                <% if parameter.constraints.any? %>
+                  <span class="api-muted">(<%= parameter.constraints.join(", ") %>)</span>
+                <% end %>
+              </td>
+              <td><%= parameter.description %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 
   <h4>Request</h4>
-  <pre class="api-code"><code><%= api_curl document, operation %></code></pre>
+
+  <div class="api-code-block">
+    <pre class="api-code"><code id="<%= operation.anchor %>-curl"><%= api_curl document, operation %></code></pre>
+    <button type="button" class="api-button api-button-quiet"
+            data-api-copy="<%= operation.anchor %>-curl">Copy</button>
+  </div>
+
+  <form class="api-try"
+        data-api-try
+        data-base="<%= api_base_path document %>"
+        data-path="<%= operation.path %>">
+    <fieldset>
+      <legend>Try it</legend>
+
+      <% if operation.parameters.any? %>
+        <div class="api-try-fields">
+          <% operation.parameters.each do |parameter| %>
+            <% field_id = "#{operation.anchor}-#{parameter.name.parameterize}" %>
+            <div class="api-try-field">
+              <label for="<%= field_id %>"><%= parameter.name %></label>
+              <input type="text"
+                     id="<%= field_id %>"
+                     data-param="<%= parameter.name %>"
+                     data-in="<%= parameter.in %>"
+                     data-default="<%= api_try_default document, operation, parameter %>"
+                     value="<%= api_try_default document, operation, parameter %>"
+                     placeholder="<%= parameter.type %>">
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="api-try-actions">
+        <button type="submit" class="api-button">Send request</button>
+        <button type="button" class="api-button api-button-quiet" data-api-reset>Reset</button>
+        <span class="api-muted">Runs against this site.</span>
+      </div>
+    </fieldset>
+
+    <div class="api-try-output" data-api-output hidden>
+      <p>
+        <span class="api-status" data-api-status></span>
+        <code class="api-try-url" data-api-url></code>
+      </p>
+      <pre class="api-code"><code data-api-body></code></pre>
+    </div>
+  </form>
 
   <h4>Responses</h4>
 
