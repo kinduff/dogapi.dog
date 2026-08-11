@@ -3,7 +3,6 @@
 module Api
   module V2
     class BaseController < Api::BaseController
-      include JSONAPI::Filtering
       include JSONAPI::Fetching
 
       # Breed and group data changes rarely, so responses can sit in shared
