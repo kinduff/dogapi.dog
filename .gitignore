@@ -30,6 +30,11 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Ignore local environment files, but keep the example.
+/.env
+/.env.*
+!/.env.example
+
 # Ignores coverage folder
 /coverage
 
