@@ -11,8 +11,7 @@ module Api
       private
 
       def get_limit
-        limit = params[:limit]
-        (limit.to_i.zero? || limit.to_i > 5) ? 1 : limit.to_i
+        params[:limit].to_i.clamp(1, 5)
       end
     end
   end
