@@ -40,11 +40,15 @@ RSpec.describe "Pages" do
     expect(response.headers["Content-Security-Policy"]).to include("default-src 'self'")
   end
 
-  it "nonces the inline script on the demo page" do
+  it "needs no inline script on the demo page" do
     get "/demo"
 
-    nonce = response.headers["Content-Security-Policy"][/'nonce-([^']+)'/, 1]
+    expect(response.body).not_to match(/<script(?![^>]*src=)/)
+  end
 
-    expect(response.body).to include(%(<script nonce="#{nonce}">))
+  it "loads no third party javascript at all" do
+    get "/demo"
+
+    expect(response.headers["Content-Security-Policy"]).to include("script-src 'self' https://good.lasagna.pizza")
   end
 end

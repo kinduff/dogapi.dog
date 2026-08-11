@@ -1,296 +1,160 @@
-<div data-controller="demo">
-  <h2>Demo</h2>
+<% page_heading "Demo" %>
+<% content_for :main_class, "wide" %>
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "api_docs", defer: true %>
+<% end %>
 
-  <!-- V1 Facts -->
-  <section class="demo-section">
-    <h3>GET /api/v1/facts</h3>
-    <div class="demo-controls">
-      <label for="v1-number">Number of facts (1-5):</label>
-      <input type="number" id="v1-number" data-demo-target="v1Number" value="1" min="1" max="5" class="demo-input demo-input-small">
-      <label style="margin-left: 15px;">
-        <input type="checkbox" data-demo-target="v1Raw"> Return plain text
-      </label>
-      <button data-action="click->demo#fetchV1Facts" class="demo-button">Test</button>
-    </div>
-    <div data-demo-target="v1Url" class="demo-url"></div>
-    <pre data-demo-target="v1Response" class="demo-response demo-response-short"><code>Click "Test" to see the response</code></pre>
+<p>
+  Every endpoint, live. Change the values, send the request, and read what comes
+  back — then copy the equivalent JavaScript into your own project. The full
+  reference lives in the <%= link_to "API docs", docs_path %>.
+</p>
 
-    <h4>Example Code</h4>
-    <pre class="demo-code"><code class="language-javascript">// Get 2 facts as JSON
-fetch('https://dogapi.dog/api/v1/facts?number=2')
-  .then(response => response.json())
-  .then(data => console.log(data.facts));
+<p class="api-note">
+  Requests run against this site, so what you see here is exactly what your code
+  will get. Nothing is stored and no key is needed.
+</p>
 
-// Get 1 fact as plain text
-fetch('https://dogapi.dog/api/v1/facts?number=1&raw=true')
-  .then(response => response.text())
-  .then(fact => console.log(fact));</code></pre>
+<h2 id="v1">
+  <a class="api-anchor" href="#v1" aria-hidden="true"></a>
+  Version 1 <span class="api-muted">(deprecated)</span>
+</h2>
 
-  </section>
+<p>
+  The original API. It answers with a plain <code>{ facts: [...] }</code> object,
+  or with bare text when you ask for <code>raw</code>. New projects should use
+  version 2 below.
+</p>
 
-  <!-- V2 Facts -->
-  <section class="demo-section">
-    <h3>GET /api/v2/facts</h3>
-    <div class="demo-controls">
-      <label for="v2-limit">Limit (1-5):</label>
-      <input type="number" id="v2-limit" data-demo-target="v2Limit" value="1" min="1" max="5" class="demo-input demo-input-small">
-      <button data-action="click->demo#fetchV2Facts" class="demo-button">Test</button>
-    </div>
-    <div data-demo-target="v2FactsUrl" class="demo-url"></div>
-    <pre data-demo-target="v2FactsResponse" class="demo-response demo-response-short"><code>Click "Test" to see the response</code></pre>
+<%= render "pages/demo_endpoint",
+      title: "v1 facts",
+      path_label: "/api/v1/facts",
+      base: "/api/v1",
+      path: "/facts",
+      intro: "Random dog facts. Ask for up to five at a time; anything larger comes back as five.",
+      params: [
+        {name: "number", default: "2", hint: "1-5"},
+        {name: "raw", default: "", hint: "true for plain text"}
+      ],
+      snippet: <<~JS.strip %>
+        // Two facts as JSON
+        const response = await fetch(
+          "https://dogapi.dog/api/v1/facts?number=2"
+        );
+        const body = await response.json();
 
-    <pre class="demo-code"><code class="language-javascript">// V2 returns JSON API format
-fetch('https://dogapi.dog/api/v2/facts?limit=2')
-  .then(response => response.json())
-  .then(data => {
-    data.data.forEach(fact => {
-      console.log(fact.attributes.body);
-    });
-  });</code></pre>
-  </section>
+        console.log(body.facts);
 
-  <!-- V2 Breeds -->
-  <section class="demo-section">
-    <h3>GET /api/v2/breeds</h3>
-    <div class="demo-controls">
-      <label for="breeds-size">Page size:</label>
-      <input type="number" id="breeds-size" data-demo-target="breedsSize" value="5" min="1" max="1000" class="demo-input demo-input-medium">
-      <button data-action="click->demo#fetchBreeds" class="demo-button">Test</button>
-      <button data-action="click->demo#fetchAllBreeds" class="demo-button-secondary">Get All (~280)</button>
-    </div>
-    <div data-demo-target="breedsUrl" class="demo-url"></div>
-    <pre data-demo-target="breedsResponse" class="demo-response"><code>Click "Test" to see the response</code></pre>
-    <div data-demo-target="breedHint" class="demo-hint"></div>
+        // One fact as plain text
+        const raw = await fetch(
+          "https://dogapi.dog/api/v1/facts?raw=true"
+        );
 
-    <pre class="demo-code"><code class="language-javascript">// Get first 10 breeds
-fetch('https://dogapi.dog/api/v2/breeds?page[size]=10')
-  .then(response => response.json())
-  .then(data => console.log(data.data));
+        console.log(await raw.text());
+      JS
 
-// Get all breeds in one request
-fetch('https://dogapi.dog/api/v2/breeds?page[size]=1000')
-  .then(response => response.json())
-  .then(data => console.log(`Found ${data.data.length} breeds`));</code></pre>
-  </section>
+<h2 id="v2">
+  <a class="api-anchor" href="#v2" aria-hidden="true"></a>
+  Version 2
+</h2>
 
-  <!-- Individual Breed -->
-  <section class="demo-section">
-    <h3>GET /api/v2/breeds/{id}</h3>
-    <div class="demo-controls">
-      <label for="breed-id">Breed ID:</label>
-      <input type="text" id="breed-id" data-demo-target="breedId" placeholder="Enter a Breed ID" class="demo-input demo-input-large">
-      <button data-action="click->demo#fetchBreed" class="demo-button">Test</button>
-    </div>
-    <div data-demo-target="breedUrl" class="demo-url"></div>
-    <pre data-demo-target="breedResponse" class="demo-response"><code>Click "Test" to see the response</code></pre>
+<p>
+  The current API. Responses follow JSON:API, so every record arrives with an
+  <code>id</code>, a <code>type</code> and an <code>attributes</code> object.
+</p>
 
-    <pre class="demo-code"><code class="language-javascript">// Get specific breed details
-const breedId = "your-breed-id-here";
-fetch(`https://dogapi.dog/api/v2/breeds/${breedId}`)
-  .then(response => response.json())
-  .then(data => {
-    const breed = data.data.attributes;
-    console.log(`Name: ${breed.name}`);
-    console.log(`Description: ${breed.description}`);
-    console.log(`Life span: ${breed.life.min}-${breed.life.max} years`);
-  });</code></pre>
-  </section>
+<%= render "pages/demo_endpoint",
+      title: "v2 facts",
+      path_label: "/api/v2/facts",
+      base: "/api/v2",
+      path: "/facts",
+      intro: "The same random facts, wrapped in the JSON:API envelope.",
+      params: [{name: "limit", default: "2", hint: "1-5"}],
+      snippet: <<~JS.strip %>
+        const response = await fetch(
+          "https://dogapi.dog/api/v2/facts?limit=2"
+        );
+        const body = await response.json();
 
-  <!-- V2 Groups -->
-  <section class="demo-section">
-    <h3>GET /api/v2/groups</h3>
-    <div class="demo-controls">
-      <button data-action="click->demo#fetchGroups" class="demo-button">Test</button>
-    </div>
-    <div data-demo-target="groupsUrl" class="demo-url"></div>
-    <pre data-demo-target="groupsResponse" class="demo-response demo-response-short"><code>Click "Test" to see the response</code></pre>
-    <div data-demo-target="groupHint" class="demo-hint"></div>
+        body.data.forEach((fact) => {
+          console.log(fact.attributes.body);
+        });
+      JS
 
-    <pre class="demo-code"><code class="language-javascript">// Get all dog groups with their breeds
-fetch('https://dogapi.dog/api/v2/groups')
-  .then(response => response.json())
-  .then(data => {
-    data.data.forEach(group => {
-      console.log(`${group.attributes.name}: ${group.relationships.breeds.data.length} breeds`);
-    });
-  });</code></pre>
-  </section>
+<%= render "pages/demo_endpoint",
+      title: "v2 breeds",
+      path_label: "/api/v2/breeds",
+      base: "/api/v2",
+      path: "/breeds",
+      intro: "Every breed, paginated. Leave the page size empty to get all of them at once, or set it low while you are exploring.",
+      params: [
+        {name: "page[size]", default: "3", hint: "1-1000"},
+        {name: "page[number]", default: "", hint: "1 and up"}
+      ],
+      snippet: <<~JS.strip %>
+        const response = await fetch(
+          "https://dogapi.dog/api/v2/breeds?page[size]=10"
+        );
+        const body = await response.json();
 
-  <!-- Individual Group -->
-  <section class="demo-section">
-    <h3>GET /api/v2/groups/{id}</h3>
-    <div class="demo-controls">
-      <label for="group-id">Group ID:</label>
-      <input type="text" id="group-id" data-demo-target="groupId" placeholder="Enter a Group ID" class="demo-input demo-input-large">
-      <button data-action="click->demo#fetchGroup" class="demo-button">Test</button>
-    </div>
-    <div data-demo-target="groupUrl" class="demo-url"></div>
-    <pre data-demo-target="groupResponse" class="demo-response"><code>Click "Test" to see the response</code></pre>
+        body.data.forEach((breed) => {
+          console.log(breed.attributes.name);
+        });
 
-    <pre class="demo-code"><code class="language-javascript">// Get specific group details with breeds
-const groupId = "your-group-id-here";
-fetch(`https://dogapi.dog/api/v2/groups/${groupId}`)
-  .then(response => response.json())
-  .then(data => {
-    const group = data.data.attributes;
-    const breedCount = data.data.relationships.breeds.data.length;
-    console.log(`Group: ${group.name}`);
-    console.log(`Contains ${breedCount} breeds`);
-  });</code></pre>
-  </section>
+        // How many are there in total?
+        console.log(body.meta.pagination.records);
+      JS
 
-</div>
+<%= render "pages/demo_endpoint",
+      title: "one breed",
+      path_label: "/api/v2/breeds/{id}",
+      base: "/api/v2",
+      path: "/breeds/{id}",
+      intro: "A single breed by id. Copy an id from the breeds response above and paste it here.",
+      params: [{name: "id", in: "path", default: "", hint: "a breed id"}],
+      snippet: <<~JS.strip %>
+        const id = "68f47c5a-5115-47cd-9849-e45d3c378f12";
+        const response = await fetch(
+          `https://dogapi.dog/api/v2/breeds/${id}`
+        );
+        const body = await response.json();
+        const breed = body.data.attributes;
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-<script src="https://unpkg.com/@hotwired/stimulus/dist/stimulus.umd.js"></script>
+        console.log(breed.name);
+        console.log(`Lives ${breed.life.min}-${breed.life.max} years`);
+      JS
 
-<script nonce="<%= content_security_policy_nonce %>">
-const application = Stimulus.Application.start();
+<%= render "pages/demo_endpoint",
+      title: "v2 groups",
+      path_label: "/api/v2/groups",
+      base: "/api/v2",
+      path: "/groups",
+      intro: "The breed groups. Each one lists the ids of the breeds it contains.",
+      snippet: <<~JS.strip %>
+        const response = await fetch("https://dogapi.dog/api/v2/groups");
+        const body = await response.json();
 
-application.register("demo", class extends Stimulus.Controller {
-  static targets = [
-    'v1Number', 'v1Raw', 'v1Url', 'v1Response',
-    'v2Limit', 'v2FactsUrl', 'v2FactsResponse',
-    'breedsSize', 'breedsUrl', 'breedsResponse', 'breedHint',
-    'breedId', 'breedUrl', 'breedResponse',
-    'groupsUrl', 'groupsResponse', 'groupHint',
-    'groupId', 'groupUrl', 'groupResponse'
-  ];
+        body.data.forEach((group) => {
+          const breeds = group.relationships.breeds.data.length;
 
-  async fetchV1Facts() {
-    const number = this.v1NumberTarget.value;
-    const raw = this.v1RawTarget.checked;
+          console.log(`${group.attributes.name}: ${breeds} breeds`);
+        });
+      JS
 
-    let url = `https://dogapi.dog/api/v1/facts?number=${number}`;
-    if (raw) url += '&raw=true';
+<%= render "pages/demo_endpoint",
+      title: "one group",
+      path_label: "/api/v2/groups/{id}",
+      base: "/api/v2",
+      path: "/groups/{id}",
+      intro: "A single group by id, taken from the groups response above.",
+      params: [{name: "id", in: "path", default: "", hint: "a group id"}],
+      snippet: <<~JS.strip %>
+        const id = "31f2682c-7c1e-4a4b-b7e6-c9e2e0c50dfd";
+        const response = await fetch(
+          `https://dogapi.dog/api/v2/groups/${id}`
+        );
+        const body = await response.json();
 
-    this.v1UrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      const data = raw ? await response.text() : await response.json();
-      this.v1ResponseTarget.innerHTML = `<code>${raw ? data : JSON.stringify(data, null, 2)}</code>`;
-      Prism.highlightElement(this.v1ResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.v1ResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-
-  async fetchV2Facts() {
-    const limit = this.v2LimitTarget.value;
-    const url = `https://dogapi.dog/api/v2/facts?limit=${limit}`;
-
-    this.v2FactsUrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      this.v2FactsResponseTarget.innerHTML = `<code class="language-json">${JSON.stringify(data, null, 2)}</code>`;
-      Prism.highlightElement(this.v2FactsResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.v2FactsResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-
-  async fetchBreeds() {
-    const size = this.breedsSizeTarget.value;
-    const url = `https://dogapi.dog/api/v2/breeds?page[size]=${size}`;
-
-    this.breedsUrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      let content = JSON.stringify(data, null, 2);
-      this.breedsResponseTarget.innerHTML = `<code class="language-json">${content}</code>`;
-
-      // Show breed selection hint
-      if (data.data && data.data.length > 0) {
-        this.breedHintTarget.classList.add('show');
-        this.breedHintTarget.innerHTML = `💡 Found ${data.data.length} breeds. Copy any breed ID from the response above to test the individual breed endpoint below.`;
-      }
-
-      Prism.highlightElement(this.breedsResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.breedsResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-
-  async fetchAllBreeds() {
-    this.breedsSizeTarget.value = '1000';
-    await this.fetchBreeds();
-  }
-
-  async fetchBreed() {
-    const id = this.breedIdTarget.value.trim();
-    if (!id) {
-      alert('Please enter a breed ID');
-      return;
-    }
-
-    const url = `https://dogapi.dog/api/v2/breeds/${id}`;
-    this.breedUrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      if (response.status === 404) {
-        this.breedResponseTarget.innerHTML = '<code style="color: orange;">Breed not found (404)</code>';
-        return;
-      }
-      const data = await response.json();
-      this.breedResponseTarget.innerHTML = `<code class="language-json">${JSON.stringify(data, null, 2)}</code>`;
-      Prism.highlightElement(this.breedResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.breedResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-
-  async fetchGroups() {
-    const url = 'https://dogapi.dog/api/v2/groups';
-    this.groupsUrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      this.groupsResponseTarget.innerHTML = `<code class="language-json">${JSON.stringify(data, null, 2)}</code>`;
-
-      // Show group selection hint
-      if (data.data && data.data.length > 0) {
-        this.groupHintTarget.classList.add('show');
-        this.groupHintTarget.innerHTML = `💡 Found ${data.data.length} groups. Copy any group ID from the response above to test the individual group endpoint below.`;
-      }
-
-      Prism.highlightElement(this.groupsResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.groupsResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-
-  async fetchGroup() {
-    const id = this.groupIdTarget.value.trim();
-    if (!id) {
-      alert('Please enter a group ID');
-      return;
-    }
-
-    const url = `https://dogapi.dog/api/v2/groups/${id}`;
-    this.groupUrlTarget.textContent = url;
-
-    try {
-      const response = await fetch(url);
-      if (response.status === 404) {
-        this.groupResponseTarget.innerHTML = '<code style="color: orange;">Group not found (404)</code>';
-        return;
-      }
-      const data = await response.json();
-      this.groupResponseTarget.innerHTML = `<code class="language-json">${JSON.stringify(data, null, 2)}</code>`;
-      Prism.highlightElement(this.groupResponseTarget.querySelector('code'));
-    } catch (error) {
-      this.groupResponseTarget.innerHTML = `<code style="color: red;">Error: ${error.message}</code>`;
-    }
-  }
-});
-</script>
+        console.log(body.data.attributes.name);
+        console.log(body.data.relationships.breeds.data);
+      JS
