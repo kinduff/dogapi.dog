@@ -13,7 +13,7 @@ gem "rack-attack", "~> 6.6"
 gem "rack-cors", "~> 3.0", require: "rack/cors"
 gem "rails", "~> 8.1"
 gem "redis", "~> 6.0"
-gem "rswag", "~> 2.8"
+gem "rswag-api", "~> 2.8"
 gem "sassc-rails", "~> 2.1"
 gem "sidekiq", "~> 8.1"
 gem "sprockets-rails", "~> 3.4"
@@ -25,6 +25,7 @@ group :development, :test do
   gem "debug", "~> 1.11", platforms: %i[mri mingw x64_mingw]
   gem "factory_bot_rails", "~> 6.2"
   gem "rspec-rails", "~> 8.0"
+  gem "rswag-specs", "~> 2.8"
   gem "standard", "~> 1.56"
 end
 
