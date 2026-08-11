@@ -32,6 +32,14 @@ RUN bin/rails assets:clobber && bundle exec rails assets:precompile
 ARG GIT_COMMIT
 ENV GIT_COMMIT=$GIT_COMMIT
 
+# Run as an unprivileged user. Only the directories written at runtime are
+# owned by it, the code itself stays read-only.
+RUN groupadd --system --gid 1000 rails \
+  && useradd --system --uid 1000 --gid rails --create-home rails \
+  && mkdir -p log tmp storage \
+  && chown -R rails:rails log tmp storage
+USER rails:rails
+
 EXPOSE 3000
 
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
