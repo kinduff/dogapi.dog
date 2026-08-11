@@ -598,18 +598,21 @@ h3:hover > .api-anchor::before {
 .code-body {
     counter-reset: code-line;
     font-size: 0.8em;
-    line-height: 1.5;
+    line-height: 1.45;
     margin: 0;
     max-height: 14rem;
-    overflow: auto;
-    padding: 0.7rem 0;
-    white-space: pre;
-    word-break: normal;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0.6rem 0;
+
+    // `normal` here so the newlines between the line spans collapse instead of
+    // rendering as blank rows. Each span keeps its own whitespace, and the
+    // newlines stay in the DOM so copying the block still yields real lines.
+    white-space: normal;
 
     code {
         display: block;
         font-size: inherit !important;
-        white-space: pre;
     }
 }
 
@@ -619,8 +622,11 @@ h3:hover > .api-anchor::before {
 
 .code-line {
     display: block;
-    padding: 0 1rem 0 3.2rem;
+    min-height: 1.45em;
+    overflow-wrap: anywhere;
+    padding: 0 0.8rem 0 3.2rem;
     position: relative;
+    white-space: pre-wrap;
 
     &::before {
         color: #9aa4ae;
@@ -641,8 +647,7 @@ h3:hover > .api-anchor::before {
 
 .api-columns {
     display: grid;
-    gap: 0 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 0;
 }
 
 .api-glossary {

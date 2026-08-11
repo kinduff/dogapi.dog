@@ -84,7 +84,7 @@
         <%= response.description %>
       </summary>
 
-      <% example = (response.code == "200") ? api_short_example(operation, keep: 2) : response.example %>
+      <% example = (response.code == "200") ? api_short_example(operation, keep: 1) : response.example %>
       <% if example %>
         <%= render "pages/api_code",
               label: "Example",
