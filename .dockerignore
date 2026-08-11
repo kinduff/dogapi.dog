@@ -1,0 +1,40 @@
+# Git.
+.git
+.gitignore
+.gitattributes
+.github
+
+# Bundler config (the image sets its own).
+.bundle
+
+# Logs, temp files and local uploads.
+log/*
+!log/.keep
+tmp/*
+!tmp/.keep
+!tmp/pids/.keep
+!tmp/storage/.keep
+storage/*
+!storage/.keep
+
+# Precompiled assets are built inside the image.
+public/assets
+
+# Tests and coverage.
+spec
+coverage
+
+# Local environment and secrets.
+.env
+.env.*
+!.env.example
+config/master.key
+
+# Docs and local tooling.
+README.md
+LICENSE
+todo.md
+docker-compose.yml
+Dockerfile
+.dockerignore
+.vscode
