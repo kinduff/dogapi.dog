@@ -8,7 +8,7 @@ module Api
       before_action :cache_publicly
 
       def index
-        jsonapi_paginate(Group.includes(:breeds)) do |paginated|
+        jsonapi_paginate(Group.includes(:breeds).order(:name)) do |paginated|
           render jsonapi: paginated
         end
       end

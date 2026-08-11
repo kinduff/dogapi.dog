@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_17_031019) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_11_213029) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -54,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_031019) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_breeds_on_group_id"
+    t.index ["name"], name: "index_breeds_on_name"
   end
 
   create_table "facts", force: :cascade do |t|
@@ -61,12 +62,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_031019) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
+    t.index ["uuid"], name: "index_facts_on_uuid", unique: true
   end
 
   create_table "groups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_groups_on_name"
   end
 
   create_table "users", force: :cascade do |t|
