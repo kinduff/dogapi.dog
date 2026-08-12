@@ -16,6 +16,8 @@ module BreedEnrichments
 
       - Omit a field rather than guess it. A missing field is correct and
         expected; an invented number is a bug that reaches real clients.
+      - `origin`, `coat` and `traits` are all or nothing. Leave the whole
+        object out unless you can fill in every field it requires.
       - Heights are centimetres at the withers, adult, for the standard variety
         of the breed. Weights are kilograms. Convert from inches or pounds when
         a source uses them, and round to whole numbers.
@@ -39,8 +41,9 @@ module BreedEnrichments
       - recognized_by lists only registries that recognise the breed outright,
         not ones with a provisional or foundation register listing.
       - If a source clearly contradicts the weight or life expectancy the API
-        already stores, put the corrected range in `corrections` and explain in
-        `corrections.note`. Do not put corrections anywhere else.
+        already stores, add an entry to `corrections` naming the field, the
+        range the source gives and why you believe it. Do not put corrections
+        anywhere else.
       - confidence is `high` when a kennel club standard covers most fields,
         `medium` when you relied on secondary sources, `low` when the breed is
         obscure and the sources disagree. Ratings are always estimates; do not

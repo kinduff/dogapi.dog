@@ -52,9 +52,23 @@ namespace :breeds do
     end
   end
 
-  # Every request pays for the model's own web searches, so a long run is
-  # deliberately unhurried.
-  def enrich_delay = ENV.fetch("ENRICHMENT_DELAY", "1").to_f
+  # A breed takes one to three minutes, nearly all of it spent waiting on the
+  # model's own web searches, so the whole catalogue takes hours in a single
+  # file. The work is per-breed independent, so run several at once.
+  # A thread needs the database only for the moment it writes, but it still
+  # has to be able to check a connection out, so the pool is the ceiling.
+  def enrich_workers
+    pool = ActiveRecord::Base.connection_pool.size
+    asked = ENV.fetch("ENRICHMENT_WORKERS", "4").to_i.clamp(1, 20)
+    workers = asked.clamp(1, [pool - 1, 1].max)
+
+    if workers < asked
+      warn "Running #{workers} at a time, not #{asked}: the pool holds #{pool} connections. " \
+           "Raise RAILS_MAX_THREADS to go wider."
+    end
+
+    workers
+  end
 
   def enrich_flags(args)
     flags = Array(args.extras) + [args[:flags]].compact
@@ -93,28 +107,62 @@ namespace :breeds do
   task :enrich_all, %i[flags] => :environment do |_task, args|
     flags = enrich_flags(args)
     breeds = flags[:overwrite] ? Breed.order(:name) : Breed.unenriched.order(:name)
+    # A whole catalogue is hours and real money, so a run can be capped while
+    # the prompt is still being tuned.
+    breeds = breeds.limit(ENV["ENRICHMENT_LIMIT"].to_i) if ENV["ENRICHMENT_LIMIT"].present?
+    breeds = breeds.to_a
     totals = Hash.new(0)
 
-    puts "#{breeds.size} breeds to research with #{BreedEnrichments.model}"
+    workers = enrich_workers
+    queue = Queue.new
+    breeds.each { |breed| queue << breed }
+    done = 0
+    lock = Mutex.new
 
-    breeds.each_with_index do |breed, index|
-      # One breed going wrong — a refusal, a timeout, a bad answer — must not
-      # cost the rest of the run.
-      begin
-        record = enrich(breed, flags)
-      rescue => e
-        totals[:failed] += 1
-        warn "[#{index + 1}/#{breeds.size}] #{breed.name}: #{e.class}: #{e.message}"
-        next
+    puts "#{breeds.size} breeds to research with #{BreedEnrichments.model}, #{workers} at a time"
+
+    threads = Array.new(workers) do
+      Thread.new do
+        # Each thread checks out its own connection, and gives it back rather
+        # than holding one for the minutes it spends waiting on the API.
+        loop do
+          breed =
+            begin
+              queue.pop(true)
+            rescue ThreadError
+              break
+            end
+
+          outcome =
+            begin
+              # One breed going wrong — a refusal, a timeout, a bad answer —
+              # must not cost the rest of the run.
+              record = enrich(breed, flags)
+              [record.applied? ? :applied : :skipped, record.rejections.size]
+            rescue => e
+              warn "#{breed.name}: #{e.class}: #{e.message}"
+              [:failed, 0]
+            ensure
+              # Most of a breed is spent waiting on the API, and holding a
+              # connection through that would starve the other threads.
+              ActiveRecord::Base.connection_pool.release_connection
+            end
+
+          lock.synchronize do
+            done += 1
+            totals[outcome.first] += 1
+            totals[:rejections] += outcome.last
+            puts "[#{done}/#{breeds.size}]" if (done % 25).zero?
+          end
+        end
       end
-
-      totals[record.applied? ? :applied : :skipped] += 1
-      totals[:rejections] += record.rejections.size
-
-      sleep enrich_delay unless index == breeds.size - 1
     end
 
-    puts "Done: #{totals[:applied]} applied, #{totals[:skipped]} unchanged, " \
+    threads.each(&:join)
+
+    verb = flags[:dry_run] ? "would fill in" : "filled in"
+
+    puts "Done: #{verb} #{totals[:applied]}, #{totals[:skipped]} unchanged, " \
          "#{totals[:failed]} failed, #{totals[:rejections]} fields rejected"
   end
 
