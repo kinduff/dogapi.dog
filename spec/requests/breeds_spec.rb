@@ -81,13 +81,6 @@ RSpec.describe "Breeds pages" do
       expect(response.body).to include("/docs/api-v2#get-breeds")
     end
 
-    it "carries a random fact" do
-      create(:fact, body: "Dogs have a sense of time.")
-
-      get "/breeds"
-
-      expect(response.body).to include("Dogs have a sense of time.")
-    end
   end
 
   describe "GET /breeds/:id" do

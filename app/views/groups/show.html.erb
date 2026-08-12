@@ -11,8 +11,6 @@
   <%= link_to "All groups", groups_path %>.
 </p>
 
-<%= render "shared/fact", fact: @fact %>
-
 <% if @breeds.any? %>
   <ul class="breed-grid">
     <%= render partial: "shared/breed_card", collection: @breeds, as: :breed %>

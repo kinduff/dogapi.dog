@@ -75,13 +75,6 @@ RSpec.describe "Groups pages" do
       expect(response.body).to include("/docs/api-v2#get-groups-id")
     end
 
-    it "carries a random fact" do
-      create(:fact, body: "Dog noses are unique.")
-
-      get "/groups/working-group"
-
-      expect(response.body).to include("Dog noses are unique.")
-    end
 
     it "404s on an unknown group" do
       get "/groups/not-a-group"

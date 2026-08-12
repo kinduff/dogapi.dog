@@ -13,8 +13,6 @@
   public API, and shows you the request it used.
 </p>
 
-<%= render "shared/fact", fact: @fact %>
-
 <form class="breed-search" method="get" action="<%= breeds_path %>" role="search">
   <label class="breed-search-label" for="breed-q">Find a breed</label>
   <input type="search" id="breed-q" name="q" value="<%= @query %>"
