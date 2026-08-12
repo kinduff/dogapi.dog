@@ -9,7 +9,10 @@
                srcset="<%= breed.breed_images.first.url_for(:thumb) %> 200w, <%= breed.breed_images.first.url_for(:medium) %> 600w"
                sizes="(max-width: 600px) 30vw, 10rem"
                alt="A <%= breed.name %>" width="600" height="600"
-               loading="<%= index < 6 ? "eager" : "lazy" %>">
+               loading="<%= index < 6 ? "eager" : "lazy" %>"
+               <%# The top left square is the largest thing above the fold, so
+                   it goes ahead of the rest of the row. %>
+               <%= 'fetchpriority="high"'.html_safe if index.zero? %>>
         </a>
       </li>
     <% end %>

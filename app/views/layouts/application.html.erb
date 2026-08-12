@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
     <title><%= page_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
@@ -14,9 +15,10 @@
       <meta name="robots" content="<%= content_for(:robots) %>">
     <% end %>
 
-    <meta name="title" content="<%= page_title %>">
     <meta name="description" content="<%= page_description %>">
     <meta property="og:type" content="<%= content_for?(:og_type) ? content_for(:og_type) : "website" %>">
+    <meta property="og:site_name" content="Dog API">
+    <meta property="og:locale" content="en_US">
     <meta property="og:url" content="<%= canonical_url %>">
     <meta property="og:title" content="<%= page_title %>">
     <meta property="og:description" content="<%= page_description %>">
@@ -26,6 +28,7 @@
     <meta property="twitter:title" content="<%= page_title %>">
     <meta property="twitter:description" content="<%= page_description %>">
     <meta property="twitter:image" content="<%= page_image %>">
+    <%= site_structured_data %>
     <%= yield :structured_data %>
 
     <script defer src="https://good.lasagna.pizza/script.js" data-website-id="7980a315-6a16-4996-ac59-da18143b0eec"></script>
@@ -34,7 +37,9 @@
   </head>
   <body class="markdown-body">
     <header>
-      <h1>🐶 Dog API <span>by kinduff</span></h1>
+      <%# The site name, not the page heading: every page names itself in its
+          own <h1>, and two of them would be one too many. %>
+      <p class="site-name">🐶 Dog API <span>by kinduff</span></p>
       <p>
         The Dog API provides dog data as a service!
       </p>

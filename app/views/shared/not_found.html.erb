@@ -1,0 +1,17 @@
+<%= page_heading "Not found", title: "Page not found" %>
+<% content_for :robots, "noindex, follow" %>
+<% content_for :description do %>
+  This page does not exist. Browse the dog breeds and breed groups the Dog API
+  serves, or read the API documentation.
+<% end %>
+
+<p>
+  There is nothing at <code><%= request.path %></code>. It may have been a
+  breed or a group that has since been renamed.
+</p>
+
+<p>
+  From here you can browse <%= link_to "every breed", breeds_path %>, the
+  <%= link_to "breed groups", groups_path %>, or read
+  <%= link_to "the API docs", docs_path %>.
+</p>

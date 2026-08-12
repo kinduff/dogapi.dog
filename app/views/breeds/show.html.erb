@@ -1,4 +1,4 @@
-<% page_heading @breed.name %>
+<% content_for :title, "#{@breed.name} Dog Breed - Size, Life Span and Pictures" %>
 <% content_for :description do %><%= breed_meta_description(@breed) %><% end %>
 <% content_for :canonical_path, breed_path_for(@breed) %>
 <% content_for :og_type, "article" %>
@@ -6,11 +6,12 @@
   <% content_for :og_image, hero.url_for(:large) %>
 <% end %>
 <% structured_data breed_structured_data(@breed) %>
+<% breadcrumb_structured_data([["Dog Breeds", breeds_path], [@breed.name, breed_path_for(@breed)]]) %>
 
-<%# The breed name carries the page, so it reads as the title and the group it
-    belongs to sits under it as a subtitle. %>
+<%# The breed name carries the page, so it reads as the heading and the group
+    it belongs to sits under it as a subtitle. %>
 <div class="breed-title">
-  <h2><%= @breed.name %></h2>
+  <h1><%= @breed.name %></h1>
   <p class="breed-subtitle">
     <%= link_to @breed.group.name, group_path_for(@breed.group) %>
     <%= "· Hypoallergenic" if @breed.hypoallergenic %>
@@ -25,8 +26,10 @@
 
   <figure class="breed-hero" data-gallery>
     <a href="<%= images.first.url_for %>" target="_blank" rel="noopener" data-gallery-link>
-      <img src="<%= images.first.url_for(:large) %>" alt="<%= @breed.name %>"
-           width="1200" height="1200" loading="eager" data-gallery-hero>
+      <%# The picture the page is largely about, so it is fetched ahead of
+          everything else competing for the connection. %>
+      <img src="<%= images.first.url_for(:large) %>" alt="<%= @breed.name %> dog, photographed by <%= images.first.author.presence || "an unknown author" %>"
+           width="1200" height="1200" loading="eager" fetchpriority="high" data-gallery-hero>
     </a>
 
     <%# One caption per image, server rendered so the licence links stay intact.
@@ -56,7 +59,9 @@
              data-gallery-item
              data-image-id="<%= image.id %>"
              data-large="<%= image.url_for(:large) %>">
-            <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>"
+            <%# Numbered, so a screen reader announcing the row says which one
+                of them it is on rather than the same name six times. %>
+            <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>, picture <%= index + 1 %> of <%= images.size %>"
                  width="200" height="200" loading="lazy">
           </a>
         </li>

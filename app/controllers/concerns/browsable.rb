@@ -7,22 +7,31 @@ module Browsable
   SLUG_CACHE_KEY = "browse/slugs"
   SLUG_CACHE_TTL = 1.hour
 
-  included do
-    before_action :load_fact
-  end
+  # Breed and group data only moves on an import, so these pages can sit in a
+  # shared cache for a few minutes. Nothing here is per visitor: there is no
+  # sign in, and no form on the site posts anything.
+  CACHE_MAX_AGE = 5.minutes
+  CACHE_STALE_WHILE_REVALIDATE = 1.hour
 
   private
+
+  def cache_publicly
+    expires_in CACHE_MAX_AGE,
+      public: true,
+      stale_while_revalidate: CACHE_STALE_WHILE_REVALIDATE
+  end
+
+  # A page rather than an empty body: a 404 is somewhere a visitor lands, and
+  # a blank one leaves both them and a crawler with nowhere to go.
+  def render_not_found
+    render "shared/not_found", status: :not_found, formats: :html
+  end
 
   # The whole chain the cards and the galleries touch: the group, the image,
   # its blob, and the variant records the thumbnails are read from. Without it
   # a page of 48 breeds is a few hundred queries.
   def breeds_scope
     Breed.includes(:group, breed_images: {file_attachment: {blob: {variant_records: {image_attachment: :blob}}}})
-  end
-
-  # Every page carries one, the same way the homepage does.
-  def load_fact
-    @fact = Fact.random.first
   end
 
   # Pages are linked by slug, but the API's own ids have to keep working: they

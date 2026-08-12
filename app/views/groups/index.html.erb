@@ -1,9 +1,10 @@
-<% page_heading "Breed Groups" %>
+<%= page_heading "Breed Groups", title: "Dog Breed Groups - All #{@groups.size} Groups Explained" %>
 <% content_for :description do %>
   The <%= @groups.size %> dog breed groups in the free Dog API, and the breeds
   that belong to each one.
 <% end %>
 <% content_for :canonical_path, groups_path %>
+<% breadcrumb_structured_data([["Breed Groups", groups_path]]) %>
 
 <p>
   Every breed belongs to one group. These are the nine the API knows, the same
@@ -26,7 +27,7 @@
               <a href="<%= breed_path_for(image.breed) %>" title="<%= image.breed.name %>">
                 <%# A 200px thumbnail in a 48px box: enough for any screen, and
                     the size stops the row from jumping while it loads. %>
-                <img src="<%= image.url_for(:thumb) %>" alt="<%= image.breed.name %>"
+                <img src="<%= image.url_for(:thumb) %>" alt="A <%= image.breed.name %> dog"
                      width="200" height="200" loading="lazy">
               </a>
             </li>

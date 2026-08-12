@@ -6,15 +6,11 @@ class SitemapsController < ApplicationController
   CACHE_KEY = "sitemap/urls"
   CACHE_TTL = 1.hour
 
-  STATIC_PATHS = {
-    "/" => "daily",
-    "/breeds" => "daily",
-    "/groups" => "weekly",
-    "/docs" => "weekly",
-    "/docs/api-v1" => "monthly",
-    "/docs/api-v2" => "monthly",
-    "/terms" => "yearly"
-  }.freeze
+  # The pages that are not a record. The listing ones move whenever the data
+  # behind them does, so they carry the date of the newest record; the rest
+  # only change when the site itself is edited, and say nothing.
+  DATA_BACKED_PATHS = ["/", "/breeds", "/groups"].freeze
+  STATIC_PATHS = ["/docs", "/docs/api-v1", "/docs/api-v2", "/terms"].freeze
 
   def show
     @urls = urls
@@ -28,21 +24,26 @@ class SitemapsController < ApplicationController
 
   def urls
     Rails.cache.fetch(CACHE_KEY, expires_in: CACHE_TTL) do
-      static = STATIC_PATHS.map { |path, frequency| {loc: path, changefreq: frequency, lastmod: nil} }
+      data_backed = DATA_BACKED_PATHS.map { |path| {loc: path, lastmod: newest_record&.iso8601} }
+      static = STATIC_PATHS.map { |path| {loc: path, lastmod: nil} }
 
-      static + breed_urls + group_urls
+      data_backed + static + breed_urls + group_urls
     end
+  end
+
+  def newest_record
+    [Breed.maximum(:updated_at), Group.maximum(:updated_at)].compact.max
   end
 
   def breed_urls
     Breed.order(:name).pluck(:name, :id, :updated_at).map do |name, id, updated_at|
-      {loc: "/breeds/#{name.parameterize.presence || id}", changefreq: "monthly", lastmod: updated_at&.iso8601}
+      {loc: "/breeds/#{name.parameterize.presence || id}", lastmod: updated_at&.iso8601}
     end
   end
 
   def group_urls
     Group.order(:name).pluck(:name, :id, :updated_at).map do |name, id, updated_at|
-      {loc: "/groups/#{name.parameterize.presence || id}", changefreq: "monthly", lastmod: updated_at&.iso8601}
+      {loc: "/groups/#{name.parameterize.presence || id}", lastmod: updated_at&.iso8601}
     end
   end
 end

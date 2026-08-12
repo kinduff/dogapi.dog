@@ -41,18 +41,25 @@ body {
     padding: 0;
 }
 
-h1 span {
-    font-size: 0.4em;
-    font-style: italic;
-    font-weight: normal;
-    line-height: 1.3;
-    margin-top: 0.3em;
-}
-
-header h1 {
+// The brand line in the header. Reads as the old <h1> did; it just is not one
+// any more, so the page's own heading can be.
+.site-name {
+    font-size: 2.441rem;
+    font-weight: bold;
+    line-height: 1.1;
     margin: 1.2rem 0 0;
 
+    span {
+        font-size: 0.4em;
+        font-style: italic;
+        font-weight: normal;
+        line-height: 1.3;
+        margin-top: 0.3em;
+    }
+
     @media (max-width: $phone) {
+        font-size: 1.953rem;
+
         span {
             display: block;
             font-size: 0.45em;
@@ -74,15 +81,9 @@ h6 {
     }
 }
 
-h1 {
-    font-size: 2.441rem;
-    line-height: 1.1;
-
-    @media (max-width: $phone) {
-        font-size: 1.953rem;
-    }
-}
-
+// The brand line above is the largest thing on the page, so the page heading
+// sits at the same size as the headings under it and leads by position.
+h1,
 h2 {
     font-size: 1.953rem;
     line-height: 1.15;
@@ -90,6 +91,12 @@ h2 {
     @media (max-width: $phone) {
         font-size: 1.5rem;
     }
+}
+
+// The page heading opens the page, so it sits close to the header rather than
+// a screenful below it.
+main > h1:first-child {
+    margin-top: 1.2rem;
 }
 
 h3 {
@@ -818,6 +825,11 @@ details.api-fields {
     margin: 1.4rem 0 1.8rem;
 }
 
+// The heading belongs to the grid of dogs above it, not to a new section.
+.home-hero + h1 {
+    margin-top: 0;
+}
+
 .home-hero-grid {
     display: grid;
     gap: 0.5rem;
@@ -1153,7 +1165,7 @@ details.api-fields {
 .breed-title {
     margin: 1.2rem 0 1.6rem;
 
-    h2 {
+    h1 {
         margin: 0;
     }
 }

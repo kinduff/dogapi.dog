@@ -10,7 +10,7 @@
         <img class="breed-thumb" src="<%= image.url_for(:thumb) %>"
              srcset="<%= image.url_for(:thumb) %> 200w, <%= image.url_for(:medium) %> 600w"
              sizes="(max-width: 600px) 30vw, 11rem"
-             alt="<%= breed.name %>" width="200" height="200" loading="lazy">
+             alt="A <%= breed.name %> dog" width="200" height="200" loading="lazy">
         <% if breed.breed_images.size > 1 %>
           <span class="breed-count"><%= breed.breed_images.size %></span>
         <% end %>

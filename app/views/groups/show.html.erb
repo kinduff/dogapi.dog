@@ -1,10 +1,11 @@
-<% page_heading @group.name %>
+<%= page_heading @group.name, title: "#{@group.name} - #{@breeds.size} Dog Breeds with Pictures" %>
 <% content_for :description do %>
   The <%= @breeds.size %> dog breeds in the <%= @group.name %>, with pictures,
   life spans and weights, from the free Dog API.
 <% end %>
 <% content_for :canonical_path, group_path_for(@group) %>
 <% structured_data group_structured_data(@group, @breeds) %>
+<% breadcrumb_structured_data([["Breed Groups", groups_path], [@group.name, group_path_for(@group)]]) %>
 
 <p>
   <%= pluralize @breeds.size, "breed" %> in the <%= @group.name %>.

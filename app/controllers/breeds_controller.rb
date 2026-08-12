@@ -13,6 +13,7 @@ class BreedsController < ApplicationController
   STATS_CACHE_TTL = 10.minutes
 
   def index
+    cache_publicly
     @query = params[:q].to_s.strip
     @page = [params.dig(:page, :number).to_i, 1].max
     @per_page = per_page
@@ -27,7 +28,9 @@ class BreedsController < ApplicationController
 
   def show
     @breed = find_breed(params[:id])
-    return head :not_found if @breed.nil?
+    return render_not_found if @breed.nil?
+
+    cache_publicly
 
     # The rest of the group, as somewhere to go next.
     @siblings = breeds_scope

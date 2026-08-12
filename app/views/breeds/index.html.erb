@@ -1,4 +1,7 @@
-<% page_heading @query.present? ? %(Breeds matching "#{@query}") : "Dog Breeds" %>
+<%= page_heading(
+      @query.present? ? %(Breeds matching "#{@query}") : "Dog Breeds",
+      title: @query.present? ? %(Breeds matching "#{@query}") : "Dog Breeds - All #{@stats[:breeds]} Breeds with Pictures"
+    ) %>
 <% content_for :description do %>
   Browse all <%= @stats[:breeds] %> dog breeds in the free Dog API: pictures,
   life spans, weights and the breed group each one belongs to.
@@ -6,6 +9,7 @@
 <% content_for :canonical_path, breeds_canonical_path(@page, @query) %>
 <%# A search result is one of endless variations of the same list. %>
 <% content_for :robots, "noindex, follow" if @query.present? %>
+<% breadcrumb_structured_data([["Dog Breeds", breeds_path]]) %>
 
 <p>
   All <%= number_with_delimiter @stats[:breeds] %> breeds the API knows, with

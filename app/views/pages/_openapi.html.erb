@@ -4,7 +4,13 @@
   <%= javascript_include_tag "api_docs", defer: true %>
 <% end %>
 
-<%= page_heading "#{document.title} - Docs" %>
+<%= page_heading "#{document.title} - Docs",
+      title: "#{document.title} Reference - Parameters, Responses and Examples" %>
+<% content_for :description do %>
+  Every <%= document.version %> endpoint of the free Dog API, with its
+  parameters, its responses and a request you can run from the page.
+<% end %>
+<% breadcrumb_structured_data([["API Docs", docs_path], [document.title, request.path]]) %>
 
 <%= api_text document.summary %>
 

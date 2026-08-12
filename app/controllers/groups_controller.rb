@@ -5,6 +5,7 @@ class GroupsController < ApplicationController
   include Browsable
 
   def index
+    cache_publicly
     @groups = Group.order(:name)
     # One row of pictures per group, enough to tell them apart at a glance.
     @previews = preview_images
@@ -13,7 +14,9 @@ class GroupsController < ApplicationController
 
   def show
     @group = find_group(params[:id])
-    return head :not_found if @group.nil?
+    return render_not_found if @group.nil?
+
+    cache_publicly
 
     @breeds = breeds_scope.where(group_id: @group.id).order(:name)
   end

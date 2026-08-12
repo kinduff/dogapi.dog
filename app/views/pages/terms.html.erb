@@ -1,9 +1,9 @@
-<% page_heading "Terms of Use" %>
-
-<h2>
-  <a id="terms" href="#terms" aria-hidden="true"></a>
-  Terms of Use
-</h2>
+<%= page_heading "Terms of Use", title: "Terms of Use" %>
+<% content_for :description do %>
+  What the Dog API's data may be used for, the rate limit in force, and the
+  terms you accept by calling the API.
+<% end %>
+<% breadcrumb_structured_data([["Terms of Use", terms_path]]) %>
 
 <p>The following terms of service (the &quot;Terms&quot;) apply to your access and use of the Stratonauts Dog API (the &quot;API&quot;). By accessing or using the API, you agree to be bound by these <strong>Terms</strong>. If you do not agree to these Terms, you may not access or use the API. </p>
 
@@ -15,7 +15,7 @@
   </li>
   <li>
     <p>
-      <strong>Use of the API</strong>. You may use the API for personal, non-commercial purposes only. You may not use the API for any unlawful or illegal purposes, or in any manner that could harm Stratonauts or its reputation. The API is rate limited to 60 requests per minute per client. If you need to exceed this limit, please contact dev@dogapi.dog to request an API key.
+      <strong>Use of the API</strong>. You may use the API for personal, non-commercial purposes only. You may not use the API for any unlawful or illegal purposes, or in any manner that could harm Stratonauts or its reputation. The API is rate limited to <%= Rack::Attack::REQUESTS_PER_MINUTE %> requests per minute per client. If you need to exceed this limit, please contact dev@dogapi.dog to request an API key.
     </p>
   </li>
   <li>

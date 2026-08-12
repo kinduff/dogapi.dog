@@ -23,8 +23,14 @@ RSpec.describe "SEO metadata" do
     response.body[/<link rel="canonical" href="([^"]*)"/, 1]
   end
 
-  def json_ld
-    JSON.parse(response.body[%r{<script type="application/ld\+json"[^>]*>(.*?)</script>}m, 1])
+  # Every page carries more than one block now, so they are picked by type
+  # rather than by being the only one there.
+  def json_ld_blocks
+    response.body.scan(%r{<script type="application/ld\+json"[^>]*>(.*?)</script>}m).flatten.map { |json| JSON.parse(json) }.flatten
+  end
+
+  def json_ld(type)
+    json_ld_blocks.find { |block| block["@type"] == type }
   end
 
   describe "a breed page" do
@@ -71,7 +77,7 @@ RSpec.describe "SEO metadata" do
     it "carries structured data naming the breed and its group" do
       get "/breeds/akita"
 
-      data = json_ld
+      data = json_ld("Thing")
       expect(data["name"]).to eq("Akita")
       expect(data["url"]).to eq("http://www.example.com/breeds/akita")
       expect(data.dig("isPartOf", "name")).to eq("Working Group")
@@ -82,7 +88,7 @@ RSpec.describe "SEO metadata" do
 
       get "/breeds/akita"
 
-      image = json_ld["image"].first
+      image = json_ld("Thing")["image"].first
       expect(image["@type"]).to eq("ImageObject")
       expect(image["creditText"]).to eq("Jane")
       expect(image["license"]).to eq("https://example.com/licence")
@@ -94,7 +100,7 @@ RSpec.describe "SEO metadata" do
       get "/breeds/sneaky"
 
       expect(response.body).not_to include("<script>alert(1)")
-      expect(json_ld["description"]).to include("script")
+      expect(json_ld("Thing")["description"]).to include("script")
     end
 
     it "is indexable" do
@@ -143,23 +149,100 @@ RSpec.describe "SEO metadata" do
     it "lists its breeds as structured data" do
       get "/groups/working-group"
 
-      data = json_ld
-      expect(data["@type"]).to eq("CollectionPage")
+      data = json_ld("CollectionPage")
       expect(data["hasPart"].map { |part| part["name"] }).to include("Akita")
     end
   end
 
   describe "the homepage" do
-    it "keeps the site wide description" do
+    it "describes what the API holds rather than repeating the site name" do
       get "/"
 
-      expect(meta("description")).to eq(ApplicationHelper::DEFAULT_DESCRIPTION)
+      expect(meta("description")).to include("free JSON API", "dog breeds")
     end
 
     it "canonicalises to itself" do
       get "/"
 
       expect(canonical).to eq("http://www.example.com/")
+    end
+
+    it "repeats its questions as structured data" do
+      get "/"
+
+      questions = json_ld("FAQPage")["mainEntity"]
+      expect(questions.map { |question| question["name"] }).to include("Do I need an API key?")
+      expect(questions.first.dig("acceptedAnswer", "text")).to be_present
+    end
+  end
+
+  describe "every page" do
+    it "declares its language" do
+      get "/"
+
+      expect(response.body).to include('<html lang="en">')
+    end
+
+    it "names the site and how to search it" do
+      get "/"
+
+      website = json_ld("WebSite")
+      expect(website["name"]).to eq("Dog API")
+      expect(website.dig("potentialAction", "target", "urlTemplate"))
+        .to eq("http://www.example.com/breeds?q={search_term_string}")
+    end
+
+    it "carries one heading of its own, and only one" do
+      paths = ["/", "/breeds", "/breeds/akita", "/groups", "/groups/working-group",
+        "/docs", "/docs/api-v1", "/docs/api-v2", "/terms"]
+
+      paths.each do |path|
+        get path
+
+        expect(response.body.scan("<h1").size).to eq(1), "expected one <h1> on #{path}"
+      end
+    end
+
+    it "puts the page's own subject in that heading" do
+      get "/breeds/akita"
+
+      expect(response.body).to include("<h1>Akita</h1>")
+    end
+
+    it "titles a breed page after the breed" do
+      get "/breeds/akita"
+
+      expect(response.body).to include("<title>Akita Dog Breed - Size, Life Span and Pictures | Dog API</title>")
+    end
+
+    it "trails back to the homepage" do
+      get "/breeds/akita"
+
+      names = json_ld("BreadcrumbList")["itemListElement"].map { |item| item["name"] }
+      expect(names).to eq(["Home", "Dog Breeds", "Akita"])
+    end
+  end
+
+  describe "a page that does not exist" do
+    it "answers 404 with somewhere to go next" do
+      get "/breeds/not-a-breed"
+
+      expect(response).to have_http_status(:not_found)
+      expect(response.body).to include("Not found", 'href="/breeds"')
+    end
+
+    it "keeps itself out of the index" do
+      get "/groups/not-a-group"
+
+      expect(meta("robots")).to eq("noindex, follow")
+    end
+  end
+
+  describe "caching" do
+    it "lets a shared cache hold a breed page for a few minutes" do
+      get "/breeds/akita"
+
+      expect(response.headers["Cache-Control"]).to include("public", "max-age=300")
     end
   end
 
