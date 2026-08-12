@@ -33,6 +33,12 @@ module ApplicationHelper
     "#{request.base_url}#{path}"
   end
 
+  # A sponsor is only shown when there is both something to name and somewhere
+  # to send the click. Anything less falls back to the "for rent" copy.
+  def sponsor_present?
+    ENV["SPONSOR_NAME"].present? && ENV["SPONSOR_URL"].present?
+  end
+
   # Share of breeds that have at least one picture, as a number between 0 and
   # 100. Zero breeds counts as zero rather than dividing by nothing.
   def image_coverage(stats)

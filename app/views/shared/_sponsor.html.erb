@@ -1,0 +1,22 @@
+<% if sponsor_present? %>
+  <aside class="sponsor" aria-label="Sponsor">
+    <p class="sponsor-label">Sponsored</p>
+    <p class="sponsor-body">
+      <%= link_to ENV["SPONSOR_NAME"], ENV["SPONSOR_URL"], target: "_blank", rel: "noopener sponsored" %>
+      <% if ENV["SPONSOR_TEXT"].present? %>
+        — <%= ENV["SPONSOR_TEXT"] %>
+      <% end %>
+    </p>
+  </aside>
+<% else %>
+  <aside class="sponsor sponsor-empty" aria-label="Advertise here">
+    <p class="sponsor-label">Ad space</p>
+    <p class="sponsor-body">
+      <strong>Your ad here.</strong>
+      Most of the 60,000 daily requests come from classrooms, bootcamps and
+      people learning to code, and it stays free because of that. Your brand
+      here helps keep it that way — email
+      <%= mail_to "dev@dogapi.dog", "dev@dogapi.dog", subject: "Advertising on Dog API", class: "sponsor-mail" %>.
+    </p>
+  </aside>
+<% end %>

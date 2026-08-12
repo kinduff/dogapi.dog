@@ -46,6 +46,7 @@
           <li><%= link_to_unless_current "API Docs", docs_path %></li>
         </ul>
       </nav>
+      <%= render "shared/sponsor" %>
     </header>
     <main class="<%= yield(:main_class) %>">
       <%= yield %>

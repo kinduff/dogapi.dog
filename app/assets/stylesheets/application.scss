@@ -896,6 +896,52 @@ details.api-fields {
     }
 }
 
+// Sits under the nav so it is on screen without scrolling. Kept to two short
+// lines, since anything taller pushes the page itself below the fold.
+.sponsor {
+    background: #f6f8fa;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+    margin: 0 0 1.4rem;
+    padding: 0.7rem 0.9rem;
+}
+
+// An unsold slot reads as one: dashed edge, no fill, and a label in the corner
+// saying what it is, so nobody mistakes it for something the site is saying.
+.sponsor-empty {
+    background: none;
+    border: 1px dashed #c8c8c8;
+    padding-top: 1rem;
+    position: relative;
+    text-align: center;
+
+    .sponsor-label {
+        background: var(--background-main);
+        left: 0.7rem;
+        padding: 0 0.35rem;
+        position: absolute;
+        top: -0.55rem;
+    }
+}
+
+.sponsor-label {
+    color: var(--text-alt);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.2rem;
+    text-transform: uppercase;
+}
+
+.sponsor-body {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.sponsor-mail {
+    font-weight: 600;
+}
+
 .home-welcome {
     margin-bottom: 2rem;
 
