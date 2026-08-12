@@ -6,7 +6,14 @@
 class OpenapiDocument
   class NotFound < StandardError; end
 
-  Operation = Struct.new(:verb, :path, :summary, :description, :tag, :parameters, :responses, :anchor)
+  Operation = Struct.new(:verb, :path, :summary, :description, :tag, :parameters, :responses, :anchor) do
+    # An operation that answers with a redirect to a file rather than with a
+    # document. The docs show these as pictures instead of as text, which is
+    # the only sensible way to read them.
+    def redirects_to_a_file?
+      responses.any? { |response| response.code.to_s.start_with?("3") }
+    end
+  end
 
   Response = Struct.new(:code, :description, :schema, :example)
 

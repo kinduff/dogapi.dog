@@ -474,6 +474,21 @@ h3:hover > .api-anchor,
     word-break: break-all;
 }
 
+// Responses that are pictures, in the try-it panel and in the examples.
+.api-try-image,
+.api-example-image img {
+    background: #f6f8fa;
+    display: block;
+    height: auto;
+    max-height: 24rem;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.api-example-image {
+    padding: 0.6rem;
+}
+
 .api-status-pending {
     background: var(--background-element);
     color: var(--text-alt);

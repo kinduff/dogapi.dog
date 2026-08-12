@@ -83,26 +83,71 @@
     status.textContent = message;
   }
 
+  function rendersImage(form) {
+    return form.getAttribute("data-api-render") === "image";
+  }
+
+  // Endpoints that redirect to a file are unreadable as text. fetch follows the
+  // redirect for us, so what arrives is the image itself.
+  function showImage(form, response, elapsed) {
+    var image = form.querySelector("[data-api-image]");
+    var bodyBox = form.querySelector("[data-api-body-box]");
+
+    return response.blob().then(function (blob) {
+      if (image.src) URL.revokeObjectURL(image.src);
+
+      image.src = URL.createObjectURL(blob);
+      image.hidden = false;
+      bodyBox.hidden = true;
+
+      var size = Math.round(blob.size / 1024);
+      show(
+        form,
+        "api-status-2xx",
+        response.status + " " + response.statusText + " · " + blob.type + " · " + size + " KB · " + elapsed + " ms"
+      );
+    });
+  }
+
+  function showText(form, response, elapsed) {
+    var body = form.querySelector("[data-api-body]");
+    var bodyBox = form.querySelector("[data-api-body-box]");
+    var image = form.querySelector("[data-api-image]");
+
+    return response.text().then(function (text) {
+      var kind = response.ok ? "2xx" : String(response.status).charAt(0) + "xx";
+
+      if (image) image.hidden = true;
+      bodyBox.hidden = false;
+      show(form, "api-status-" + kind, response.status + " " + response.statusText + " · " + elapsed + " ms");
+
+      var contentType = response.headers.get("content-type");
+      renderLines(body, formatBody(text, contentType), contentType && contentType.indexOf("json") !== -1);
+    });
+  }
+
   function send(form) {
     var url = buildUrl(form);
     var body = form.querySelector("[data-api-body]");
     var urlLabel = form.querySelector("[data-api-url]");
+    var wantsImage = rendersImage(form);
     var startedAt = (window.performance || Date).now();
 
     urlLabel.textContent = url;
     show(form, "api-status-pending", "…");
     renderLines(body, "");
 
-    fetch(url, { headers: { Accept: "application/json" } })
+    fetch(url, { headers: { Accept: wantsImage ? "image/*" : "application/json" } })
       .then(function (response) {
-        return response.text().then(function (text) {
-          var elapsed = Math.round((window.performance || Date).now() - startedAt);
-          var kind = response.ok ? "2xx" : String(response.status).charAt(0) + "xx";
+        var elapsed = Math.round((window.performance || Date).now() - startedAt);
+        var contentType = response.headers.get("content-type") || "";
+        var isImage = contentType.indexOf("image/") === 0;
 
-          show(form, "api-status-" + kind, response.status + " " + response.statusText + " · " + elapsed + " ms");
-          var contentType = response.headers.get("content-type");
-          renderLines(body, formatBody(text, contentType), contentType && contentType.indexOf("json") !== -1);
-        });
+        // A 404 on one of these still answers with text, so the check is on
+        // what came back rather than on what was asked for.
+        return wantsImage && response.ok && isImage
+          ? showImage(form, response, elapsed)
+          : showText(form, response, elapsed);
       })
       .catch(function (error) {
         show(form, "api-status-4xx", "Request failed");
@@ -116,6 +161,14 @@
     });
 
     var output = form.querySelector("[data-api-output]");
+    var image = form.querySelector("[data-api-image]");
+
+    if (image && image.src) {
+      URL.revokeObjectURL(image.src);
+      image.removeAttribute("src");
+      image.hidden = true;
+    }
+
     output.hidden = true;
   }
 

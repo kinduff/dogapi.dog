@@ -15,8 +15,10 @@ Rails.application.configure do
     policy.object_src :none
     policy.frame_ancestors :none
     policy.font_src :self, :data
-    # Third party badges (Product Hunt) and the inline SVG favicon.
-    policy.img_src :self, :data, :https
+    # Third party badges (Product Hunt) and the inline SVG favicon. `blob` is
+    # for the API reference, which renders an image response by turning what it
+    # fetched into an object URL rather than requesting the file twice.
+    policy.img_src :self, :data, :https, :blob
     # Everything but analytics is served from this app.
     policy.script_src :self, analytics_host
     # `unsafe_inline` covers the few inline `style` attributes left in the

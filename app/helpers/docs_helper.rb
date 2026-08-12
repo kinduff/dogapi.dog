@@ -53,7 +53,19 @@ module DocsHelper
     url = "#{document.base_url}#{path}"
     url += "?#{query.first.name}=#{api_example_value(query.first)}" if query.any?
 
+    # -L so the redirect is followed to the file, -o so the bytes land somewhere
+    # instead of in the terminal.
+    return "curl -sL \"#{url}\" -o breed.webp" if operation.redirects_to_a_file?
+
     "curl -s \"#{url}\""
+  end
+
+  # A live URL for the picture shown under a redirect response, with any path
+  # placeholder filled in by a real id so the example resolves.
+  def api_example_image_path(document, operation)
+    path = operation.path.gsub(/\{(\w+)\}/) { api_sample_id(operation) || "{#{$1}}" }
+
+    "#{api_base_path(document)}#{path}?size=medium"
   end
 
   def api_method_class(verb)
