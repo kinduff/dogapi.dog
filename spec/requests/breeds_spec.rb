@@ -100,6 +100,41 @@ RSpec.describe "Breeds pages" do
       expect(response.body).to include("Jane", "CC BY-SA 4.0")
     end
 
+    it "makes every image a gallery thumbnail" do
+      create(:breed_image, breed: akita, source_id: "File:One.jpg")
+      second = create(:breed_image, breed: akita, source_id: "File:Two.jpg")
+      second.file.attach(
+        io: Rails.root.join("spec/fixtures/files/dog_alt.jpg").open,
+        filename: "other.jpg",
+        content_type: "image/jpeg"
+      )
+
+      get "/breeds/akita"
+
+      expect(response.body.scan("data-gallery-item").size).to eq(2)
+      expect(response.body).to include("data-gallery-hero", "breed_gallery")
+    end
+
+    it "carries a caption per image, with only the first one showing" do
+      create(:breed_image, breed: akita, source_id: "File:One.jpg", author: "Jane")
+      create(:breed_image, breed: akita, source_id: "File:Two.jpg", author: "Sam")
+
+      get "/breeds/akita"
+
+      expect(response.body.scan("data-gallery-credit").size).to eq(2)
+      expect(response.body).to include("Jane", "Sam")
+    end
+
+    it "leaves the pictures as plain links for a reader without javascript" do
+      create(:breed_image, breed: akita)
+
+      get "/breeds/akita"
+
+      # Signed disk URLs differ every time they are built, so the filename is
+      # the part worth asserting on.
+      expect(response.body).to match(%r{<a href="[^"]*dog\.jpg"[^>]*data-gallery-link})
+    end
+
     it "says so when there is no picture" do
       get "/breeds/akita"
 

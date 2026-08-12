@@ -15,28 +15,43 @@
 
 <% images = @breed.breed_images.to_a %>
 <% if images.any? %>
-  <figure class="breed-hero">
-    <a href="<%= images.first.url_for %>" target="_blank" rel="noopener">
+  <% content_for :javascripts do %>
+    <%= javascript_include_tag "breed_gallery", defer: true %>
+  <% end %>
+
+  <figure class="breed-hero" data-gallery>
+    <a href="<%= images.first.url_for %>" target="_blank" rel="noopener" data-gallery-link>
       <img src="<%= images.first.url_for(:large) %>" alt="<%= @breed.name %>"
-           width="1200" height="1200" loading="eager">
+           width="1200" height="1200" loading="eager" data-gallery-hero>
     </a>
-    <figcaption class="api-muted">
-      <%= images.first.author.presence || "Unknown author" %> ·
-      <% if images.first.license_url.present? %>
-        <%= link_to images.first.license, images.first.license_url, target: "_blank", rel: "noopener nofollow" %>
-      <% else %>
-        <%= images.first.license %>
-      <% end %>
-      · <%= link_to "source", images.first.attribution[:source_url], target: "_blank", rel: "noopener nofollow" %>
-    </figcaption>
+
+    <%# One caption per image, server rendered so the licence links stay intact.
+        The script shows the one belonging to the picture on display. %>
+    <% images.each_with_index do |image, index| %>
+      <figcaption class="api-muted" data-gallery-credit="<%= image.id %>" <%= "hidden" unless index.zero? %>>
+        <%= image.author.presence || "Unknown author" %> ·
+        <% if image.license_url.present? %>
+          <%= link_to image.license, image.license_url, target: "_blank", rel: "noopener nofollow" %>
+        <% else %>
+          <%= image.license %>
+        <% end %>
+        · <%= link_to "source", image.attribution[:source_url], target: "_blank", rel: "noopener nofollow" %>
+      </figcaption>
+    <% end %>
   </figure>
 
   <% if images.size > 1 %>
     <ul class="breed-gallery">
-      <% images.drop(1).each do |image| %>
+      <% images.each_with_index do |image, index| %>
         <li>
+          <%# Without the script these stay what they look like: links to the
+              file. With it, they swap the picture above instead. %>
           <a href="<%= image.url_for %>" target="_blank" rel="noopener"
-             title="<%= image_credit(image) %>">
+             title="<%= image_credit(image) %>"
+             class="<%= "is-current" if index.zero? %>"
+             data-gallery-item
+             data-image-id="<%= image.id %>"
+             data-large="<%= image.url_for(:large) %>">
             <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>" loading="lazy">
           </a>
         </li>
