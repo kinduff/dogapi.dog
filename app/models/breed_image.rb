@@ -6,6 +6,15 @@ class BreedImage < ApplicationRecord
   MAX_BYTE_SIZE = 10.megabytes
   CONTENT_TYPES = %w[image/jpeg image/png image/webp].freeze
 
+  # Quality floor. Anything smaller is an icon, a badge or a thumbnail rather
+  # than a photograph, and would only be upscaled by the largest variant.
+  MIN_DIMENSION = 400
+  MIN_PIXELS = 300_000
+
+  # Panoramas and tall strips survive a `resize_to_fill` square crop badly, so
+  # they are refused rather than shown mangled.
+  MAX_ASPECT_RATIO = 2.5
+
   # The sizes the API exposes. Everything is converted to WebP, which is a
   # third of the bytes of the JPEG originals at the same visual quality.
   VARIANTS = {
@@ -24,6 +33,7 @@ class BreedImage < ApplicationRecord
   validates :source_id, uniqueness: {scope: :source}
   validate :file_attached
   validate :file_is_a_supported_image
+  validate :file_is_big_enough
 
   scope :ordered, -> { order(:position, :created_at) }
 
@@ -53,6 +63,18 @@ class BreedImage < ApplicationRecord
       source: source,
       source_url: page_url.presence || source_url
     }
+  end
+
+  # Width and height once Active Storage has analyzed the blob. Nil before
+  # then, which is why the importer analyzes before saving.
+  def dimensions
+    return unless file.attached?
+
+    metadata = file.blob.metadata
+    width = metadata["width"]
+    height = metadata["height"]
+
+    [width, height] if width.to_i.positive? && height.to_i.positive?
   end
 
   private
@@ -104,6 +126,26 @@ class BreedImage < ApplicationRecord
 
   def file_attached
     errors.add(:file, "must be attached") unless file.attached?
+  end
+
+  # Only checks what is known: a blob that has not been analyzed yet carries no
+  # dimensions, and the importer is the one that guarantees they are there.
+  def file_is_big_enough
+    width, height = dimensions
+    return if width.nil?
+
+    if width < MIN_DIMENSION || height < MIN_DIMENSION
+      errors.add(:file, "must be at least #{MIN_DIMENSION}px on both sides, got #{width}x#{height}")
+    end
+
+    if width * height < MIN_PIXELS
+      errors.add(:file, "must be at least #{MIN_PIXELS} pixels, got #{width * height}")
+    end
+
+    ratio = [width.to_f / height, height.to_f / width].max
+    if ratio > MAX_ASPECT_RATIO
+      errors.add(:file, "is too far from square to crop well, got #{width}x#{height}")
+    end
   end
 
   def file_is_a_supported_image

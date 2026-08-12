@@ -23,7 +23,13 @@ module BreedImages
     end
 
     def call
-      entries.first(@limit).map { |entry| candidate_from(entry) }
+      candidates.first(@limit)
+    end
+
+    # The catalog is small and already local, so there is nothing to paginate:
+    # this exists so both adapters answer the same question the same way.
+    def candidates
+      entries.lazy.map { |entry| candidate_from(entry) }
     end
 
     private
@@ -36,7 +42,7 @@ module BreedImages
     end
 
     def candidate_from(entry)
-      Candidate.new(
+      BreedImages::Candidate.new(
         source: SOURCE,
         source_id: entry["id"].presence || entry["url"],
         source_url: entry["url"],

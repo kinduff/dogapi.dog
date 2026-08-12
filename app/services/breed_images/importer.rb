@@ -13,6 +13,10 @@ module BreedImages
       end
     end
 
+    # Wikimedia rate limits clients that pull files back to back, and a breed
+    # with several candidates would otherwise download them with no gap at all.
+    def self.download_delay = ENV.fetch("IMAGE_DOWNLOAD_DELAY", "0.5").to_f
+
     def self.call(...) = new(...).call
 
     def initialize(breed, source: DEFAULT_SOURCE, limit: 3)
@@ -24,8 +28,25 @@ module BreedImages
       @result = Result.new(imported: [], skipped: [], errors: [])
     end
 
+    # `limit` is how many images the breed should end up with, not how many
+    # candidates to try. Candidates that are already stored, that duplicate a
+    # file, that fail to download or that fall below the quality floor do not
+    # count, so the source is walked until the breed has enough or the source
+    # runs out.
     def call
-      candidates.each { |candidate| import(candidate) }
+      missing = @limit - @breed.breed_images.count
+      return @result if missing < 1
+
+      attempted = 0
+
+      candidates.each do |candidate|
+        break if @result.imported.size >= missing
+
+        sleep self.class.download_delay if attempted.positive?
+        attempted += 1
+
+        import(candidate)
+      end
 
       @result
     end
@@ -33,7 +54,7 @@ module BreedImages
     private
 
     def candidates
-      @adapter.call(@breed, limit: @limit)
+      @adapter.new(@breed, limit: @limit).candidates
     rescue Downloader::Error => e
       @result.errors << "#{@breed.name}: #{e.message}"
       []
@@ -65,9 +86,17 @@ module BreedImages
         return @result.skipped << candidate.source_id
       end
 
+      # Fills in width and height, which the record validates on. Commons is
+      # asked for them too, but a manual entry has nobody to ask.
+      blob.analyze unless blob.analyzed?
+
       breed_image = @breed.breed_images.build(candidate.to_attributes.merge(position: next_position))
       breed_image.file.attach(blob)
-      breed_image.save!
+
+      unless breed_image.save
+        blob.purge
+        raise ActiveRecord::RecordInvalid, breed_image
+      end
 
       preprocess(breed_image)
       @result.imported << breed_image

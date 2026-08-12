@@ -47,6 +47,55 @@ RSpec.describe BreedImage do
     expect(breed_image.errors[:file].join).to include("must be one of")
   end
 
+  describe "dimension floor" do
+    # Attaching to an unsaved record does not upload anything, and analyze
+    # needs bytes on the service to look at.
+    def attach(fixture, breed_image = subject)
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: Rails.root.join("spec/fixtures/files/#{fixture}").open,
+        filename: fixture,
+        content_type: "image/jpeg"
+      )
+      blob.analyze
+      breed_image.file.attach(blob)
+      breed_image
+    end
+
+    it "accepts an analyzed image above the floor" do
+      expect(attach("dog.jpg")).to be_valid
+    end
+
+    it "rejects an icon sized image" do
+      breed_image = attach("tiny.jpg")
+
+      expect(breed_image).not_to be_valid
+      expect(breed_image.errors[:file].join).to include("at least #{described_class::MIN_DIMENSION}px")
+    end
+
+    it "rejects an image with too few pixels" do
+      breed_image = build(:breed_image)
+      allow(breed_image.file.blob).to receive(:metadata).and_return({"width" => 420, "height" => 420})
+
+      expect(breed_image).not_to be_valid
+      expect(breed_image.errors[:file].join).to include("pixels")
+    end
+
+    it "rejects a panorama" do
+      breed_image = build(:breed_image)
+      allow(breed_image.file.blob).to receive(:metadata).and_return({"width" => 4000, "height" => 600})
+
+      expect(breed_image).not_to be_valid
+      expect(breed_image.errors[:file].join).to include("too far from square")
+    end
+
+    it "says nothing about a blob that has not been analyzed" do
+      breed_image = build(:breed_image)
+
+      expect(breed_image.dimensions).to be_nil
+      expect(breed_image).to be_valid
+    end
+  end
+
   it "rejects a file over the size limit" do
     allow(breed_image.file.blob).to receive(:byte_size).and_return(described_class::MAX_BYTE_SIZE + 1)
 

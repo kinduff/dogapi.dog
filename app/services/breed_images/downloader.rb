@@ -13,6 +13,14 @@ module BreedImages
     OPEN_TIMEOUT = 5
     READ_TIMEOUT = 15
 
+    # Wikimedia throttles clients that pull files back to back. When it says so
+    # with a 429, or when its servers are briefly unavailable, waiting and
+    # trying again is the documented way through.
+    RETRY_STATUSES = [429, 503].freeze
+    MAX_RETRIES = 4
+    BASE_BACKOFF = 2
+    MAX_BACKOFF = 60
+
     # The block goes to `#call`, not to the constructor, so it cannot be
     # forwarded wholesale.
     def self.call(*args, **options, &block) = new(*args, **options).call(&block)
@@ -42,7 +50,7 @@ module BreedImages
 
     private
 
-    def get(uri, redirects_left = MAX_REDIRECTS)
+    def get(uri, redirects_left = MAX_REDIRECTS, attempt = 0)
       raise Error, "#{uri.scheme.inspect} is not an http(s) url" unless %w[http https].include?(uri.scheme)
 
       response = Net::HTTP.start(
@@ -65,10 +73,26 @@ module BreedImages
       when Net::HTTPRedirection
         raise Error, "too many redirects from #{@url}" if redirects_left.zero?
 
-        get(URI.join(uri.to_s, response["location"]), redirects_left - 1)
+        get(URI.join(uri.to_s, response["location"]), redirects_left - 1, attempt)
+      when ->(r) { RETRY_STATUSES.include?(r.code.to_i) }
+        raise Error, "#{response.code} after #{attempt} retries for #{uri}" if attempt >= MAX_RETRIES
+
+        wait = backoff_for(response, attempt)
+        warn "  #{response.code} from #{uri.host}, waiting #{wait}s before retry #{attempt + 1}/#{MAX_RETRIES}"
+        sleep wait
+        get(uri, redirects_left, attempt + 1)
       else
         raise Error, "#{response.code} #{response.message} for #{uri}"
       end
+    end
+
+    # Honour Retry-After when it is sent, otherwise back off exponentially.
+    def backoff_for(response, attempt)
+      retry_after = response["retry-after"].to_i
+
+      return retry_after.clamp(1, MAX_BACKOFF) if retry_after.positive?
+
+      (BASE_BACKOFF**(attempt + 1)).clamp(1, MAX_BACKOFF)
     end
 
     def request_for(uri)

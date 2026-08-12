@@ -13,15 +13,32 @@ namespace :images do
     puts run_import(breed, args).summary
   end
 
-  desc "Import images for every breed that has none: images:import_all[wikimedia_commons,3]"
+  desc "Bring every breed up to the requested number of images: images:import_all[wikimedia_commons,3]"
   task :import_all, %i[source limit] => :environment do |_task, args|
-    breeds = Breed.where.missing(:breed_images).order(:name)
-    puts "#{breeds.size} breeds without images"
+    limit = (args[:limit].presence || 3).to_i
+
+    # Breeds that are short of the target, not just the ones with nothing: the
+    # limit is how many images a breed should end up with.
+    breeds = Breed.left_joins(:breed_images)
+      .group(:id)
+      .having("COUNT(breed_images.id) < ?", limit)
+      .order(:name)
+      .to_a
+
+    puts "#{breeds.size} breeds with fewer than #{limit} images"
 
     totals = Hash.new(0)
 
     breeds.each_with_index do |breed, index|
-      result = run_import(breed, args)
+      # A long run must survive one breed going wrong, whatever the reason.
+      begin
+        result = run_import(breed, args)
+      rescue => e
+        totals[:errors] += 1
+        warn "[#{index + 1}/#{breeds.size}] #{breed.name}: #{e.class}: #{e.message}"
+        next
+      end
+
       totals[:imported] += result.imported.size
       totals[:skipped] += result.skipped.size
       totals[:errors] += result.errors.size
@@ -33,6 +50,24 @@ namespace :images do
     end
 
     puts "Done: #{totals[:imported]} imported, #{totals[:skipped]} skipped, #{totals[:errors]} failed"
+  end
+
+  desc "Delete stored images that fall below the current quality floor"
+  task prune: :environment do
+    removed = 0
+
+    BreedImage.with_files.find_each do |image|
+      next unless image.file.attached?
+
+      image.file.blob.analyze unless image.file.blob.analyzed?
+      next if image.valid?
+
+      puts "#{image.breed.name} (#{image.source_id}): #{image.errors[:file].join(", ")}"
+      image.destroy
+      removed += 1
+    end
+
+    puts "Removed #{removed} images, #{BreedImage.count} left"
   end
 
   desc "Build any missing variants for stored images"

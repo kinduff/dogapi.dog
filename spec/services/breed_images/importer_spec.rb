@@ -21,8 +21,11 @@ RSpec.describe BreedImages::Importer do
     )
   end
 
+  # The importer walks the adapter's candidate enumerator, pulling more only
+  # when it still needs images.
   def stub_adapter(*candidates)
-    allow(BreedImages::WikimediaCommons).to receive(:call).and_return(candidates)
+    adapter = instance_double(BreedImages::WikimediaCommons, candidates: candidates.each)
+    allow(BreedImages::WikimediaCommons).to receive(:new).and_return(adapter)
   end
 
   def stub_download(url: "https://upload.wikimedia.org/akita.jpg", body: image_bytes)
@@ -104,8 +107,104 @@ RSpec.describe BreedImages::Importer do
     expect(result.errors.join).to include("404")
   end
 
+  it "analyzes what it stores so the dimensions are known" do
+    stub_adapter(candidate)
+    stub_download
+
+    expect(result.imported.first.dimensions).to eq([800, 600])
+  end
+
+  it "refuses an image below the quality floor and keeps nothing behind" do
+    stub_adapter(candidate)
+    stub_download(body: Rails.root.join("spec/fixtures/files/tiny.jpg").binread)
+
+    expect(result.imported).to be_empty
+    expect(result.errors.join).to include("at least #{BreedImage::MIN_DIMENSION}px")
+    expect(BreedImage.count).to eq(0)
+    expect(ActiveStorage::Blob.count).to eq(0)
+  end
+
+  describe "reaching the requested count" do
+    def working_candidate(index)
+      url = "https://upload.wikimedia.org/ok#{index}.jpg"
+      stub_request(:get, url).to_return(
+        status: 200,
+        # Different bytes each time, or the checksum dedupe would skip them.
+        body: image_bytes + index.to_s,
+        headers: {"Content-Type" => "image/jpeg"}
+      )
+      candidate(id: "File:Ok#{index}.jpg", url: url)
+    end
+
+    def broken_candidate(index)
+      url = "https://upload.wikimedia.org/bad#{index}.jpg"
+      stub_request(:get, url).to_return(status: 404, body: "")
+      candidate(id: "File:Bad#{index}.jpg", url: url)
+    end
+
+    it "keeps pulling candidates until it has as many images as asked for" do
+      stub_adapter(broken_candidate(1), broken_candidate(2), working_candidate(3), working_candidate(4))
+
+      result = described_class.call(breed, limit: 2)
+
+      expect(result.imported.size).to eq(2)
+      expect(result.errors.size).to eq(2)
+    end
+
+    it "stops as soon as the target is met, leaving the rest untouched" do
+      stub_adapter(working_candidate(1), working_candidate(2), working_candidate(3))
+
+      described_class.call(breed, limit: 2)
+
+      expect(a_request(:get, "https://upload.wikimedia.org/ok3.jpg")).not_to have_been_made
+    end
+
+    it "settles for fewer when the source runs out" do
+      stub_adapter(working_candidate(1), broken_candidate(2))
+
+      result = described_class.call(breed, limit: 5)
+
+      expect(result.imported.size).to eq(1)
+    end
+
+    it "counts the images the breed already has toward the target" do
+      create(:breed_image, breed: breed, source_id: "File:Existing.jpg")
+      stub_adapter(working_candidate(1), working_candidate(2))
+
+      result = described_class.call(breed, limit: 2)
+
+      expect(result.imported.size).to eq(1)
+      expect(breed.reload.breed_images.count).to eq(2)
+    end
+
+    it "does nothing when the breed already has enough" do
+      create(:breed_image, breed: breed, source_id: "File:Existing.jpg")
+      stub_adapter(working_candidate(1))
+
+      result = described_class.call(breed, limit: 1)
+
+      expect(result.imported).to be_empty
+      expect(a_request(:get, /upload\.wikimedia\.org/)).not_to have_been_made
+    end
+
+    it "does not count images rejected by the quality floor" do
+      tiny = "https://upload.wikimedia.org/tiny.jpg"
+      stub_request(:get, tiny).to_return(
+        status: 200,
+        body: Rails.root.join("spec/fixtures/files/tiny.jpg").binread,
+        headers: {"Content-Type" => "image/jpeg"}
+      )
+      stub_adapter(candidate(id: "File:Tiny.jpg", url: tiny), working_candidate(1))
+
+      result = described_class.call(breed, limit: 1)
+
+      expect(result.imported.size).to eq(1)
+      expect(result.imported.first.source_id).to eq("File:Ok1.jpg")
+    end
+  end
+
   it "records an adapter failure instead of raising" do
-    allow(BreedImages::WikimediaCommons).to receive(:call).and_raise(BreedImages::Downloader::Error, "503 from Commons")
+    allow(BreedImages::WikimediaCommons).to receive(:new).and_raise(BreedImages::Downloader::Error, "503 from Commons")
 
     expect(result.imported).to be_empty
     expect(result.errors.join).to include("503 from Commons")
