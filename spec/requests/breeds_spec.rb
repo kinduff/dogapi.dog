@@ -265,5 +265,12 @@ RSpec.describe "Breeds pages" do
       expect(response).to have_http_status(:moved_permanently)
       expect(response).to redirect_to("/breeds")
     end
+
+    it "sends the misspelled Bavarian hound slug to the corrected one" do
+      get "/breeds/bavarian-mountain-scent-houn"
+
+      expect(response).to have_http_status(:moved_permanently)
+      expect(response).to redirect_to("/breeds/bavarian-mountain-scent-hound")
+    end
   end
 end

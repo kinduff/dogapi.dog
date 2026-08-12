@@ -12,6 +12,12 @@ Rails.application.routes.draw do
   root to: "pages#index"
   get "/terms", to: "pages#terms", as: :terms
   get "/docs", to: "pages#docs", as: :docs
+  # A breed page is linked by the slug its name parameterizes to, so fixing a
+  # misspelled name moves the page. Ahead of the resource, which would answer
+  # for the old slug with a 404 of its own.
+  get "/breeds/bavarian-mountain-scent-houn",
+    to: redirect("/breeds/bavarian-mountain-scent-hound", status: 301)
+
   resources :breeds, only: %i[index show]
   resources :groups, only: %i[index show]
 
