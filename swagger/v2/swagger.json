@@ -129,6 +129,161 @@
           }
         }
       },
+      "BreedOrigin": {
+        "type": "object",
+        "description": "Where the breed comes from",
+        "properties": {
+          "country": {
+            "type": "string",
+            "example": "Japan"
+          },
+          "region": {
+            "type": "string",
+            "example": "Akita Prefecture"
+          },
+          "era": {
+            "type": "string",
+            "example": "17th century"
+          }
+        }
+      },
+      "BreedCoat": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "smooth",
+              "short",
+              "medium",
+              "long",
+              "wire",
+              "curly",
+              "double",
+              "hairless",
+              "corded"
+            ],
+            "example": "double"
+          },
+          "length": {
+            "type": "string",
+            "enum": [
+              "hairless",
+              "short",
+              "medium",
+              "long"
+            ],
+            "example": "medium"
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "red",
+              "brindle",
+              "white"
+            ]
+          }
+        }
+      },
+      "BreedTraits": {
+        "type": "object",
+        "description": "Ratings from 1 (lowest) to 5 (highest), relative to dogs in general. Estimates, not measurements.",
+        "properties": {
+          "energy": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "trainability": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "barking": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "grooming": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "shedding": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "drooling": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "good_with_children": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "good_with_dogs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "good_with_strangers": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "apartment_friendly": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 3
+          },
+          "exercise_minutes": {
+            "type": "integer",
+            "description": "Typical daily exercise for an adult",
+            "example": 60
+          },
+          "temperament": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "loyal",
+              "dignified",
+              "courageous"
+            ]
+          }
+        }
+      },
+      "BreedSource": {
+        "type": "object",
+        "description": "A page the researched attributes were taken from",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string",
+            "example": "Akita Dog Breed Information"
+          }
+        }
+      },
       "Breed": {
         "type": "object",
         "properties": {
@@ -180,6 +335,69 @@
               "hypoallergenic": {
                 "type": "boolean",
                 "example": false
+              },
+              "male_height": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Range"
+                  }
+                ],
+                "description": "Male height at the withers, in centimetres"
+              },
+              "female_height": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Range"
+                  }
+                ],
+                "description": "Female height at the withers, in centimetres"
+              },
+              "origin": {
+                "$ref": "#/components/schemas/BreedOrigin"
+              },
+              "coat": {
+                "$ref": "#/components/schemas/BreedCoat"
+              },
+              "traits": {
+                "$ref": "#/components/schemas/BreedTraits"
+              },
+              "other_names": {
+                "type": "array",
+                "description": "Names the breed also goes by",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Akita Inu",
+                  "Japanese Akita"
+                ]
+              },
+              "recognized_by": {
+                "type": "array",
+                "description": "Kennel clubs that recognise the breed",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "AKC",
+                    "FCI",
+                    "UKC",
+                    "KC",
+                    "CKC",
+                    "ANKC",
+                    "NZKC"
+                  ]
+                },
+                "example": [
+                  "AKC",
+                  "FCI"
+                ]
+              },
+              "sources": {
+                "type": "array",
+                "description": "Where the researched attributes above came from",
+                "items": {
+                  "$ref": "#/components/schemas/BreedSource"
+                }
               },
               "images": {
                 "type": "array",

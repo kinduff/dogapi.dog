@@ -25,7 +25,8 @@ RSpec.describe "Api::V2::Breeds" do
       get "/api/v2/breeds"
 
       expect(json["data"].first["attributes"].keys).to match_array(
-        %w[name description life male_weight female_weight hypoallergenic images]
+        %w[name description life male_weight female_weight hypoallergenic images
+          male_height female_height origin coat traits other_names recognized_by sources]
       )
     end
 

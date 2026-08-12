@@ -240,6 +240,13 @@ blockquote {
     }
 }
 
+// The dots carry the 1 to 5 scale on their own, so they get to be wider than
+// the surrounding text rather than louder than it.
+.breed-rating {
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+}
+
 .api-toc {
     border-left: 0.2rem solid var(--background-element);
     margin: 2rem 0;

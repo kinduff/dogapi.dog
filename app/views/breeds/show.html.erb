@@ -89,6 +89,46 @@
     <dd><%= weight %></dd>
   <% end %>
 
+  <% if (height = breed_height(@breed, :male)) %>
+    <dt>Male height</dt>
+    <dd><%= height %></dd>
+  <% end %>
+
+  <% if (height = breed_height(@breed, :female)) %>
+    <dt>Female height</dt>
+    <dd><%= height %></dd>
+  <% end %>
+
+  <% if (origin = breed_origin(@breed)) %>
+    <dt>Origin</dt>
+    <dd><%= origin %></dd>
+  <% end %>
+
+  <% if (coat = breed_coat(@breed)) %>
+    <dt>Coat</dt>
+    <dd><%= coat %></dd>
+  <% end %>
+
+  <% if @breed.traits_temperament.present? %>
+    <dt>Temperament</dt>
+    <dd><%= @breed.traits_temperament.to_sentence %></dd>
+  <% end %>
+
+  <% if @breed.traits_exercise_minutes.present? %>
+    <dt>Exercise</dt>
+    <dd><%= @breed.traits_exercise_minutes %> minutes a day</dd>
+  <% end %>
+
+  <% if @breed.other_names.any? %>
+    <dt>Also known as</dt>
+    <dd><%= @breed.other_names.to_sentence %></dd>
+  <% end %>
+
+  <% if @breed.recognized_by.any? %>
+    <dt>Recognized by</dt>
+    <dd><%= @breed.recognized_by.join(", ") %></dd>
+  <% end %>
+
   <dt>Hypoallergenic</dt>
   <dd><%= @breed.hypoallergenic ? "Yes" : "No" %></dd>
 
@@ -98,6 +138,35 @@
 
 <% if @breed.description.present? %>
   <p><%= @breed.description %></p>
+<% end %>
+
+<%# Ratings are estimates researched from breed standards, so they are shown
+    together with where they came from rather than as bare facts. %>
+<% ratings = breed_ratings(@breed) %>
+<% if ratings.any? %>
+  <h2 id="traits">
+    <a class="api-anchor" href="#traits" aria-hidden="true"></a>
+    Traits
+  </h2>
+
+  <dl class="api-facts breed-traits">
+    <% ratings.each do |label, value| %>
+      <dt><%= label %></dt>
+      <dd><span class="breed-rating" title="<%= value %> out of 5"><%= breed_rating_bar(value) %></span></dd>
+    <% end %>
+  </dl>
+
+  <p class="api-muted">
+    Ratings run from 1 to 5 against dogs in general, and are estimates rather
+    than measurements.
+    <% if @breed.sources.any? %>
+      Researched from
+      <%= safe_join(@breed.sources.map { |source|
+            link_to(source["title"].presence || URI.parse(source["url"]).host, source["url"],
+                    target: "_blank", rel: "noopener nofollow")
+          }, ", ") %>.
+    <% end %>
+  </p>
 <% end %>
 
 <% if @siblings.any? %>

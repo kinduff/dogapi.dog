@@ -103,10 +103,49 @@ module BrowseHelper
   end
 
   def breed_weight(breed, sex)
-    min = breed.public_send("#{sex}_weight_min")
-    max = breed.public_send("#{sex}_weight_max")
+    breed_measurement(breed, "#{sex}_weight", "kg")
+  end
+
+  def breed_height(breed, sex)
+    breed_measurement(breed, "#{sex}_height", "cm")
+  end
+
+  def breed_measurement(breed, field, unit)
+    min = breed.public_send("#{field}_min")
+    max = breed.public_send("#{field}_max")
     return if min.blank? && max.blank?
 
-    "#{[min, max].compact.join("–")} kg"
+    "#{[min, max].compact.join("–")} #{unit}"
+  end
+
+  # Where the breed comes from, as one line: "Japan, Akita Prefecture (17th century)".
+  def breed_origin(breed)
+    country = [breed.origin_country, breed.origin_region].compact_blank.join(", ")
+    return if country.blank?
+
+    breed.origin_era.present? ? "#{country} (#{breed.origin_era})" : country
+  end
+
+  def breed_coat(breed)
+    parts = [breed.coat_length, breed.coat_type].compact_blank.uniq
+    colors = Array(breed.coat_colors).compact_blank
+    return if parts.empty? && colors.empty?
+
+    [parts.join(" "), colors.to_sentence].compact_blank.join(" · ")
+  end
+
+  # Ratings render as a bar rather than a bare number, since the number only
+  # means anything against the 1 to 5 scale.
+  def breed_rating_bar(value)
+    return if value.blank?
+
+    "#{"●" * value}#{"○" * (5 - value)}"
+  end
+
+  def breed_ratings(breed)
+    Breed::RATINGS.filter_map do |name|
+      value = breed.traits[name.to_s]
+      [name.to_s.humanize, value] if value.present?
+    end
   end
 end

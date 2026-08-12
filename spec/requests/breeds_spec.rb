@@ -90,6 +90,36 @@ RSpec.describe "Breeds pages" do
       expect(response.body).to include("Akita", "Working Group", "10–14 years")
     end
 
+    it "shows the researched attributes when a breed has them" do
+      akita.update!(
+        male_height: {"min" => 66, "max" => 71},
+        origin: {"country" => "Japan", "era" => "17th century"},
+        coat: {"type" => "double", "length" => "medium", "colors" => %w[red brindle]},
+        traits: {"energy" => 4, "temperament" => %w[loyal dignified], "exercise_minutes" => 60},
+        other_names: ["Akita Inu"],
+        recognized_by: ["AKC"],
+        sources: [{"url" => "https://www.akc.org/dog-breeds/akita/", "title" => "AKC"}]
+      )
+
+      get "/breeds/akita"
+
+      expect(response.body).to include(
+        "66–71 cm",
+        "Japan (17th century)",
+        "medium double",
+        "loyal and dignified",
+        "60 minutes a day",
+        "Akita Inu",
+        "AKC"
+      )
+    end
+
+    it "leaves the researched rows out for a breed nobody has enriched" do
+      get "/breeds/beagle"
+
+      expect(response.body).not_to include("Origin", "Traits")
+    end
+
     it "renders the breed by its API id" do
       get "/breeds/#{akita.id}"
 

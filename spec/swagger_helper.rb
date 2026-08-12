@@ -92,10 +92,55 @@ BREED_IMAGE_SCHEMA = {
   }
 }.freeze
 
+# Everything below is filled in by a research run rather than typed in by
+# hand, so any of it can be empty for a breed the sources are quiet about.
+BREED_ORIGIN_SCHEMA = {
+  type: :object,
+  description: "Where the breed comes from",
+  properties: {
+    country: {type: :string, example: "Japan"},
+    region: {type: :string, example: "Akita Prefecture"},
+    era: {type: :string, example: "17th century"}
+  }
+}.freeze
+
+BREED_COAT_SCHEMA = {
+  type: :object,
+  properties: {
+    type: {type: :string, enum: BreedEnrichments::COAT_TYPES, example: "double"},
+    length: {type: :string, enum: BreedEnrichments::COAT_LENGTHS, example: "medium"},
+    colors: {type: :array, items: {type: :string}, example: %w[red brindle white]}
+  }
+}.freeze
+
+BREED_TRAITS_SCHEMA = {
+  type: :object,
+  description: "Ratings from 1 (lowest) to 5 (highest), relative to dogs in general. Estimates, not measurements.",
+  properties: BreedEnrichments::RATINGS.to_h { |name|
+    [name, {type: :integer, minimum: 1, maximum: 5, example: 3}]
+  }.merge(
+    exercise_minutes: {type: :integer, description: "Typical daily exercise for an adult", example: 60},
+    temperament: {type: :array, items: {type: :string}, example: %w[loyal dignified courageous]}
+  )
+}.freeze
+
+BREED_SOURCE_SCHEMA = {
+  type: :object,
+  description: "A page the researched attributes were taken from",
+  properties: {
+    url: {type: :string, format: :uri},
+    title: {type: :string, example: "Akita Dog Breed Information"}
+  }
+}.freeze
+
 V2_SCHEMAS = {
   Range: RANGE_SCHEMA,
   PaginationMeta: PAGINATION_META_SCHEMA,
   BreedImage: BREED_IMAGE_SCHEMA,
+  BreedOrigin: BREED_ORIGIN_SCHEMA,
+  BreedCoat: BREED_COAT_SCHEMA,
+  BreedTraits: BREED_TRAITS_SCHEMA,
+  BreedSource: BREED_SOURCE_SCHEMA,
   Breed: {
     type: :object,
     properties: {
@@ -113,6 +158,34 @@ V2_SCHEMAS = {
           male_weight: {allOf: [{"$ref": "#/components/schemas/Range"}], description: "Male weight in kilograms"},
           female_weight: {allOf: [{"$ref": "#/components/schemas/Range"}], description: "Female weight in kilograms"},
           hypoallergenic: {type: :boolean, example: false},
+          male_height: {
+            allOf: [{"$ref": "#/components/schemas/Range"}],
+            description: "Male height at the withers, in centimetres"
+          },
+          female_height: {
+            allOf: [{"$ref": "#/components/schemas/Range"}],
+            description: "Female height at the withers, in centimetres"
+          },
+          origin: {"$ref": "#/components/schemas/BreedOrigin"},
+          coat: {"$ref": "#/components/schemas/BreedCoat"},
+          traits: {"$ref": "#/components/schemas/BreedTraits"},
+          other_names: {
+            type: :array,
+            description: "Names the breed also goes by",
+            items: {type: :string},
+            example: ["Akita Inu", "Japanese Akita"]
+          },
+          recognized_by: {
+            type: :array,
+            description: "Kennel clubs that recognise the breed",
+            items: {type: :string, enum: BreedEnrichments::REGISTRIES},
+            example: %w[AKC FCI]
+          },
+          sources: {
+            type: :array,
+            description: "Where the researched attributes above came from",
+            items: {"$ref": "#/components/schemas/BreedSource"}
+          },
           images: {
             type: :array,
             description: "Pictures of the breed, empty when none have been imported yet",

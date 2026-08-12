@@ -63,7 +63,10 @@ RSpec.describe OpenapiDocument do
 
   describe "#models" do
     it "lists the reusable schemas" do
-      expect(document.models).to contain_exactly("Range", "PaginationMeta", "BreedImage", "Breed", "Group", "Fact")
+      expect(document.models).to contain_exactly(
+        "Range", "PaginationMeta", "BreedImage", "BreedOrigin", "BreedCoat", "BreedTraits", "BreedSource",
+        "Breed", "Group", "Fact"
+      )
     end
 
     it "leaves out the envelope wrappers" do
