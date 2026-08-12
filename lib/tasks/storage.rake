@@ -19,7 +19,14 @@ namespace :storage do
     ActiveStorage::Current.url_options = Rails.application.config.x.image_url_options
 
     puts "Downloaded: #{service.download(key).inspect}"
-    puts "Public URL: #{service.url(key, filename: ActiveStorage::Filename.new("check.txt"), content_type: "text/plain", disposition: :inline)}"
+    url = service.url(
+      key,
+      expires_in: 5.minutes,
+      filename: ActiveStorage::Filename.new("check.txt"),
+      content_type: "text/plain",
+      disposition: :inline
+    )
+    puts "URL: #{url}"
   ensure
     if service && key
       service.delete(key)
