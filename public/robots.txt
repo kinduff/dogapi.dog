@@ -1,1 +1,11 @@
 # See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+
+User-agent: *
+Allow: /
+
+# Search results are variations of the breed list, and the API answers to
+# clients rather than to crawlers.
+Disallow: /breeds?q=
+Disallow: /api/
+
+Sitemap: https://dogapi.dog/sitemap.xml
