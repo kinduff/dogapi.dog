@@ -38,6 +38,13 @@ module DogapiDog
     # Breed images are resized and converted to WebP through libvips.
     config.active_storage.variant_processor = :vips
 
+    # Host used for image URLs built outside a request, such as in the import
+    # task. Only the Disk service needs it; bucket services build their own.
+    config.x.image_url_options = {
+      protocol: ENV.fetch("APP_PROTOCOL", "https"),
+      host: ENV.fetch("APP_HOST", "dogapi.dog")
+    }
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end
