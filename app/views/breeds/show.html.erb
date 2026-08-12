@@ -7,11 +7,15 @@
 <% end %>
 <% structured_data breed_structured_data(@breed) %>
 
-<p class="breed-lead">
-  <%= @breed.name %> belongs to the
-  <%= link_to @breed.group.name, group_path_for(@breed.group) %>.
-  <%= "Hypoallergenic." if @breed.hypoallergenic %>
-</p>
+<%# The breed name carries the page, so it reads as the title and the group it
+    belongs to sits under it as a subtitle. %>
+<div class="breed-title">
+  <h2><%= @breed.name %></h2>
+  <p class="breed-subtitle">
+    <%= link_to @breed.group.name, group_path_for(@breed.group) %>
+    <%= "· Hypoallergenic" if @breed.hypoallergenic %>
+  </p>
+</div>
 
 <% images = @breed.breed_images.to_a %>
 <% if images.any? %>

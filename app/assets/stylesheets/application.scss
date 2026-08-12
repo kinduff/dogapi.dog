@@ -1078,8 +1078,18 @@ details.api-fields {
     margin: 1.2rem 0 2rem;
 }
 
-.breed-lead {
-    font-size: 1.1em;
+.breed-title {
+    margin: 1.2rem 0 1.6rem;
+
+    h2 {
+        margin: 0;
+    }
+}
+
+.breed-subtitle {
+    color: #666;
+    font-size: 1.05em;
+    margin: 0.3em 0 0;
 }
 
 .breed-hero {
