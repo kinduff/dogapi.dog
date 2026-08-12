@@ -1148,27 +1148,39 @@ details.api-fields {
 }
 
 .breed-stat-icon {
-    font-size: 1.1rem;
+    color: var(--theme);
+    line-height: 0;
+
+    svg {
+        height: 1.15rem;
+        width: 1.15rem;
+    }
 }
 
 .breed-stat-label {
     color: var(--text-alt);
     font-size: 0.62em;
     letter-spacing: 0.05em;
-    margin-top: 0.25rem;
+    margin: 0.3rem 0 0.1rem;
     text-transform: uppercase;
 }
 
+// Both sexes are the same answer to the same question, so they are the same
+// size: only the symbol in front of them differs.
 .breed-stat-value {
-    font-size: 0.95em;
+    align-items: center;
+    display: flex;
+    font-size: 0.9em;
     font-weight: 600;
+    gap: 0.25rem;
     white-space: nowrap;
-}
 
-.breed-stat-note {
-    color: #666;
-    font-size: 0.7em;
-    white-space: nowrap;
+    svg {
+        color: var(--theme-light);
+        flex: 0 0 auto;
+        height: 0.85em;
+        width: 0.85em;
+    }
 }
 
 // Temperament words. Short enough to read as a row of labels, and there are

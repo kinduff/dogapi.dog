@@ -77,11 +77,15 @@
   <ul class="breed-stats">
     <% stats.each do |stat| %>
       <li class="breed-stat">
-        <span class="breed-stat-icon" aria-hidden="true"><%= stat[:icon] %></span>
+        <span class="breed-stat-icon"><%= icon(stat[:icon]) %></span>
         <span class="breed-stat-label"><%= stat[:label] %></span>
-        <span class="breed-stat-value"><%= stat[:value] %></span>
-        <% if stat[:note] %>
-          <span class="breed-stat-note"><%= stat[:note] %></span>
+        <% stat[:rows].each do |row| %>
+          <span class="breed-stat-value">
+            <% if row[:sex] %>
+              <%= icon(row[:sex], label: (row[:sex] == :mars) ? "Male" : "Female") %>
+            <% end %>
+            <%= row[:value] %>
+          </span>
         <% end %>
       </li>
     <% end %>

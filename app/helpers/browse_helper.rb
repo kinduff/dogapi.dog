@@ -138,21 +138,26 @@ module BrowseHelper
   # can be read at a glance rather than found in a table.
   def breed_stats(breed)
     [
-      breed_stat("📏", "Height", breed_height(breed, :male), breed_height(breed, :female)),
-      breed_stat("⚖️", "Weight", breed_weight(breed, :male), breed_weight(breed, :female)),
-      breed_stat("🎂", "Life span", breed_life_span(breed)),
-      breed_stat("🐾", "Exercise", breed_exercise(breed))
+      breed_stat(:ruler, "Height", breed_height(breed, :male), breed_height(breed, :female)),
+      breed_stat(:weight, "Weight", breed_weight(breed, :male), breed_weight(breed, :female)),
+      breed_stat(:heart_pulse, "Life span", breed_life_span(breed)),
+      breed_stat(:activity, "Exercise", breed_exercise(breed))
     ].compact
   end
 
+  # `rows` is either one plain value or one per sex — never a headline value
+  # with a smaller footnote under it, since both sexes are equally the answer.
   def breed_stat(icon, label, value, female = nil)
-    value ||= female
-    return if value.blank?
+    return if value.blank? && female.blank?
 
-    # Both sexes are only worth the space when they actually differ.
-    note = "♀ #{female}" if female.present? && female != value
+    rows =
+      if value.present? && female.present? && value != female
+        [{sex: :mars, value: value}, {sex: :venus, value: female}]
+      else
+        [{value: value.presence || female}]
+      end
 
-    {icon: icon, label: label, value: note ? "♂ #{value}" : value, note: note}
+    {icon: icon, label: label, rows: rows}
   end
 
   def breed_exercise(breed)
