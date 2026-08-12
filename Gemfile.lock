@@ -360,8 +360,8 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.4.1)
-    shoulda-matchers (7.0.1)
-      activesupport (>= 7.1)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     sidekiq (8.1.6)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
@@ -451,7 +451,7 @@ DEPENDENCIES
   rswag-api (~> 2.8)
   rswag-specs (~> 2.8)
   sassc-rails (~> 2.1)
-  shoulda-matchers (~> 7.0)
+  shoulda-matchers (~> 8.0)
   sidekiq (~> 8.1)
   simplecov (~> 1.1)
   sprockets-rails (~> 3.4)
