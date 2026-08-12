@@ -1,6 +1,8 @@
 //= require_tree .
 //= require_self
 
+$phone: 600px;
+
 :root {
     --background-main: #fefefe;
     --background-element: #eee;
@@ -26,13 +28,19 @@ html {
         sans-serif;
     font-size: 125%;
     line-height: 1.6;
-    word-break: break-word;
+    overflow-wrap: break-word;
+
+    @media (max-width: $phone) {
+        font-size: 112.5%;
+    }
 }
 
 body {
     min-height: 100%;
     overflow-x: hidden;
+    padding: 0;
 }
+
 h1 span {
     font-size: 0.4em;
     font-style: italic;
@@ -43,6 +51,14 @@ h1 span {
 
 header h1 {
     margin: 1.2rem 0 0;
+
+    @media (max-width: $phone) {
+        span {
+            display: block;
+            font-size: 0.45em;
+            margin-top: 0.1em;
+        }
+    }
 }
 
 h1,
@@ -52,21 +68,37 @@ h4,
 h5,
 h6 {
     margin: 3.2rem 0 0.8em;
+
+    @media (max-width: $phone) {
+        margin-top: 2rem;
+    }
 }
 
 h1 {
     font-size: 2.441rem;
     line-height: 1.1;
+
+    @media (max-width: $phone) {
+        font-size: 1.953rem;
+    }
 }
 
 h2 {
     font-size: 1.953rem;
     line-height: 1.15;
+
+    @media (max-width: $phone) {
+        font-size: 1.5rem;
+    }
 }
 
 h3 {
     font-size: 1.563rem;
     line-height: 1.2;
+
+    @media (max-width: $phone) {
+        font-size: 1.3rem;
+    }
 }
 
 h4 {
@@ -90,6 +122,10 @@ footer {
     margin: auto;
     max-width: 40rem;
     padding: 0 2rem;
+
+    @media (max-width: $phone) {
+        padding: 0 1.2rem;
+    }
 }
 
 nav,
@@ -118,16 +154,21 @@ nav {
 
     // Four links fit on two lines on a phone, which is shorter than four rows
     // of one link each and leaves the page itself above the fold.
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
         ul {
+            align-items: center;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem 1rem;
+            gap: 0.2rem 1rem;
         }
 
         li {
             margin-right: 0;
-            padding: 0.2rem 0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 0.45rem 0;
         }
     }
 }
@@ -162,7 +203,26 @@ nav.footer-nav {
         padding: 0;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
+        gap: 1.4rem 1.2rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        h2 {
+            font-size: 0.8rem;
+            letter-spacing: 0.03em;
+        }
+
+        li {
+            margin: 0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 0.35rem 0;
+        }
+    }
+
+    @media (max-width: 380px) {
         grid-template-columns: minmax(0, 1fr);
     }
 }
@@ -205,6 +265,16 @@ blockquote {
     border-left: 0.3rem solid #7a283a;
     margin: 0.6rem 0 1.2rem 0;
     padding-left: 2rem;
+
+    @media (max-width: $phone) {
+        padding-left: 1rem;
+    }
+}
+
+@media (max-width: $phone) {
+    .api-button {
+        min-height: 2.4rem;
+    }
 }
 
 // API reference
@@ -231,7 +301,7 @@ blockquote {
         margin: 0 0 0.4rem;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
         grid-template-columns: 1fr;
 
         dt {
@@ -351,6 +421,7 @@ blockquote {
     -webkit-overflow-scrolling: touch;
     margin: 1rem 0 1.6rem;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
 }
 
 .api-table {
@@ -486,6 +557,11 @@ h3:hover > .api-anchor,
         font-size: 0.85em;
         min-width: 0;
         padding: 0.4em 0.5em;
+
+        @media (max-width: $phone) {
+            font-size: 16px;
+            padding: 0.5em;
+        }
     }
 }
 
@@ -612,6 +688,14 @@ h3:hover > .api-anchor,
 
     &:hover {
         background: #eef1f4;
+    }
+
+    @media (max-width: $phone) {
+        padding: 0 0.5rem 0 2.2rem;
+
+        &::before {
+            width: 1.6rem;
+        }
     }
 }
 
@@ -742,8 +826,12 @@ details.api-fields {
     margin: 0;
     padding: 0;
 
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+
+        .home-hero-card:nth-child(n + 13) {
+            display: none;
+        }
     }
 }
 
@@ -910,6 +998,11 @@ details.api-fields {
     list-style: none;
     margin: 1rem 0 1.5rem;
     padding: 0;
+
+    @media (max-width: $phone) {
+        gap: 0.6rem 0.5rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 .breed-card {
@@ -985,6 +1078,14 @@ details.api-fields {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media (max-width: $phone) {
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        min-height: 2.6em;
+        white-space: normal;
+    }
 }
 
 .breed-card-meta {
@@ -998,6 +1099,7 @@ details.api-fields {
 .breed-pagination {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: 0.8rem;
     margin: 1.2rem 0 2rem;
 }
@@ -1026,6 +1128,10 @@ details.api-fields {
         max-height: 30rem;
         object-fit: contain;
         width: 100%;
+
+        @media (max-width: $phone) {
+            max-height: 55vh;
+        }
     }
 
     figcaption {
@@ -1094,6 +1200,11 @@ details.api-fields {
     display: flex;
     gap: 0.6rem;
     justify-content: space-between;
+
+    .api-muted {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
 }
 
 .group-previews {
@@ -1114,6 +1225,11 @@ details.api-fields {
         &:hover {
             outline: 2px solid var(--theme);
         }
+
+        @media (max-width: $phone) {
+            height: 3.6rem;
+            width: 3.6rem;
+        }
     }
 }
 
@@ -1133,7 +1249,7 @@ details.api-fields {
     margin: 1.4rem 0;
     padding: 0;
 
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -1221,7 +1337,7 @@ details.api-fields {
     margin: 1.2rem 0;
     padding: 1rem 1.2rem;
 
-    @media (max-width: 600px) {
+    @media (max-width: $phone) {
         grid-template-columns: minmax(0, 1fr) auto;
     }
 
