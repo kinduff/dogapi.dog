@@ -98,41 +98,27 @@ RSpec.describe "Homepage" do
       expect(response.body).not_to include('href="/breeds/pictureless"')
     end
 
-    it "names each dog with its group and life span" do
+    it "links each picture to the breed it shows" do
       create(:breed_image, breed: akita)
 
       get "/"
 
-      expect(rendered_text.squish).to include("Akita", "Working Group · 10–12 years")
+      expect(response.body).to include('href="/breeds/akita"', 'alt="A Akita"')
     end
 
-    # The grid is the answer to the request printed under it, so the two have
-    # to agree on what was asked for.
-    it "prints the one request the grid came from" do
+    # The grid is the whole thing now: no request line, no button, no script.
+    it "asks for nothing beyond the pictures" do
       create(:breed_image, breed: akita)
 
       get "/"
 
-      expect(rendered_text.squish).to include(
-        "https://dogapi.dog/api/v2/breeds?filter[has_images]=true&page[size]=8&page[number]=1"
-      )
-    end
-
-    # The button is the only part that needs the script, so the grid has to
-    # stand on its own.
-    it "renders real dogs without javascript" do
-      create(:breed_image, breed: akita)
-
-      get "/"
-
-      expect(response.body).to include("data-hero-shuffle", "hidden")
-      expect(response.body).to include("home_hero")
+      expect(response.body).not_to include("data-hero-shuffle", "home_hero", "home-hero-request")
     end
 
     it "is left out entirely when nothing has been imported yet" do
       get "/"
 
-      expect(response.body).not_to include("data-hero-grid")
+      expect(response.body).not_to include("home-hero-grid")
     end
   end
 

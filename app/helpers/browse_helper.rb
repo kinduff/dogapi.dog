@@ -102,12 +102,6 @@ module BrowseHelper
     "#{[breed.life_min, breed.life_max].compact.join("–")} years"
   end
 
-  # One line of context under the picture on the homepage: the group, and the
-  # life span when the record has one.
-  def hero_meta(breed)
-    [breed.group&.name, breed_life_span(breed)].compact.join(" · ")
-  end
-
   def breed_weight(breed, sex)
     min = breed.public_send("#{sex}_weight_min")
     max = breed.public_send("#{sex}_weight_max")
