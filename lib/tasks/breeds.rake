@@ -59,7 +59,9 @@ namespace :breeds do
   # has to be able to check a connection out, so the pool is the ceiling.
   def enrich_workers
     pool = ActiveRecord::Base.connection_pool.size
-    asked = ENV.fetch("ENRICHMENT_WORKERS", "4").to_i.clamp(1, 20)
+    # The threads spend their lives blocked on the API, so the ceiling is the
+    # connection pool and the account's rate limit rather than the machine.
+    asked = ENV.fetch("ENRICHMENT_WORKERS", "4").to_i.clamp(1, 64)
     workers = asked.clamp(1, [pool - 1, 1].max)
 
     if workers < asked
