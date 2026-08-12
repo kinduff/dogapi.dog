@@ -4,6 +4,10 @@ services:
   web:
     image: kinduff/dogapi.dog:latest
     restart: unless-stopped
+    # Bucket credentials and Umami keys, see .env.example. The file has to
+    # exist next to this one or compose refuses to start.
+    env_file:
+      - .env
     environment:
       - REDIS_URL=redis://redis
       - DATABASE_URL=postgres://postgres:postgres@postgres
