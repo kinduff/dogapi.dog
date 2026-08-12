@@ -16,6 +16,15 @@ class Breed < ApplicationRecord
     apartment_friendly
   ].freeze
 
+  # What the ranges that were here before enrichment can plausibly hold. Wide
+  # on purpose: the point is to catch a number that belongs to another breed or
+  # another unit, not to second-guess a breed standard.
+  PLAUSIBLE_RANGES = {
+    "life" => (5..25),
+    "male_weight" => (0.5..115),
+    "female_weight" => (0.5..115)
+  }.freeze
+
   belongs_to :group
   has_many :breed_images, -> { ordered }, dependent: :destroy, inverse_of: :breed
   has_many :breed_enrichments, -> { ordered }, dependent: :destroy, inverse_of: :breed

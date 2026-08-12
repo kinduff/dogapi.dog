@@ -3,13 +3,7 @@
 namespace :breeds do
   # What the API promises: weights in kilograms, life expectancy in years. A
   # value outside these bounds is not a rare breed, it is a bad row.
-  def plausible_ranges
-    {
-      "life" => (5..25),
-      "male_weight" => (0.5..115),
-      "female_weight" => (0.5..115)
-    }
-  end
+  def plausible_ranges = Breed::PLAUSIBLE_RANGES
 
   desc "Report breeds whose stored ranges are missing, inverted or implausible"
   task audit: :environment do
@@ -191,6 +185,91 @@ namespace :breeds do
     searches = usage.sum { |entry| entry.dig("server_tool_use", "web_search_requests").to_i }
 
     puts "\n#{runs} runs: #{tokens["input_tokens"]} tokens in, #{tokens["output_tokens"]} out, #{searches} web searches"
+  end
+
+  def print_correction(correction, indent: "  ")
+    puts "#{indent}#{correction}"
+    puts "#{indent}  #{correction.note}" if correction.note.present?
+  end
+
+  desc "List the corrections still waiting on a decision"
+  task corrections: :environment do
+    outstanding = BreedEnrichments::Corrections.outstanding
+
+    if outstanding.empty?
+      puts "Nothing outstanding"
+      next
+    end
+
+    puts "#{outstanding.size} corrections across #{outstanding.map(&:breed).uniq.size} breeds\n\n"
+
+    outstanding.group_by(&:breed).each do |breed, corrections|
+      puts breed.name
+      corrections.each { |correction| print_correction(correction) }
+      Array(corrections.first.run.payload["sources"]).each { |source| puts "    source: #{source["url"]}" }
+      puts
+    end
+
+    puts "Accept with: rails breeds:correct[#{outstanding.first.breed.name}]"
+  end
+
+  desc "Accept a breed's corrections: breeds:correct[Akita] or breeds:correct[Akita,life]"
+  task :correct, %i[breed field] => :environment do |_task, args|
+    name = args[:breed] or abort("Usage: rails breeds:correct[BreedName]")
+    breed = Breed.find_by(name: name) or abort("No breed named #{name.inspect}")
+
+    outstanding = BreedEnrichments::Corrections.for_breed(breed)
+    outstanding = outstanding.select { |correction| correction.field == args[:field] } if args[:field]
+
+    if outstanding.empty?
+      puts "Nothing outstanding for #{breed.name}#{" on #{args[:field]}" if args[:field]}"
+      next
+    end
+
+    outstanding.each do |correction|
+      BreedEnrichments::Corrections.accept(correction)
+      puts "#{breed.name} #{correction}"
+    end
+  end
+
+  desc "Accept every outstanding correction: breeds:correct_all shows them, breeds:correct_all[write] applies"
+  task :correct_all, %i[flags] => :environment do |_task, args|
+    write = Array(args.extras).push(args[:flags]).include?("write")
+    outstanding = BreedEnrichments::Corrections.outstanding
+
+    if outstanding.empty?
+      puts "Nothing outstanding"
+      next
+    end
+
+    outstanding.group_by(&:breed).each do |breed, corrections|
+      corrections.each do |correction|
+        BreedEnrichments::Corrections.accept(correction) if write
+        puts "#{breed.name} #{correction}"
+      end
+    end
+
+    verb = write ? "Accepted" : "Would accept"
+    puts "\n#{verb} #{outstanding.size} corrections across #{outstanding.map(&:breed).uniq.size} breeds"
+    puts "Re-run as breeds:correct_all[write] to apply, or read them one at a time with breeds:corrections" unless write
+    puts "Undo with breeds:uncorrect_all" if write
+  end
+
+  desc "Put back the ranges an accepted correction replaced: breeds:uncorrect[Akita] or breeds:uncorrect_all"
+  task :uncorrect, %i[breed] => :environment do |_task, args|
+    name = args[:breed] or abort("Usage: rails breeds:uncorrect[BreedName]")
+    breed = Breed.find_by(name: name) or abort("No breed named #{name.inspect}")
+
+    reverted = breed.breed_enrichments.ordered.sum { |run| BreedEnrichments::Corrections.revert(run).size }
+
+    puts reverted.zero? ? "Nothing accepted for #{breed.name}" : "Put back #{reverted} ranges on #{breed.name}"
+  end
+
+  task uncorrect_all: :environment do
+    runs = BreedEnrichments::Corrections.accepted_runs.to_a
+    reverted = runs.sum { |run| BreedEnrichments::Corrections.revert(run).size }
+
+    puts reverted.zero? ? "Nothing accepted" : "Put back #{reverted} ranges across #{runs.size} breeds"
   end
 
   desc "List the runs a human should look at: low confidence, rejections or corrections"
