@@ -29,9 +29,11 @@ Rails.application.configure do
   config.cache_store = :memory_store
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  # Local disk by default. Set ACTIVE_STORAGE_SERVICE to point development at a
-  # real bucket, which is the only way to check bucket credentials end to end.
-  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "local").to_sym
+  # Always the local disk unless asked otherwise, and deliberately not the
+  # ACTIVE_STORAGE_SERVICE the deployed app reads: .env is loaded here too now,
+  # so sharing that name would point every local import at the live bucket.
+  # Set DEV_ACTIVE_STORAGE_SERVICE=backblaze for a one-off check against it.
+  config.active_storage.service = ENV.fetch("DEV_ACTIVE_STORAGE_SERVICE", "local").to_sym
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false

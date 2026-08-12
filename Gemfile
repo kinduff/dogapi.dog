@@ -33,6 +33,9 @@ group :development, :test do
 end
 
 group :development do
+  # Development only on purpose: the suite must not pick up whatever happens to
+  # be in a developer's .env.
+  gem "dotenv-rails", "~> 3.1"
   gem "rack-mini-profiler", "~> 4.0"
   gem "web-console", "~> 4.3"
 end
