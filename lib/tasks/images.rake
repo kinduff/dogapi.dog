@@ -3,7 +3,7 @@
 namespace :images do
   # Wikimedia asks clients not to hammer the API. Imports are occasional, so
   # a pause between breeds costs nothing.
-  DELAY = ENV.fetch("IMAGE_IMPORT_DELAY", "1").to_f
+  def import_delay = ENV.fetch("IMAGE_IMPORT_DELAY", "1").to_f
 
   desc "Import images for one breed: images:import[Akita,wikimedia_commons,3]"
   task :import, %i[breed source limit] => :environment do |_task, args|
@@ -29,7 +29,7 @@ namespace :images do
       puts "[#{index + 1}/#{breeds.size}] #{breed.name}: #{result.summary}"
       result.errors.each { |error| warn "  #{error}" }
 
-      sleep DELAY unless index == breeds.size - 1
+      sleep import_delay unless index == breeds.size - 1
     end
 
     puts "Done: #{totals[:imported]} imported, #{totals[:skipped]} skipped, #{totals[:errors]} failed"
