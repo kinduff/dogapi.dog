@@ -703,10 +703,82 @@
                               "max": 100
                             },
                             "female_weight": {
-                              "min": 50,
-                              "max": 100
+                              "min": 45,
+                              "max": 70
                             },
-                            "images": []
+                            "male_height": {
+                              "min": 72,
+                              "max": 75
+                            },
+                            "female_height": {
+                              "min": 67,
+                              "max": 70
+                            },
+                            "origin": {
+                              "country": "Georgia",
+                              "region": "Caucasus Mountains",
+                              "era": "antiquity"
+                            },
+                            "coat": {
+                              "type": "double",
+                              "length": "long",
+                              "colors": [
+                                "gray",
+                                "fawn",
+                                "brindle",
+                                "white"
+                              ]
+                            },
+                            "traits": {
+                              "energy": 3,
+                              "trainability": 2,
+                              "barking": 4,
+                              "grooming": 4,
+                              "shedding": 5,
+                              "drooling": 3,
+                              "good_with_children": 3,
+                              "good_with_dogs": 2,
+                              "good_with_strangers": 1,
+                              "apartment_friendly": 1,
+                              "exercise_minutes": 60,
+                              "temperament": [
+                                "fearless",
+                                "self-confident",
+                                "territorial"
+                              ]
+                            },
+                            "other_names": [
+                              "Caucasian Ovcharka",
+                              "Kavkazskaia Ovtcharka",
+                              "Nagazi"
+                            ],
+                            "recognized_by": [
+                              "AKC",
+                              "FCI",
+                              "UKC"
+                            ],
+                            "sources": [
+                              {
+                                "url": "https://www.akc.org/dog-breeds/caucasian-shepherd-dog/",
+                                "title": "Caucasian Shepherd Dog Dog Breed Information - AKC"
+                              }
+                            ],
+                            "images": [
+                              {
+                                "id": "3f1c5f4e-1a6b-4f2e-9b8d-2c0e5a7d4b31",
+                                "url": "https://images.dogapi.dog/caucasian-shepherd-dog.jpg",
+                                "thumb": "https://images.dogapi.dog/caucasian-shepherd-dog-thumb.webp",
+                                "medium": "https://images.dogapi.dog/caucasian-shepherd-dog-medium.webp",
+                                "large": "https://images.dogapi.dog/caucasian-shepherd-dog-large.webp",
+                                "attribution": {
+                                  "author": "Magdalena Niemiec",
+                                  "license": "CC BY-SA 3.0",
+                                  "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+                                  "source": "wikimedia_commons",
+                                  "source_url": "https://commons.wikimedia.org/wiki/File:Caucasian_Shepherd_Dog.jpg"
+                                }
+                              }
+                            ]
                           },
                           "relationships": {
                             "group": {
@@ -736,7 +808,82 @@
                               "min": 25,
                               "max": 35
                             },
-                            "images": []
+                            "male_height": {
+                              "min": 62,
+                              "max": 68
+                            },
+                            "female_height": {
+                              "min": 59,
+                              "max": 65
+                            },
+                            "origin": {
+                              "country": "Belgium",
+                              "region": "Flanders",
+                              "era": "19th century"
+                            },
+                            "coat": {
+                              "type": "double",
+                              "length": "medium",
+                              "colors": [
+                                "black",
+                                "fawn",
+                                "brindle",
+                                "gray"
+                              ]
+                            },
+                            "traits": {
+                              "energy": 3,
+                              "trainability": 4,
+                              "barking": 2,
+                              "grooming": 4,
+                              "shedding": 2,
+                              "drooling": 3,
+                              "good_with_children": 4,
+                              "good_with_dogs": 3,
+                              "good_with_strangers": 3,
+                              "apartment_friendly": 2,
+                              "exercise_minutes": 60,
+                              "temperament": [
+                                "affectionate",
+                                "courageous",
+                                "strong-willed"
+                              ]
+                            },
+                            "other_names": [
+                              "Vlaamse Koehond",
+                              "Flanders Cattle Dog"
+                            ],
+                            "recognized_by": [
+                              "AKC",
+                              "FCI",
+                              "UKC",
+                              "KC",
+                              "CKC",
+                              "ANKC",
+                              "NZKC"
+                            ],
+                            "sources": [
+                              {
+                                "url": "https://www.akc.org/dog-breeds/bouvier-des-flandres/",
+                                "title": "Bouvier des Flandres Dog Breed Information - AKC"
+                              }
+                            ],
+                            "images": [
+                              {
+                                "id": "b7c2d90a-5e44-4f01-8a6c-1d3f9e2b7c05",
+                                "url": "https://images.dogapi.dog/bouvier-des-flandres.jpg",
+                                "thumb": "https://images.dogapi.dog/bouvier-des-flandres-thumb.webp",
+                                "medium": "https://images.dogapi.dog/bouvier-des-flandres-medium.webp",
+                                "large": "https://images.dogapi.dog/bouvier-des-flandres-large.webp",
+                                "attribution": {
+                                  "author": "Canarian",
+                                  "license": "CC BY-SA 4.0",
+                                  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+                                  "source": "wikimedia_commons",
+                                  "source_url": "https://commons.wikimedia.org/wiki/File:Bouvier_des_Flandres.jpg"
+                                }
+                              }
+                            ]
                           },
                           "relationships": {
                             "group": {
@@ -817,12 +964,69 @@
                             "max": 100
                           },
                           "female_weight": {
-                            "min": 50,
-                            "max": 100
+                            "min": 45,
+                            "max": 70
                           },
+                          "male_height": {
+                            "min": 72,
+                            "max": 75
+                          },
+                          "female_height": {
+                            "min": 67,
+                            "max": 70
+                          },
+                          "origin": {
+                            "country": "Georgia",
+                            "region": "Caucasus Mountains",
+                            "era": "antiquity"
+                          },
+                          "coat": {
+                            "type": "double",
+                            "length": "long",
+                            "colors": [
+                              "gray",
+                              "fawn",
+                              "brindle",
+                              "white"
+                            ]
+                          },
+                          "traits": {
+                            "energy": 3,
+                            "trainability": 2,
+                            "barking": 4,
+                            "grooming": 4,
+                            "shedding": 5,
+                            "drooling": 3,
+                            "good_with_children": 3,
+                            "good_with_dogs": 2,
+                            "good_with_strangers": 1,
+                            "apartment_friendly": 1,
+                            "exercise_minutes": 60,
+                            "temperament": [
+                              "fearless",
+                              "self-confident",
+                              "territorial"
+                            ]
+                          },
+                          "other_names": [
+                            "Caucasian Ovcharka",
+                            "Kavkazskaia Ovtcharka",
+                            "Nagazi"
+                          ],
+                          "recognized_by": [
+                            "AKC",
+                            "FCI",
+                            "UKC"
+                          ],
+                          "sources": [
+                            {
+                              "url": "https://www.akc.org/dog-breeds/caucasian-shepherd-dog/",
+                              "title": "Caucasian Shepherd Dog Dog Breed Information - AKC"
+                            }
+                          ],
                           "images": [
                             {
-                              "id": "6d1e1b0c-0f0b-4b4a-9c4c-8e1f4b7f7f52",
+                              "id": "3f1c5f4e-1a6b-4f2e-9b8d-2c0e5a7d4b31",
                               "url": "https://images.dogapi.dog/caucasian-shepherd-dog.jpg",
                               "thumb": "https://images.dogapi.dog/caucasian-shepherd-dog-thumb.webp",
                               "medium": "https://images.dogapi.dog/caucasian-shepherd-dog-medium.webp",
