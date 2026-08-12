@@ -1,45 +1,32 @@
-<%# The picture at the top of the page is an API response, not an asset: the
-    src points at the same endpoint the snippet underneath tells you to use,
-    and the shuffle button asks the public API for another breed the way any
-    other client would. Without JavaScript it is still a real dog, linked to
-    its page. %>
-<% candidates = pool.map { |id, name| {id: id, path: breed_path(name.parameterize.presence || id)} } %>
-<figure class="home-hero" data-hero data-hero-pool="<%= candidates.to_json %>">
-  <a class="home-hero-frame" data-hero-picture href="<%= breed_path_for(breed) %>">
-    <img class="home-hero-image" data-hero-image
-         src="<%= image_api_v2_breed_path(breed, size: "large") %>"
-         alt="A <%= breed.name %>" width="1200" height="900" fetchpriority="high">
-    <span class="home-hero-spinner" data-hero-spinner hidden aria-hidden="true"></span>
-  </a>
+<%# The top of the page is one request to the public API, rendered. The eight
+    breeds below are the page of the collection named in the URL under them,
+    in the same order, and the shuffle button asks for another page. Without
+    JavaScript it is a grid of real dogs that link to their pages. %>
+<% query = {"filter[has_images]" => "true", "page[size]" => size, "page[number]" => page} %>
+<section class="home-hero" data-hero data-hero-pages="<%= pages %>" data-hero-size="<%= size %>">
+  <ul class="home-hero-grid" data-hero-grid>
+    <% breeds.each do |breed| %>
+      <li class="home-hero-card">
+        <a href="<%= breed_path_for(breed) %>">
+          <img src="<%= breed.breed_images.first.url_for(:medium) %>"
+               srcset="<%= breed.breed_images.first.url_for(:thumb) %> 200w, <%= breed.breed_images.first.url_for(:medium) %> 600w"
+               sizes="(max-width: 600px) 45vw, 15rem"
+               alt="A <%= breed.name %>" width="600" height="600" loading="eager">
+          <strong><%= breed.name %></strong>
+          <span class="api-muted"><%= hero_meta(breed) %></span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
 
-  <figcaption class="home-hero-caption">
-    <span class="home-hero-facts">
-      <strong class="home-hero-name" data-hero-name><%= breed.name %></strong>
-      <span class="api-muted" data-hero-meta><%= hero_meta(breed) %></span>
-    </span>
-
-    <span class="home-hero-actions">
-      <%# Nothing to press until the script is there to answer it. %>
-      <button type="button" class="api-button" data-hero-shuffle hidden>Shuffle</button>
-      <a class="api-button api-button-quiet" data-hero-link href="<%= breed_path_for(breed) %>">See the breed →</a>
-    </span>
-  </figcaption>
-
-  <%# What the browser just did, in the shape the docs use for every other
-      request on the site. %>
   <p class="home-hero-request">
-    <code data-hero-url><%= image_api_v2_breed_path(breed, size: "large") %></code>
-    <span class="api-muted" data-hero-status role="status"></span>
+    <span class="home-hero-url">
+      <span class="api-method api-method-get">GET</span>
+      <code data-hero-url><%= api_url("/breeds", query) %></code>
+    </span>
+
+    <%# Nothing to press until the script is there to answer it. %>
+    <button type="button" class="api-button" data-hero-shuffle hidden>Another page</button>
+    <span class="home-hero-spinner" data-hero-spinner hidden aria-hidden="true"></span>
   </p>
-</figure>
-
-<%= render "pages/api_code",
-      label: "That picture, in one tag",
-      language: "html",
-      id: "home-hero-code",
-      content: %(<img src="https://dogapi.dog/api/v2/breeds/image">) %>
-
-<p class="home-hero-note api-muted">
-  No id means any dog. Add one — <code>/api/v2/breeds/&lt;id&gt;/image</code> —
-  and you get that breed, which is what the button above is doing.
-</p>
+</section>

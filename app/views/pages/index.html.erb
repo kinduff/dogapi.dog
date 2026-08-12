@@ -3,7 +3,11 @@
   <%= javascript_include_tag "home_hero", defer: true %>
 <% end %>
 
-<%= render "pages/hero", breed: @hero_breed, pool: @hero_pool if @hero_breed %>
+<%= render "pages/hero",
+      breeds: @hero_breeds,
+      page: @hero_page,
+      pages: @hero_pages,
+      size: PagesController::HERO_SIZE if @hero_breeds.any? %>
 
 <p class="home-lead">
   Hi, I'm <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.
@@ -73,6 +77,23 @@
     </figure>
   </div>
 </form>
+
+<p>
+  Pictures need even less than that. The image endpoint redirects straight to a
+  file, so an <code>img</code> tag can point at it and nothing else is needed:
+</p>
+
+<%= render "pages/api_code",
+      label: "A dog, in one tag",
+      language: "html",
+      id: "home-image-tag",
+      content: %(<img src="https://dogapi.dog/api/v2/breeds/image">) %>
+
+<p>
+  No id means any dog. Add one — <code>/api/v2/breeds/&lt;id&gt;/image</code> —
+  and you get that breed, which is where the pictures at the top of this page
+  come from.
+</p>
 
 <p>
   When you want the rest, the <%= link_to "docs", docs_path %> explain every

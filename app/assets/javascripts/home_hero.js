@@ -1,11 +1,10 @@
-// The picture at the top of the homepage. Shuffling it is a real call to the
-// public API: one request for the breed, and the picture itself is the image
-// endpoint, so what the page shows is what a reader would get from the same
-// two URLs.
+// The grid at the top of the homepage is one request to the public API,
+// rendered. Shuffling asks for another page of the same collection, and every
+// tile — picture, name, group, life span — is built from that single response.
 (function () {
   "use strict";
 
-  var IMAGE_SIZE = "large";
+  var PATH = "/api/v2/breeds";
 
   function ready(fn) {
     if (document.readyState !== "loading") return fn();
@@ -16,28 +15,28 @@
     var hero = document.querySelector("[data-hero]");
     if (!hero) return;
 
+    var grid = hero.querySelector("[data-hero-grid]");
     var button = hero.querySelector("[data-hero-shuffle]");
-    var image = hero.querySelector("[data-hero-image]");
     var spinner = hero.querySelector("[data-hero-spinner]");
-    var name = hero.querySelector("[data-hero-name]");
-    var meta = hero.querySelector("[data-hero-meta]");
     var url = hero.querySelector("[data-hero-url]");
-    var status = hero.querySelector("[data-hero-status]");
-    var links = hero.querySelectorAll("[data-hero-picture], [data-hero-link]");
 
-    var pool = [];
-    try {
-      pool = JSON.parse(hero.getAttribute("data-hero-pool") || "[]");
-    } catch (error) {
-      pool = [];
-    }
-
-    // A single breed would shuffle to the dog already on screen, forever.
-    if (!button || pool.length < 2) return;
-    button.hidden = false;
-
+    var pages = parseInt(hero.getAttribute("data-hero-pages"), 10) || 1;
+    var size = parseInt(hero.getAttribute("data-hero-size"), 10) || 8;
     var current = null;
     var busy = false;
+
+    function query(page) {
+      return PATH + "?filter[has_images]=true&page[size]=" + size + "&page[number]=" + page + "&include=group";
+    }
+
+    function pick() {
+      var next = 1 + Math.floor(Math.random() * pages);
+      // One retry is enough to make repeats rare without looping on a short
+      // collection.
+      if (next === current && pages > 1) next = 1 + Math.floor(Math.random() * pages);
+
+      return next;
+    }
 
     function lifeSpan(life) {
       if (!life) return null;
@@ -48,51 +47,83 @@
       return years.length ? years.join("–") + " years" : null;
     }
 
-    function pick() {
-      var next = pool[Math.floor(Math.random() * pool.length)];
-      // One retry is enough to make repeats rare without looping on a short
-      // list.
-      if (current && next.id === current.id) next = pool[Math.floor(Math.random() * pool.length)];
+    // The groups arrive once each, as included records, however many breeds
+    // point at them.
+    function groups(payload) {
+      var names = {};
 
-      return next;
-    }
-
-    function groupName(payload) {
-      var relation = payload.data.relationships && payload.data.relationships.group;
-      var groupId = relation && relation.data && relation.data.id;
-      var included = payload.included || [];
-
-      for (var index = 0; index < included.length; index++) {
-        if (included[index].id === groupId) return included[index].attributes.name;
-      }
-
-      return null;
-    }
-
-    function render(payload, breed) {
-      var attributes = payload.data.attributes;
-      var facts = [groupName(payload), lifeSpan(attributes.life)].filter(Boolean);
-
-      name.textContent = attributes.name;
-      meta.textContent = facts.join(" · ");
-      image.alt = "A " + attributes.name;
-
-      Array.prototype.forEach.call(links, function (link) {
-        link.href = breed.path;
+      (payload.included || []).forEach(function (record) {
+        if (record.type === "group") names[record.id] = record.attributes.name;
       });
 
-      // The picture is a second request to the image endpoint, which is the
-      // one the snippet under the card is about.
-      var imageUrl = "/api/v2/breeds/" + breed.id + "/image?size=" + IMAGE_SIZE;
-      url.textContent = imageUrl;
-      image.src = imageUrl;
+      return names;
     }
 
-    function done(message) {
+    function path(name) {
+      return "/breeds/" + name.toLowerCase().normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function tile(breed, groupNames) {
+      var attributes = breed.attributes;
+      var picture = (attributes.images || [])[0];
+      if (!picture) return null;
+
+      var relation = breed.relationships && breed.relationships.group;
+      var groupId = relation && relation.data && relation.data.id;
+      var facts = [groupNames[groupId], lifeSpan(attributes.life)].filter(Boolean);
+
+      var item = document.createElement("li");
+      var link = document.createElement("a");
+      var image = document.createElement("img");
+      var name = document.createElement("strong");
+      var meta = document.createElement("span");
+
+      item.className = "home-hero-card";
+      link.href = path(attributes.name);
+
+      image.src = picture.medium;
+      image.srcset = picture.thumb + " 200w, " + picture.medium + " 600w";
+      image.sizes = "(max-width: 600px) 45vw, 15rem";
+      image.alt = "A " + attributes.name;
+      image.width = 600;
+      image.height = 600;
+
+      name.textContent = attributes.name;
+      meta.className = "api-muted";
+      meta.textContent = facts.join(" · ");
+
+      link.appendChild(image);
+      link.appendChild(name);
+      link.appendChild(meta);
+      item.appendChild(link);
+
+      return item;
+    }
+
+    function render(payload) {
+      var names = groups(payload);
+      var tiles = (payload.data || []).map(function (breed) {
+        return tile(breed, names);
+      }).filter(Boolean);
+
+      if (!tiles.length) return false;
+
+      grid.textContent = "";
+      tiles.forEach(function (item) {
+        grid.appendChild(item);
+      });
+
+      return true;
+    }
+
+    function done() {
       busy = false;
       button.disabled = false;
       spinner.hidden = true;
-      status.textContent = message;
+      grid.classList.remove("is-loading");
     }
 
     function shuffle() {
@@ -101,33 +132,53 @@
       busy = true;
       button.disabled = true;
       spinner.hidden = false;
-      status.textContent = "Asking the API…";
+      grid.classList.add("is-loading");
 
-      var breed = pick();
-      current = breed;
+      var page = pick();
 
-      // The group travels as an included record, which is where its name is:
-      // the breed itself only carries the relationship.
-      fetch("/api/v2/breeds/" + breed.id + "?include=group", {headers: {Accept: "application/vnd.api+json"}})
+      fetch(query(page), {headers: {Accept: "application/vnd.api+json"}})
         .then(function (response) {
-          if (!response.ok) throw new Error(response.status + " " + response.statusText);
+          if (!response.ok) throw new Error(response.status);
 
           return response.json();
         })
         .then(function (payload) {
-          render(payload, breed);
+          if (!render(payload)) return done();
 
-          // The button comes back when the picture is on screen, not when the
-          // JSON lands, so a fast clicker cannot stack requests.
-          if (image.complete) return done("200 OK");
-          image.addEventListener("load", function () { done("200 OK"); }, {once: true});
-          image.addEventListener("error", function () { done("The picture did not load"); }, {once: true});
+          current = page;
+          // The URL under the grid is the one that produced it, so it only
+          // changes once the new dogs are on screen.
+          url.textContent = "https://dogapi.dog" + query(page).replace("&include=group", "");
+
+          // The last picture to arrive ends the wait, so the button comes back
+          // when the grid is really there.
+          var pictures = Array.prototype.slice.call(grid.querySelectorAll("img"));
+          var pending = pictures.filter(function (image) {
+            return !image.complete;
+          });
+
+          if (!pending.length) return done();
+
+          var left = pending.length;
+          pending.forEach(function (image) {
+            var settle = function () {
+              left -= 1;
+              if (left === 0) done();
+            };
+
+            image.addEventListener("load", settle, {once: true});
+            image.addEventListener("error", settle, {once: true});
+          });
         })
-        .catch(function (error) {
-          done("Could not reach the API (" + error.message + ")");
+        .catch(function () {
+          done();
         });
     }
 
-    button.addEventListener("click", shuffle);
+    // A single page would shuffle to the dogs already on screen, forever.
+    if (button && pages > 1) {
+      button.hidden = false;
+      button.addEventListener("click", shuffle);
+    }
   });
 })();

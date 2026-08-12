@@ -5,17 +5,19 @@ class PagesController < ApplicationController
   SAMPLE_ID_CACHE_TTL = 1.hour
   COUNTS_CACHE_KEY = "home/counts"
   COUNTS_CACHE_TTL = 1.hour
-  HERO_CACHE_KEY = "home/hero_pool"
+  HERO_CACHE_KEY = "home/hero_pages"
   HERO_CACHE_TTL = 1.hour
-  HERO_POOL_SIZE = 40
+  # One screenful of dogs, and the page size the request under them asks for.
+  HERO_SIZE = 8
 
   helper_method :sample_ids
 
   def index
     @fact = Fact.random.first
     @counts = data_counts
-    @hero_pool = hero_pool.sample(HERO_POOL_SIZE)
-    @hero_breed = hero_breed
+    @hero_pages = hero_pages
+    @hero_page = rand(1..@hero_pages) if @hero_pages.positive?
+    @hero_breeds = hero_breeds
   end
 
   def terms
@@ -42,23 +44,28 @@ class PagesController < ApplicationController
     end
   end
 
-  # The breeds the picture at the top of the page can land on. Cached because
-  # importing pictures is the only thing that moves it, and the page hands the
-  # list to the shuffle button so a click costs no round trip to pick one.
-  # Names travel with the ids because the page a breed lives at is built from
-  # its name, and guessing that in the browser gets accents wrong.
-  def hero_pool
+  # How many pages of pictured breeds there are, which is what the shuffle
+  # button picks from. Cached because only an import moves it.
+  def hero_pages
     Rails.cache.fetch(HERO_CACHE_KEY, expires_in: HERO_CACHE_TTL) do
-      Breed.where.associated(:breed_images).distinct.pluck(:id, :name)
+      (Breed.where.associated(:breed_images).distinct.count / HERO_SIZE.to_f).ceil
     end
   end
 
-  # The one the page opens on, drawn per request so a reload is a different
-  # dog even before anybody presses the button.
-  def hero_breed
-    return if @hero_pool.empty?
+  # One page of the collection the request under the grid asks for, down to the
+  # order and the offset: what the page renders and what that URL returns are
+  # the same eight breeds. Drawn at random so a reload brings different dogs
+  # before anybody presses the button.
+  def hero_breeds
+    return Breed.none if @hero_page.nil?
 
-    Breed.includes(:group).find_by(id: @hero_pool.sample.first)
+    Breed
+      .where.associated(:breed_images)
+      .distinct
+      .includes(:group, breed_images: {file_attachment: {blob: {variant_records: {image_attachment: :blob}}}})
+      .order(:name)
+      .offset((@hero_page - 1) * HERO_SIZE)
+      .limit(HERO_SIZE)
   end
 
   # Ids of records that actually exist, so the examples and the prefilled

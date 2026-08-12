@@ -41,6 +41,11 @@ RSpec.describe "Homepage" do
       expect(response.body).to include("data-api-try", 'data-base="/api/v2"', 'data-path="/facts"')
     end
 
+    it "shows the img tag the image endpoint answers, highlighted" do
+      expect(rendered_text).to include('<img src="https://dogapi.dog/api/v2/breeds/image">')
+      expect(response.body).to include(%(<span class="nt">&lt;img</span>), %(<span class="na">src=</span>))
+    end
+
     it "shows a copyable request, highlighted" do
       expect(rendered_text).to include('curl -s "https://dogapi.dog/api/v2/facts?limit=1"')
       expect(response.body).to include('<span class="code-line">')
@@ -64,30 +69,58 @@ RSpec.describe "Homepage" do
     end
   end
 
-  describe "the picture at the top" do
+  describe "the grid at the top" do
     let(:group) { create(:group, name: "Working Group") }
     let!(:akita) { create(:breed, name: "Akita", group: group, life: {min: 10, max: 12}) }
 
-    it "loads the picture from the image endpoint rather than from an asset" do
+    def pictured(name)
+      breed = create(:breed, name: name, group: group)
+      create(:breed_image, breed: breed, source_id: "File:#{name}.jpg")
+      breed
+    end
+
+    it "shows a whole page of breeds rather than one" do
       create(:breed_image, breed: akita)
+      3.times { |index| pictured("Breed #{index}") }
 
       get "/"
 
-      expect(response.body).to include("/api/v2/breeds/#{akita.id}/image?size=large")
+      expect(response.body.scan("home-hero-card").size).to eq(4)
     end
 
-    it "names the dog it is showing and links to its page" do
+    it "leaves out the breeds with no picture imported" do
+      create(:breed_image, breed: akita)
+      create(:breed, name: "Pictureless", group: group)
+
+      get "/"
+
+      expect(response.body).to include('href="/breeds/akita"')
+      expect(response.body).not_to include('href="/breeds/pictureless"')
+    end
+
+    it "names each dog with its group and life span" do
       create(:breed_image, breed: akita)
 
       get "/"
 
       expect(rendered_text.squish).to include("Akita", "Working Group · 10–12 years")
-      expect(response.body).to include('href="/breeds/akita"')
     end
 
-    # The button is the only part that needs the script, so the rest of the
-    # card has to stand on its own.
-    it "renders a real dog without javascript" do
+    # The grid is the answer to the request printed under it, so the two have
+    # to agree on what was asked for.
+    it "prints the one request the grid came from" do
+      create(:breed_image, breed: akita)
+
+      get "/"
+
+      expect(rendered_text.squish).to include(
+        "https://dogapi.dog/api/v2/breeds?filter[has_images]=true&page[size]=8&page[number]=1"
+      )
+    end
+
+    # The button is the only part that needs the script, so the grid has to
+    # stand on its own.
+    it "renders real dogs without javascript" do
       create(:breed_image, breed: akita)
 
       get "/"
@@ -96,30 +129,10 @@ RSpec.describe "Homepage" do
       expect(response.body).to include("home_hero")
     end
 
-    it "hands the shuffle button breeds that actually have a picture" do
-      create(:breed_image, breed: akita)
-      create(:breed, name: "Pictureless", group: group)
-
-      get "/"
-
-      pool = JSON.parse(CGI.unescapeHTML(response.body[/data-hero-pool="([^"]+)"/, 1]))
-
-      expect(pool).to contain_exactly({"id" => akita.id, "path" => "/breeds/akita"})
-    end
-
-    it "shows the one tag that does the same thing, highlighted" do
-      create(:breed_image, breed: akita)
-
-      get "/"
-
-      expect(rendered_text).to include('<img src="https://dogapi.dog/api/v2/breeds/image">')
-      expect(response.body).to include(%(<span class="nt">&lt;img</span>), %(<span class="na">src=</span>))
-    end
-
     it "is left out entirely when nothing has been imported yet" do
       get "/"
 
-      expect(response.body).not_to include("data-hero-pool")
+      expect(response.body).not_to include("data-hero-grid")
     end
   end
 
