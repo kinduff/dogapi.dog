@@ -1,0 +1,38 @@
+# Dog API
+
+> Dog data as a free JSON API: <%= number_with_delimiter @counts[:breeds] %> breeds, <%= @counts[:groups] %> groups and <%= number_with_delimiter @counts[:facts] %> facts, with <%= number_with_delimiter @counts[:images] %> pictures. No key and no sign up.
+
+Every endpoint is a GET and none of them authenticate. Requests are capped at
+<%= Rack::Attack::REQUESTS_PER_MINUTE %> a minute per IP. v2 answers in JSON:API format and is the version to
+build on; v1 answers in a shape of its own and is deprecated. Collections page
+with `page[number]` and `page[size]`. Pictures are served as a redirect to the
+file, so an `<img>` tag can point straight at one, and each carries the licence
+and the attribution its source asks for.
+
+## Documentation
+
+- [Which version to use](<%= request.base_url %>/docs): the difference between v1 and v2, and why v2 is the one to pick.
+<% @documents.each do |document| -%>
+- [<%= document.title %> reference](<%= request.base_url %>/docs/api-<%= document.version %>): every <%= document.version %> endpoint, its parameters, its responses and a request you can run.
+- [<%= document.title %> OpenAPI document](<%= request.base_url + document.document_path %>): the same reference, machine readable.
+<% end -%>
+
+## Endpoints
+
+<% @documents.each do |document| -%>
+<% document.operations.each do |operation| -%>
+- [<%= operation.verb %> /api/<%= document.version %><%= operation.path %>](<%= request.base_url %>/docs/api-<%= document.version %>#<%= operation.anchor %>): <%= operation.summary %><%= ", taking #{operation.parameters.map(&:name).to_sentence}" if operation.parameters.any? %>.
+<% end -%>
+<% end -%>
+
+## Browse
+
+- [Breeds](<%= request.base_url %>/breeds): all <%= number_with_delimiter @counts[:breeds] %> breeds, each one a page carrying the API request that built it.
+- [Groups](<%= request.base_url %>/groups): the <%= @counts[:groups] %> groups, every breed belonging to one of them.
+- [Sitemap](<%= request.base_url %>/sitemap.xml): every page on the site.
+
+## Optional
+
+- [Terms of use](<%= request.base_url %>/terms): what the data may be used for.
+- [Source](https://github.com/kinduff/dogapi.dog): the whole site and API, MIT licensed.
+- [Contact](mailto:<%= @documents.first.contact_email %>): for anything the docs do not answer.

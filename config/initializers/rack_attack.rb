@@ -22,6 +22,9 @@ Rack::Attack.cache.store =
     ActiveSupport::Cache::MemoryStore.new
   end
 
-Rack::Attack.throttle("req/ip", limit: 300, period: 1.minute, &:ip)
+# Named rather than inline, so the number the docs quote is the number in force.
+Rack::Attack::REQUESTS_PER_MINUTE = 300
+
+Rack::Attack.throttle("req/ip", limit: Rack::Attack::REQUESTS_PER_MINUTE, period: 1.minute, &:ip)
 
 Rack::Attack.enabled = Rails.env.production?

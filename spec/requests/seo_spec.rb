@@ -189,4 +189,60 @@ RSpec.describe "SEO metadata" do
       expect(response.body).to include("<lastmod>#{akita.updated_at.iso8601}</lastmod>")
     end
   end
+
+  describe "GET /llms.txt" do
+    it "is plain text" do
+      get "/llms.txt"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/plain")
+    end
+
+    it "opens with the title and the one line summary the format asks for" do
+      get "/llms.txt"
+
+      expect(response.body).to start_with("# Dog API\n\n> ")
+    end
+
+    it "counts what the API holds right now" do
+      get "/llms.txt"
+
+      expect(response.body).to include("1 breeds", "1 groups")
+    end
+
+    it "quotes the rate limit actually in force" do
+      get "/llms.txt"
+
+      expect(response.body).to include("#{Rack::Attack::REQUESTS_PER_MINUTE} a minute per IP")
+    end
+
+    it "links every documented endpoint" do
+      get "/llms.txt"
+
+      OpenapiDocument.load("v2").operations.each do |operation|
+        expect(response.body).to include("[GET /api/v2#{operation.path}]")
+      end
+    end
+
+    it "links the pages on the host the request came in on" do
+      get "/llms.txt"
+
+      expect(response.body).to include(
+        "(http://www.example.com/breeds)",
+        "(http://www.example.com/groups)",
+        "(http://www.example.com/sitemap.xml)",
+        "(http://www.example.com/api-docs/v2/swagger.json)"
+      )
+    end
+
+    it "points at anchors that exist on the reference it links to" do
+      get "/llms.txt"
+      anchors = response.body.scan(%r{/docs/api-v2#([\w-]+)\)}).flatten
+
+      get "/docs/api-v2"
+
+      expect(anchors).not_to be_empty
+      anchors.each { |anchor| expect(response.body).to include(%(id="#{anchor}")) }
+    end
+  end
 end

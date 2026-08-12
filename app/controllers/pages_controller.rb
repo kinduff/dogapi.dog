@@ -3,8 +3,6 @@
 class PagesController < ApplicationController
   SAMPLE_ID_CACHE_KEY = "docs/sample_ids"
   SAMPLE_ID_CACHE_TTL = 1.hour
-  COUNTS_CACHE_KEY = "home/counts"
-  COUNTS_CACHE_TTL = 1.hour
   HERO_CACHE_KEY = "home/hero_count"
   HERO_CACHE_TTL = 1.hour
   # Six across, three down: one screenful of dogs.
@@ -14,7 +12,7 @@ class PagesController < ApplicationController
 
   def index
     @fact = Fact.random.first
-    @counts = data_counts
+    @counts = DataCounts.call
     @hero_breeds = hero_breeds
   end
 
@@ -33,14 +31,6 @@ class PagesController < ApplicationController
   end
 
   private
-
-  # What the API holds right now, for the homepage. Counting three small tables
-  # once an hour is cheaper than keeping a number in the copy that goes stale.
-  def data_counts
-    Rails.cache.fetch(COUNTS_CACHE_KEY, expires_in: COUNTS_CACHE_TTL) do
-      {breeds: Breed.count, groups: Group.count, facts: Fact.count, images: BreedImage.count}
-    end
-  end
 
   # How many breeds have a picture. Cached because only an import moves it, and
   # the grid only needs it to pick where to start.
