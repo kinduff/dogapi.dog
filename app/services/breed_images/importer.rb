@@ -7,7 +7,7 @@ module BreedImages
   # skipped by their source id, and files that are byte for byte identical to
   # one the breed already has are skipped by checksum.
   class Importer
-    Result = Struct.new(:imported, :skipped, :errors, keyword_init: true) do
+    Result = Struct.new(:imported, :skipped, :errors) do
       def summary
         "#{imported.size} imported, #{skipped.size} skipped, #{errors.size} failed"
       end

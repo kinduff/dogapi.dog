@@ -12,8 +12,7 @@ module BreedImages
     :author,
     :license,
     :license_url,
-    :filename,
-    keyword_init: true
+    :filename
   ) do
     def to_attributes
       {
