@@ -72,6 +72,76 @@ namespace :images do
     puts "#{Breed.where.associated(:breed_images).distinct.count}/#{Breed.count} breeds have images"
   end
 
+  desc "Score one breed's images and put the best first: images:rerank[Akita,force]"
+  task :rerank, %i[breed force] => :environment do |_task, args|
+    name = args[:breed] or abort("Usage: rails images:rerank[BreedName]")
+    breed = Breed.find_by(name: name) or abort("No breed named #{name.inspect}")
+
+    result = BreedImages::Reranker.call(breed, force: args[:force].present?)
+
+    puts "#{breed.name}: #{result.summary}"
+    result.reviewed.each { |image| puts "  #{image.score}/10 #{image.source_id}: #{image.review_notes}" }
+    result.errors.each { |error| warn "  #{error}" }
+  end
+
+  desc "Score every breed's images and put the best first: images:rerank_all[force]"
+  task :rerank_all, [:force] => :environment do |_task, args|
+    force = args[:force].present?
+
+    # Without `force` a breed whose pictures were all scored already has
+    # nothing to ask the model, so a rerun costs one query per breed.
+    breeds = Breed.where.associated(:breed_images).distinct.order(:name).to_a
+    puts "#{breeds.size} breeds with images"
+
+    totals = Hash.new(0)
+
+    breeds.each_with_index do |breed, index|
+      begin
+        result = BreedImages::Reranker.call(breed, force: force)
+      rescue => e
+        totals[:errors] += 1
+        warn "[#{index + 1}/#{breeds.size}] #{breed.name}: #{e.class}: #{e.message}"
+        next
+      end
+
+      totals[:reviewed] += result.reviewed.size
+      totals[:skipped] += result.skipped.size
+      totals[:errors] += result.errors.size
+
+      puts "[#{index + 1}/#{breeds.size}] #{breed.name}: #{result.summary}"
+      result.errors.each { |error| warn "  #{error}" }
+    end
+
+    puts "Done: #{totals[:reviewed]} reviewed, #{totals[:skipped]} skipped, #{totals[:errors]} failed"
+  end
+
+  desc "Delete reviewed images that scored below a threshold: images:prune_reviewed[4]"
+  task :prune_reviewed, [:score] => :environment do |_task, args|
+    threshold = (args[:score].presence || BreedImages::Reviewer::GOOD_ENOUGH - 2).to_i
+    doomed = BreedImage.where(score: ...threshold).includes(:breed).order(:score)
+
+    doomed.find_each do |image|
+      puts "#{image.breed.name} (#{image.source_id}): #{image.score}/10 #{image.review_notes}"
+    end
+
+    removed = doomed.destroy_all.size
+    puts "Removed #{removed} images below #{threshold}/10, #{BreedImage.count} left"
+  end
+
+  desc "Report how the reviewed images scored"
+  task scores: :environment do
+    reviewed = BreedImage.where.not(score: nil)
+    puts "#{reviewed.count}/#{BreedImage.count} images reviewed"
+
+    reviewed.group(:score).count.sort.reverse_each do |score, count|
+      puts "  #{score.to_s.rjust(2)}/10  #{"#" * [count, 60].min} #{count}"
+    end
+
+    unreviewable = Breed.where.associated(:breed_images).distinct.count -
+      Breed.joins(:breed_images).where(breed_images: {score: BreedImages::Reviewer::GOOD_ENOUGH..}).distinct.count
+    puts "#{unreviewable} breeds have no image scoring #{BreedImages::Reviewer::GOOD_ENOUGH}/10 or better"
+  end
+
   desc "Delete stored images that fall below the current quality floor"
   task prune: :environment do
     removed = 0

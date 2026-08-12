@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_13_044700) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_13_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -65,11 +65,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_13_044700) do
     t.string "license_url"
     t.string "page_url"
     t.integer "position", default: 0, null: false
+    t.string "review_notes"
+    t.datetime "reviewed_at"
+    t.integer "score"
     t.string "source", null: false
     t.string "source_id", null: false
     t.string "source_url", null: false
     t.datetime "updated_at", null: false
     t.index ["breed_id", "position"], name: "index_breed_images_on_breed_id_and_position"
+    t.index ["breed_id", "score"], name: "index_breed_images_on_breed_id_and_score"
     t.index ["breed_id"], name: "index_breed_images_on_breed_id"
     t.index ["source", "source_id"], name: "index_breed_images_on_source_and_source_id", unique: true
   end
