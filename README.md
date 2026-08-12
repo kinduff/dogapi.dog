@@ -13,6 +13,25 @@ Once you have these prerequisites installed, follow these steps:
 3. Set up the database by running `rails db:setup`
 4. Start the API server by running `rails server`
 
+## Breed images
+
+Breed pictures are imported from [Wikimedia Commons](https://commons.wikimedia.org)
+into Active Storage, resized to WebP, and served with the attribution their
+licence requires. `libvips` must be installed locally for the variants.
+
+```bash
+rails "images:import[Akita]"     # one breed
+rails images:import_all          # every breed that has none yet
+rails images:stats               # coverage so far
+rails images:reprocess           # rebuild missing variants
+```
+
+Hand picked images can be listed in `db/seeds/breed_images.yml` and imported
+with `rails "images:import[Akita,manual]"`.
+
+In production set `ACTIVE_STORAGE_SERVICE` to `amazon` or `cloudflare` and fill
+in the `S3_*` values from `.env.example`; without them files stay on local disk.
+
 ## Contributing
 
 We welcome contributions to this project! If you have an idea for a new feature or find a bug, please open an issue in this repository.

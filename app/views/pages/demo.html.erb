@@ -122,7 +122,37 @@
 
         console.log(breed.name);
         console.log(`Lives ${breed.life.min}-${breed.life.max} years`);
+
+        // Images come with the credit their licence requires
+        breed.images.forEach((image) => {
+          console.log(image.medium, image.attribution.author);
+        });
       JS
+
+<h2 id="images">
+  <a class="api-anchor" href="#images" aria-hidden="true"></a>
+  Breed images
+</h2>
+
+<p>
+  Every breed carries an <code>images</code> array with the original file and
+  three ready made sizes. There is also a redirect endpoint that goes straight
+  to a file, so it can be dropped into an <code>&lt;img&gt;</code> tag:
+</p>
+
+<%= render "pages/api_code", label: "HTML", language: "html", content: <<~HTML.strip %>
+      <!-- The primary image of one breed, 600px wide -->
+      <img src="https://dogapi.dog/api/v2/breeds/#{sample_ids["breed"] || "BREED_ID"}/image?size=medium" alt="">
+
+      <!-- A random picture of a random breed -->
+      <img src="https://dogapi.dog/api/v2/breeds/image?size=thumb" alt="">
+    HTML
+
+<p class="api-note">
+  Images are imported from Wikimedia Commons and stay under their author's
+  licence. Show the <code>attribution</code> that comes with each image
+  wherever you display it.
+</p>
 
 <%= render "pages/demo_endpoint",
       title: "v2 groups",
