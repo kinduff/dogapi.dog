@@ -13,6 +13,10 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
         `page[size]` falls back to that maximum, so a plain request returns the
         whole collection. Each breed links to the group it belongs to.
 
+        Most breeds have no picture imported yet.
+        `filter[has_images]=true` narrows the collection to the ones that do,
+        which is what you want if you are putting photographs on a screen.
+
         Responses may be cached publicly for up to 5 minutes.
       TEXT
       produces "application/json"
@@ -23,6 +27,9 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
       parameter name: "page[size]", in: :query, required: false,
         schema: {type: :integer, minimum: 1, maximum: 1000},
         description: "Number of records per page (max 1000)"
+      parameter name: "filter[has_images]", in: :query, required: false,
+        schema: {type: :boolean},
+        description: "Only breeds that have at least one picture"
 
       response(200, "successful") do
         schema "$ref": "#/components/schemas/BreedCollection"

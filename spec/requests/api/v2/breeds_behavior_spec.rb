@@ -29,6 +29,40 @@ RSpec.describe "Api::V2::Breeds" do
       )
     end
 
+    context "with filter[has_images]" do
+      it "keeps only the breeds that have a picture" do
+        pictured = create(:breed, name: "Akita", group: group)
+        create(:breed_image, breed: pictured)
+        create(:breed, name: "Beagle", group: group)
+
+        get "/api/v2/breeds", params: {filter: {has_images: "true"}}
+
+        expect(json["data"].map { |breed| breed.dig("attributes", "name") }).to eq(["Akita"])
+      end
+
+      # A breed with three pictures is still one record.
+      it "returns a breed once however many pictures it has" do
+        pictured = create(:breed, name: "Akita", group: group)
+        create(:breed_image, breed: pictured, source_id: "File:One.jpg")
+        create(:breed_image, breed: pictured, source_id: "File:Two.jpg")
+
+        get "/api/v2/breeds", params: {filter: {has_images: "true"}}
+
+        expect(json["data"].size).to eq(1)
+        expect(json.dig("meta", "pagination", "records")).to eq(1)
+      end
+
+      # Cast the same way as `random` on the image endpoint, so one false value
+      # means the same thing everywhere in this API.
+      it "leaves the collection alone when asked for false" do
+        create(:breed, name: "Beagle", group: group)
+
+        get "/api/v2/breeds", params: {filter: {has_images: "false"}}
+
+        expect(json["data"].size).to eq(1)
+      end
+    end
+
     it "links each breed to its group" do
       breed = create(:breed, group: group)
 

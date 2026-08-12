@@ -8,7 +8,7 @@ module Api
       before_action :cache_publicly
 
       def index
-        jsonapi_paginate(breeds.order(:name)) do |paginated|
+        jsonapi_paginate(filtered(breeds).order(:name)) do |paginated|
           render jsonapi: paginated
         end
       end
@@ -40,6 +40,15 @@ module Api
       end
 
       private
+
+      # Most breeds have no picture imported yet, so a client that wants
+      # something to show has to ask for the ones that do. Anything other than
+      # a true value leaves the collection alone.
+      def filtered(scope)
+        return scope unless ActiveModel::Type::Boolean.new.cast(params.dig(:filter, :has_images))
+
+        scope.where.associated(:breed_images).distinct
+      end
 
       SIZES = BreedImage::VARIANTS.keys.map(&:to_s).freeze
       DEFAULT_SIZE = "medium"
