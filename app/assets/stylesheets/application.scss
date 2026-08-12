@@ -741,3 +741,235 @@ details.api-fields {
     font-size: 1.15em;
     line-height: 1;
 }
+
+// Image gallery
+.image-intro {
+    margin: 0.8rem 0 1rem;
+}
+
+.image-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+
+    li {
+        background: #f6f8fa;
+        border-radius: 3px;
+        color: var(--text-alt);
+        font-size: 0.8em;
+        padding: 0.25rem 0.6rem;
+    }
+
+    strong {
+        color: var(--text-main);
+        font-size: 1.15em;
+    }
+}
+
+// One chip per licence in the collection, because what an image may be used
+// for matters as much as how many there are.
+.image-licenses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0 0 0.6rem;
+    padding: 0;
+
+    li {
+        align-items: baseline;
+        border: 1px solid var(--background-element);
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 0.75em;
+        gap: 0.35rem;
+        padding: 0.15rem 0.6rem;
+    }
+}
+
+.image-license-name {
+    font-family: monospace;
+}
+
+.image-meter {
+    background: var(--background-element);
+    border-radius: 999px;
+    display: block;
+    height: 0.4rem;
+    overflow: hidden;
+
+    > span {
+        background: var(--theme);
+        display: block;
+        height: 100%;
+    }
+}
+
+.image-groups {
+    display: grid;
+    gap: 0.15rem 1.4rem;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    list-style: none;
+    margin: 0.8rem 0 1rem;
+    padding: 0;
+
+    li {
+        align-items: center;
+        display: grid;
+        font-size: 0.8em;
+        gap: 0.6rem;
+        grid-template-columns: minmax(6rem, 10rem) 1fr max-content;
+    }
+}
+
+.image-group-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.image-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.8rem;
+}
+
+.image-filter {
+    background: #f6f8fa;
+    border-radius: 999px;
+    color: var(--text-alt);
+    font-size: 0.8em;
+    padding: 0.2rem 0.7rem;
+    text-decoration: none;
+
+    &:hover {
+        background: var(--background-element);
+    }
+}
+
+.image-filter-on {
+    background: var(--theme);
+    color: var(--text-inverted);
+
+    &:hover {
+        background: var(--theme-dark);
+    }
+}
+
+.image-grid {
+    display: grid;
+    gap: 0.7rem;
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.image-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.image-media {
+    line-height: 0;
+    position: relative;
+}
+
+.image-thumb-link {
+    display: block;
+}
+
+.image-thumb {
+    aspect-ratio: 1;
+    background: #f6f8fa;
+    border-radius: 3px;
+    display: block;
+    // Beats the width and height attributes on the img, which are only there
+    // to reserve the space while the file loads.
+    height: auto;
+    object-fit: cover;
+    width: 100%;
+
+    &:hover {
+        outline: 2px solid var(--theme);
+    }
+}
+
+// Placeholder for a breed nothing has been imported for yet.
+.image-thumb-empty {
+    align-items: center;
+    background: repeating-linear-gradient(
+        45deg,
+        #f6f8fa,
+        #f6f8fa 8px,
+        #eef1f4 8px,
+        #eef1f4 16px
+    );
+    display: flex;
+    font-size: 1.5rem;
+    justify-content: center;
+    opacity: 0.7;
+
+    &:hover {
+        outline: 0;
+    }
+}
+
+// The breed's other pictures, sat on the corner of the main one so a card is
+// the same height whether or not there are any.
+.image-extras {
+    bottom: 3px;
+    display: flex;
+    gap: 2px;
+    left: 3px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+
+    img {
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 2px;
+        display: block;
+        height: 1.5rem;
+        object-fit: cover;
+        width: 1.5rem;
+
+        &:hover {
+            border-color: var(--theme);
+        }
+    }
+}
+
+.image-card-name {
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 0.3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.image-card-meta,
+.image-card-credit {
+    font-size: 0.7em;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -1,0 +1,118 @@
+<% page_heading "Breed Images" %>
+
+<p class="image-intro">
+  Every breed the API knows, with the pictures it can serve for them. Images
+  come from <%= link_to "Wikimedia Commons", "https://commons.wikimedia.org", target: "_blank", rel: "noopener" %>
+  and keep the licence their author chose, so the credit under each one has to
+  travel with the picture wherever you use it. Click any thumbnail for the
+  original file.
+</p>
+
+<ul class="image-stats">
+  <li><strong><%= number_with_delimiter @stats[:covered] %></strong> with a picture</li>
+  <li><strong><%= number_with_delimiter @stats[:missing] %></strong> missing</li>
+  <li><strong><%= number_to_percentage(image_coverage(@stats), precision: 0) %></strong> coverage</li>
+  <li><strong><%= number_with_delimiter @stats[:images] %></strong> images stored</li>
+  <% if @stats[:licenses].any? %>
+    <li><strong><%= @stats[:licenses].size %></strong> licences</li>
+  <% end %>
+</ul>
+
+<% if @stats[:licenses].any? %>
+  <ul class="image-licenses">
+    <% @stats[:licenses].each do |license, count| %>
+      <li>
+        <span class="image-license-name"><%= license %></span>
+        <span class="api-muted"><%= count %></span>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<div class="image-meter" role="img" aria-label="<%= number_to_percentage(image_coverage(@stats), precision: 0) %> of breeds have a picture">
+  <span style="width: <%= image_coverage(@stats).round(2) %>%"></span>
+</div>
+
+<% if @stats[:groups].any? %>
+  <ul class="image-groups">
+    <% @stats[:groups].each do |group| %>
+      <li>
+        <span class="image-group-name"><%= group[:name] %></span>
+        <span class="image-meter">
+          <span style="width: <%= group[:total].zero? ? 0 : (100.0 * group[:covered] / group[:total]).round(2) %>%"></span>
+        </span>
+        <span class="api-muted"><%= group[:covered] %>/<%= group[:total] %></span>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<nav class="image-filters" aria-label="Filter breeds">
+  <%= link_to "All (#{@stats[:breeds]})", images_path,
+        class: class_names("image-filter", "image-filter-on": @filter == "all") %>
+  <%= link_to "With images (#{@stats[:covered]})", images_path(filter: "with"),
+        class: class_names("image-filter", "image-filter-on": @filter == "with") %>
+  <%= link_to "Missing (#{@stats[:missing]})", images_path(filter: "missing"),
+        class: class_names("image-filter", "image-filter-on": @filter == "missing") %>
+</nav>
+
+<% if @breeds.empty? %>
+  <p class="api-note">
+    Nothing to show here yet. Run <code>rails images:import_all</code> to fill
+    the gallery.
+  </p>
+<% else %>
+  <ul class="image-grid">
+    <% @breeds.each do |breed| %>
+      <% images = breed.breed_images.to_a %>
+      <% primary = images.first %>
+      <li class="image-card">
+        <div class="image-media">
+          <% if primary %>
+            <%= link_to primary.url_for, target: "_blank", rel: "noopener", class: "image-thumb-link",
+                  title: image_credit(primary) do %>
+              <img class="image-thumb" src="<%= primary.url_for(:medium) %>" alt="<%= breed.name %>"
+                   width="600" height="600" loading="lazy">
+            <% end %>
+          <% else %>
+            <span class="image-thumb image-thumb-empty" aria-hidden="true">🐾</span>
+          <% end %>
+
+          <% if images.size > 1 %>
+            <ul class="image-extras">
+              <% images.drop(1).each do |extra| %>
+                <li>
+                  <%= link_to extra.url_for, target: "_blank", rel: "noopener", title: image_credit(extra) do %>
+                    <img src="<%= extra.url_for(:thumb) %>" alt="<%= breed.name %>"
+                         width="200" height="200" loading="lazy">
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+
+        <span class="image-card-name">
+          <%= link_to breed.name, api_v2_breed_path(breed), target: "_blank", rel: "noopener",
+                title: "JSON for #{breed.name}" %>
+        </span>
+        <span class="image-card-meta api-muted">
+          <%= breed.group&.name %><%= " · #{images.size} img" if images.size > 1 %>
+        </span>
+
+        <% if primary %>
+          <span class="image-card-credit api-muted" title="<%= image_credit(primary) %>">
+            <%= primary.author.presence || "Unknown author" %> ·
+            <% if primary.license_url.present? %>
+              <%= link_to primary.license, primary.license_url, target: "_blank", rel: "noopener nofollow" %>
+            <% else %>
+              <%= primary.license %>
+            <% end %>
+          </span>
+        <% else %>
+          <span class="image-card-credit api-muted">No image yet</span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
