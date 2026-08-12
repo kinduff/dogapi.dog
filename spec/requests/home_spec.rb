@@ -1,0 +1,67 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe "Homepage" do
+  def rendered_text
+    CGI.unescapeHTML(ActionController::Base.helpers.strip_tags(response.body))
+  end
+
+  before { Rails.cache.clear }
+
+  context "with data" do
+    let!(:fact) { create(:fact, body: "Dogs have three eyelids.") }
+
+    before do
+      create_list(:breed, 3, group: create(:group))
+      get "/"
+    end
+
+    it "renders" do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "shows a real fact from the database" do
+      expect(response.body).to include(fact.body)
+    end
+
+    it "counts what the api actually holds instead of claiming a number" do
+      expect(rendered_text).to include("3", "1", "breeds", "groups", "dog facts")
+    end
+
+    it "sends people to the docs and the demo" do
+      expect(response.body).to include('href="/docs"', 'href="/demo"')
+    end
+
+    it "lets a visitor call the api without leaving the page" do
+      expect(response.body).to include("data-api-try", 'data-base="/api/v2"', 'data-path="/facts"')
+    end
+
+    it "shows a copyable request, highlighted" do
+      expect(rendered_text).to include('curl -s "https://dogapi.dog/api/v2/facts?limit=1"')
+      expect(response.body).to include('<span class="code-line">')
+    end
+
+    it "answers the questions a teacher asks first" do
+      expect(rendered_text).to include("Do I need an API key?", "300 requests per minute per IP")
+    end
+
+    it "gives the image dimensions so the layout does not jump" do
+      expect(response.body).to match(/<img[^>]+width="1280"[^>]+height="720"/)
+      expect(response.body).to include('loading="lazy"')
+    end
+
+    it "loads nothing from a javascript cdn" do
+      expect(response.body).not_to include("unpkg.com", "cdnjs.cloudflare.com", "jsdelivr")
+    end
+  end
+
+  context "with an empty database" do
+    before { get "/" }
+
+    it "still renders" do
+      expect(response).to have_http_status(:ok)
+      expect(rendered_text).to include("Start in one request")
+    end
+  end
+end

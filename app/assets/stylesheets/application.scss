@@ -670,3 +670,145 @@ details.api-fields {
         color: inherit;
     }
 }
+
+// Homepage
+.home-lead {
+    font-size: 1.15em;
+    margin-top: 1.2rem;
+}
+
+.home-fact {
+    background: #f6f8fa;
+    border-left: 0.3rem solid var(--theme);
+    border-radius: 0 3px 3px 0;
+    margin: 1.4rem 0;
+    padding: 1rem 1.2rem;
+
+    cite {
+        color: var(--text-alt);
+        display: block;
+        font-size: 0.75em;
+        font-style: normal;
+        margin-top: 0.5rem;
+    }
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin: 1.4rem 0 2rem;
+}
+
+.home-cta {
+    display: inline-block;
+    font-size: 0.9em;
+    padding: 0.6em 1.2em;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--text-inverted);
+    }
+}
+
+.api-button-quiet.home-cta {
+    color: var(--text-main);
+
+    &:hover {
+        color: var(--text-main);
+    }
+}
+
+.home-stats {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    margin: 1.4rem 0 2rem;
+
+    div {
+        background: #f6f8fa;
+        border-radius: 3px;
+        padding: 0.9rem 1rem;
+    }
+
+    dt {
+        color: var(--theme);
+        font-size: 1.6em;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    dd {
+        color: var(--text-alt);
+        font-size: 0.85em;
+        margin: 0.3rem 0 0;
+    }
+}
+
+.home-points {
+    list-style: none;
+    margin: 1rem 0 1.6rem;
+    padding: 0;
+
+    li {
+        border-bottom: 1px solid var(--background-element);
+        padding: 0.7rem 0;
+    }
+
+    li:last-child {
+        border-bottom: 0;
+    }
+
+    strong {
+        color: var(--text-main);
+    }
+}
+
+.home-image {
+    border-radius: 3px;
+    height: auto;
+    margin: 1.6rem 0;
+    width: 100%;
+}
+
+.home-badge {
+    margin-top: 2rem;
+
+    img {
+        height: auto;
+        max-width: 250px;
+    }
+}
+
+.home-welcome {
+    margin-bottom: 2rem;
+
+    h2 {
+        margin-top: 2rem;
+    }
+}
+
+.home-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    list-style: none;
+    margin: 1rem 0 1.2rem;
+    padding: 0;
+
+    li {
+        align-items: center;
+        background: #f6f8fa;
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 0.8em;
+        gap: 0.35rem;
+        padding: 0.3rem 0.75rem 0.3rem 0.55rem;
+        white-space: nowrap;
+    }
+}
+
+.home-flag {
+    font-size: 1.15em;
+    line-height: 1;
+}

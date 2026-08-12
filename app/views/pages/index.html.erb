@@ -1,44 +1,229 @@
-<h2>
-  <a id="overview" href="#overview" aria-hidden="true"></a>
-  Overview
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "api_docs", defer: true %>
+<% end %>
+
+<p class="home-lead">
+  A free JSON API with dog breeds, breed groups and facts. No key, no sign up,
+  no limits worth worrying about — built to be the API you learn on.
+</p>
+
+<% if @fact %>
+  <blockquote class="home-fact">
+    <%= @fact.body %>
+    <cite>a random fact, served by this API when the page loaded</cite>
+  </blockquote>
+<% end %>
+
+<p class="home-actions">
+  <%= link_to "Read the docs", docs_path, class: "api-button home-cta" %>
+  <%= link_to "Try every endpoint", demo_path, class: "api-button api-button-quiet home-cta" %>
+</p>
+
+<h2 id="start">
+  <a class="api-anchor" href="#start" aria-hidden="true"></a>
+  Start in one request
 </h2>
 
 <p>
-  The <strong>Dog API</strong> provides information on over 340 dog breeds, 20 breed groups, and fun facts. Our data is accurate and constantly updated. Easily integrate this information into your own website or application with our user-friendly API. Get started today and discover more about the world of dogs.
+  Nothing to install and nothing to configure. Paste this in a terminal, or run
+  the same thing right here.
 </p>
+
+<%= render "pages/api_code",
+      label: "Terminal",
+      language: "shell",
+      id: "home-curl",
+      content: 'curl -s "https://dogapi.dog/api/v2/facts?limit=1"' %>
+
+<form class="api-try" data-api-try data-base="/api/v2" data-path="/facts">
+  <fieldset>
+    <legend>Try it</legend>
+
+    <div class="api-try-fields">
+      <div class="api-try-field">
+        <label for="home-limit">limit</label>
+        <input type="text" id="home-limit" data-param="limit" data-in="query"
+               data-default="1" value="1" placeholder="1-5">
+      </div>
+    </div>
+
+    <div class="api-try-actions">
+      <button type="submit" class="api-button">Send request</button>
+      <button type="button" class="api-button api-button-quiet" data-api-reset>Reset</button>
+      <span class="api-muted">Runs against this site.</span>
+    </div>
+  </fieldset>
+
+  <div class="api-try-output" data-api-output hidden>
+    <figure class="code">
+      <figcaption class="code-head">
+        <span class="api-status" data-api-status></span>
+        <code class="api-try-url" data-api-url></code>
+      </figcaption>
+      <pre class="code-body code-body-tall"><code data-api-body></code></pre>
+    </figure>
+  </div>
+</form>
+
+<h2 id="inside">
+  <a class="api-anchor" href="#inside" aria-hidden="true"></a>
+  What's inside
+</h2>
+
+<dl class="home-stats">
+  <div>
+    <dt><%= number_with_delimiter @counts[:breeds] %></dt>
+    <dd>breeds, each with life span, weight ranges and a description</dd>
+  </div>
+  <div>
+    <dt><%= number_with_delimiter @counts[:groups] %></dt>
+    <dd>breed groups, linked to the breeds they contain</dd>
+  </div>
+  <div>
+    <dt><%= number_with_delimiter @counts[:facts] %></dt>
+    <dd>dog facts, served at random</dd>
+  </div>
+</dl>
+
+<h2 id="teaching">
+  <a class="api-anchor" href="#teaching" aria-hidden="true"></a>
+  Made for classrooms and side projects
+</h2>
 
 <p>
-  For example:
+  This API is used by universities, bootcamps, home labs and a lot of people
+  learning to code. That shapes what it does and what it refuses to do.
 </p>
 
-<blockquote>
-  <%= @fact&.body %>
-</blockquote>
+<ul class="home-points">
+  <li>
+    <strong>No key, no account.</strong> Nothing to sign up for and nothing to
+    leak in a public repository or a screen share.
+  </li>
+  <li>
+    <strong>Works from the browser.</strong> CORS is open for reads, so
+    <code>fetch()</code> works from a static page, CodePen or a classroom laptop
+    with no proxy in between.
+  </li>
+  <li>
+    <strong>Small, predictable payloads.</strong> V2 follows JSON:API, so once
+    a student can read one response they can read all of them.
+  </li>
+  <li>
+    <strong>Kind to slow connections.</strong> Responses are a few kilobytes,
+    served over HTTPS, cached at the edge where it is safe to do so.
+  </li>
+  <li>
+    <strong>Fair use, not a quota.</strong> 300 requests per minute per IP is
+    plenty for a full classroom. There is no monthly limit to run out of
+    mid-lesson.
+  </li>
+  <li>
+    <strong>Stable.</strong> V1 has been answering since 2016 and still does.
+    V2 is the one to build on.
+  </li>
+</ul>
+
+<h3 id="exercises">
+  <a class="api-anchor" href="#exercises" aria-hidden="true"></a>
+  Ideas to teach with
+</h3>
+
+<p>Each of these needs no backend, no key and no setup beyond a text editor:</p>
+
+<ul class="home-points">
+  <li>
+    <strong>First fetch.</strong> Show one random fact on a page, then a button
+    that swaps it for another.
+  </li>
+  <li>
+    <strong>Lists and loops.</strong> Render every breed with
+    <code>?page[size]=1000</code>, then add a search box that filters client
+    side.
+  </li>
+  <li>
+    <strong>Pagination.</strong> Walk pages with <code>page[number]</code> and
+    read the totals out of <code>meta.pagination</code>.
+  </li>
+  <li>
+    <strong>Relationships.</strong> Pick a group, follow
+    <code>relationships.breeds</code>, and fetch each breed by id.
+  </li>
+  <li>
+    <strong>Handling errors.</strong> Request a breed id that does not exist and
+    handle the 404 without breaking the page.
+  </li>
+  <li>
+    <strong>Charts.</strong> Plot life span or weight ranges across a group and
+    talk about what the numbers do and do not say.
+  </li>
+</ul>
 
 <p>
-  Best of all, it's <strong>completely free to use</strong>!
+  Built something with it? Send it to
+  <%= mail_to "dev@dogapi.dog" %> — seeing what people make is what keeps this
+  running.
 </p>
 
+<%= image_tag "dogs.jpg",
+      alt: "3 pugs with glasses in front of a computer in an office, digital art",
+      width: 1280,
+      height: 720,
+      loading: "lazy",
+      class: "home-image" %>
+
+<h2 id="faq">
+  <a class="api-anchor" href="#faq" aria-hidden="true"></a>
+  Questions
+</h2>
+
+<h3>Do I need an API key?</h3>
 <p>
-  <a href="https://www.producthunt.com/posts/dog-api-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dog&#0045;api&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=373528&theme=neutral" alt="Dog&#0032;API - JSON&#0032;API&#0032;with&#0032;information&#0032;on&#0032;dog&#0032;breeds&#0032;and&#0032;fun&#0032;facts | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  No, and there is no plan to require one. If that ever changes, existing
+  requests will keep working.
 </p>
 
-<%= image_tag "dogs.jpg", alt: '3 pugs with glasses in front of a computer in an office, digital art' %>
+<h3>Why is it free?</h3>
+<p>
+  It is used as a teaching tool and for fun, and it has been hosted for free for
+  years. Keeping it that way matters more than making money from it. If you want
+  to help with the hosting bill, you can
+  <%= link_to "buy me a coffee", "https://www.buymeacoffee.com/kinduff", target: "_blank", rel: "noopener" %>.
+</p>
 
-<h3>FAQ</h3>
+<h3>Can I use it in a course, a workshop or a tutorial?</h3>
+<p>
+  Yes, including commercial courses, with no need to ask. A link back is
+  appreciated but not required. If you are teaching a large group, nothing
+  special is needed — the rate limit is per IP, and a classroom behind one
+  address is well within it.
+</p>
 
-<h4>1. Where's the Slack button?</h4>
-<p>I lost ownership of the Slack application due to Slack's policy. I tried to regain ownership of my own application but it was not possible.</p>
+<h3>Why is V1 deprecated?</h3>
+<p>
+  V1 does not follow any standard and was not built to grow. V2 follows JSON:API
+  and is where breeds, groups and everything new lives. V1 still answers, and
+  will keep answering.
+</p>
 
-<h4>2. Why is this free?</h4>
-<p>This API is widely used as an education tool, and for entertainment purposes. I've been hosting it for free for 6 years I'd like to keep it that way.</p>
-<p>If you are interested in supporting this API, you can always <a href="https://www.buymeacoffee.com/kinduff" target="_blank">Buy me a coffee</a>.</p>
+<h3>Where's the Slack button?</h3>
+<p>
+  Ownership of the Slack application was lost to a policy change and could not
+  be recovered.
+</p>
 
-<h4>3. Why is V1 deprecated?</h4>
-<p>The V1 version doesn't follow any kind of standard and was built to not be scalable. With V2, I'm planning to add new features including breeds, pictures, and other cool dog data.</p>
+<h3>Who makes this?</h3>
+<p>
+  <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>,
+  who likes building silly things and sharing them. The code is
+  <%= link_to "on GitHub", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %>
+  under the MIT license.
+</p>
 
-<h4>4. How can I get an API key?</h4>
-<p>No need for now! I might introduce it in the future.</p>
-
-<h4>5. Who are you?</h4>
-<p>I'm <a href="https://kinduff.com" target="_blank">kinduff</a>! I love to build silly things and share them to the world. If you have built something interesting, let me know, it will inspire me to keep this service going. Send me an email at dev@dogapi.dog and I will check it out!</p>
+<p class="home-badge">
+  <a href="https://www.producthunt.com/posts/dog-api-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-dog&#0045;api&#0045;2" target="_blank" rel="noopener">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=373528&theme=neutral"
+         alt="Dog API - JSON API with information on dog breeds and fun facts | Product Hunt"
+         width="250" height="54" loading="lazy">
+  </a>
+</p>
