@@ -712,7 +712,8 @@ details.api-fields {
         color: #1f4f7a;
     }
 
-    .nb, .bp, .nx, .nv, .vg {
+    // `na` is an HTML attribute name, kept quieter than the tag around it.
+    .nb, .bp, .nx, .nv, .vg, .na {
         color: #4a4a55;
     }
 

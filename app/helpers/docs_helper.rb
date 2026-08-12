@@ -20,7 +20,8 @@ module DocsHelper
   LEXERS = {
     "json" => Rouge::Lexers::JSON,
     "shell" => Rouge::Lexers::Shell,
-    "javascript" => Rouge::Lexers::Javascript
+    "javascript" => Rouge::Lexers::Javascript,
+    "html" => Rouge::Lexers::HTML
   }.freeze
 
   # One span per line so the viewer can number them with a CSS counter, each

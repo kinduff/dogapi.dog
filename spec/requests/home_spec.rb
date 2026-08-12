@@ -107,12 +107,13 @@ RSpec.describe "Homepage" do
       expect(pool).to contain_exactly({"id" => akita.id, "path" => "/breeds/akita"})
     end
 
-    it "shows the one tag that does the same thing" do
+    it "shows the one tag that does the same thing, highlighted" do
       create(:breed_image, breed: akita)
 
       get "/"
 
       expect(rendered_text).to include('<img src="https://dogapi.dog/api/v2/breeds/image">')
+      expect(response.body).to include(%(<span class="nt">&lt;img</span>), %(<span class="na">src=</span>))
     end
 
     it "is left out entirely when nothing has been imported yet" do
