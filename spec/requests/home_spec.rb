@@ -21,6 +21,10 @@ RSpec.describe "Homepage" do
       expect(response).to have_http_status(:ok)
     end
 
+    it "introduces the person behind it" do
+      expect(rendered_text).to include("Hi, I'm kinduff")
+    end
+
     it "shows a real fact from the database" do
       expect(response.body).to include(fact.body)
     end
@@ -42,6 +46,10 @@ RSpec.describe "Homepage" do
       expect(response.body).to include('<span class="code-line">')
     end
 
+    it "shows how much the api is used" do
+      expect(rendered_text).to include("about 60,000 requests on an average day")
+    end
+
     it "answers the questions a teacher asks first" do
       expect(rendered_text).to include("Do I need an API key?", "300 requests per minute per IP")
     end
@@ -61,7 +69,7 @@ RSpec.describe "Homepage" do
 
     it "still renders" do
       expect(response).to have_http_status(:ok)
-      expect(rendered_text).to include("Start in one request")
+      expect(rendered_text).to include("Try it")
     end
   end
 end

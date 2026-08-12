@@ -3,30 +3,36 @@
 <% end %>
 
 <p class="home-lead">
-  A free JSON API with dog breeds, breed groups and facts. No key, no sign up,
-  no limits worth worrying about — built to be the API you learn on.
+  Hi, I'm <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.
+  This is a free API with dog breeds, breed groups and facts. I've kept it
+  running since 2016, mostly because people learning to code keep finding it
+  useful. No key, no sign up, nothing to pay.
 </p>
 
 <% if @fact %>
   <blockquote class="home-fact">
     <%= @fact.body %>
-    <cite>a random fact, served by this API when the page loaded</cite>
+    <cite>a fact this API served when you loaded the page</cite>
   </blockquote>
 <% end %>
 
-<p class="home-actions">
-  <%= link_to "Read the docs", docs_path, class: "api-button home-cta" %>
-  <%= link_to "Try every endpoint", demo_path, class: "api-button api-button-quiet home-cta" %>
+<p>
+  Right now it holds <strong><%= number_with_delimiter @counts[:breeds] %></strong>
+  breeds with their life spans and weights,
+  <strong><%= number_with_delimiter @counts[:groups] %></strong> breed groups,
+  and <strong><%= number_with_delimiter @counts[:facts] %></strong> dog facts.
+  It answers about 60,000 requests on an average day, from universities,
+  bootcamps, home labs and a lot of people poking at it on a Saturday.
 </p>
 
 <h2 id="start">
   <a class="api-anchor" href="#start" aria-hidden="true"></a>
-  Start in one request
+  Try it
 </h2>
 
 <p>
-  Nothing to install and nothing to configure. Paste this in a terminal, or run
-  the same thing right here.
+  Nothing to install. Paste this into a terminal, or press the button and watch
+  what comes back.
 </p>
 
 <%= render "pages/api_code",
@@ -65,104 +71,53 @@
   </div>
 </form>
 
-<h2 id="inside">
-  <a class="api-anchor" href="#inside" aria-hidden="true"></a>
-  What's inside
-</h2>
+<p>
+  When you want the rest, the <%= link_to "docs", docs_path %> explain every
+  endpoint, and the <%= link_to "demo", demo_path %> lets you run all of them
+  from the page.
+</p>
 
-<dl class="home-stats">
-  <div>
-    <dt><%= number_with_delimiter @counts[:breeds] %></dt>
-    <dd>breeds, each with life span, weight ranges and a description</dd>
-  </div>
-  <div>
-    <dt><%= number_with_delimiter @counts[:groups] %></dt>
-    <dd>breed groups, linked to the breeds they contain</dd>
-  </div>
-  <div>
-    <dt><%= number_with_delimiter @counts[:facts] %></dt>
-    <dd>dog facts, served at random</dd>
-  </div>
-</dl>
-
-<h2 id="teaching">
-  <a class="api-anchor" href="#teaching" aria-hidden="true"></a>
-  Made for classrooms and side projects
+<h2 id="teachers">
+  <a class="api-anchor" href="#teachers" aria-hidden="true"></a>
+  If you're teaching with it
 </h2>
 
 <p>
-  This API is used by universities, bootcamps, home labs and a lot of people
-  learning to code. That shapes what it does and what it refuses to do.
+  Go ahead — course, workshop, tutorial, video, paid or free. You don't need to
+  ask me and you don't need to credit me, though I always like hearing about it.
 </p>
 
-<ul class="home-points">
-  <li>
-    <strong>No key, no account.</strong> Nothing to sign up for and nothing to
-    leak in a public repository or a screen share.
-  </li>
-  <li>
-    <strong>Works from the browser.</strong> CORS is open for reads, so
-    <code>fetch()</code> works from a static page, CodePen or a classroom laptop
-    with no proxy in between.
-  </li>
-  <li>
-    <strong>Small, predictable payloads.</strong> V2 follows JSON:API, so once
-    a student can read one response they can read all of them.
-  </li>
-  <li>
-    <strong>Kind to slow connections.</strong> Responses are a few kilobytes,
-    served over HTTPS, cached at the edge where it is safe to do so.
-  </li>
-  <li>
-    <strong>Fair use, not a quota.</strong> 300 requests per minute per IP is
-    plenty for a full classroom. There is no monthly limit to run out of
-    mid-lesson.
-  </li>
-  <li>
-    <strong>Stable.</strong> V1 has been answering since 2016 and still does.
-    V2 is the one to build on.
-  </li>
-</ul>
+<p>
+  A few things worth knowing before you put it in front of a class. There's no
+  key, so nobody can leak one in a public repo or a screen share. It works
+  straight from the browser, so <code>fetch()</code> in a static page or a
+  CodePen is fine. The rate limit is 300 requests per minute per IP, which a
+  whole room sharing one connection stays well under, and there's no monthly
+  quota to run out of halfway through a lesson.
+</p>
+
+<p>
+  If it breaks in the middle of a class, email me at
+  <%= mail_to "dev@dogapi.dog" %> and I'll look at it.
+</p>
 
 <h3 id="exercises">
   <a class="api-anchor" href="#exercises" aria-hidden="true"></a>
-  Ideas to teach with
+  Things to build with it
 </h3>
 
-<p>Each of these needs no backend, no key and no setup beyond a text editor:</p>
-
-<ul class="home-points">
-  <li>
-    <strong>First fetch.</strong> Show one random fact on a page, then a button
-    that swaps it for another.
-  </li>
-  <li>
-    <strong>Lists and loops.</strong> Render every breed with
-    <code>?page[size]=1000</code>, then add a search box that filters client
-    side.
-  </li>
-  <li>
-    <strong>Pagination.</strong> Walk pages with <code>page[number]</code> and
-    read the totals out of <code>meta.pagination</code>.
-  </li>
-  <li>
-    <strong>Relationships.</strong> Pick a group, follow
-    <code>relationships.breeds</code>, and fetch each breed by id.
-  </li>
-  <li>
-    <strong>Handling errors.</strong> Request a breed id that does not exist and
-    handle the 404 without breaking the page.
-  </li>
-  <li>
-    <strong>Charts.</strong> Plot life span or weight ranges across a group and
-    talk about what the numbers do and do not say.
-  </li>
-</ul>
+<p>
+  In case you need somewhere to start: show a random fact and add a button that
+  fetches another one. List every breed and filter them with a search box. Walk
+  through the pages with <code>page[number]</code>. Pick a group and follow its
+  breeds to fetch each one. Ask for a breed that doesn't exist and handle the
+  404 without breaking the page. Chart the life spans across a group and argue
+  about what the numbers actually mean.
+</p>
 
 <p>
-  Built something with it? Send it to
-  <%= mail_to "dev@dogapi.dog" %> — seeing what people make is what keeps this
-  running.
+  If you make something with it, send it over. Seeing what people build is the
+  reason this is still online.
 </p>
 
 <%= image_tag "dogs.jpg",
@@ -174,50 +129,40 @@
 
 <h2 id="faq">
   <a class="api-anchor" href="#faq" aria-hidden="true"></a>
-  Questions
+  Questions I get
 </h2>
 
 <h3>Do I need an API key?</h3>
 <p>
-  No, and there is no plan to require one. If that ever changes, existing
-  requests will keep working.
+  No, and I don't plan to require one. If that ever changes, whatever you've
+  already built will keep working.
 </p>
 
 <h3>Why is it free?</h3>
 <p>
-  It is used as a teaching tool and for fun, and it has been hosted for free for
-  years. Keeping it that way matters more than making money from it. If you want
-  to help with the hosting bill, you can
+  Because it's mostly used for learning and for fun, and I've paid for it myself
+  this long without it hurting. If you feel like helping with the bill, you can
   <%= link_to "buy me a coffee", "https://www.buymeacoffee.com/kinduff", target: "_blank", rel: "noopener" %>.
-</p>
-
-<h3>Can I use it in a course, a workshop or a tutorial?</h3>
-<p>
-  Yes, including commercial courses, with no need to ask. A link back is
-  appreciated but not required. If you are teaching a large group, nothing
-  special is needed — the rate limit is per IP, and a classroom behind one
-  address is well within it.
 </p>
 
 <h3>Why is V1 deprecated?</h3>
 <p>
-  V1 does not follow any standard and was not built to grow. V2 follows JSON:API
-  and is where breeds, groups and everything new lives. V1 still answers, and
-  will keep answering.
+  I wrote V1 without following any standard and it doesn't grow well. V2 follows
+  JSON:API and is where breeds, groups and anything new lives. V1 still answers,
+  and I'm not going to switch it off.
 </p>
 
 <h3>Where's the Slack button?</h3>
 <p>
-  Ownership of the Slack application was lost to a policy change and could not
-  be recovered.
+  I lost ownership of the Slack app to a policy change and couldn't get it back.
 </p>
 
-<h3>Who makes this?</h3>
+<h3>Who are you?</h3>
 <p>
-  <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>,
-  who likes building silly things and sharing them. The code is
-  <%= link_to "on GitHub", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %>
-  under the MIT license.
+  <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.
+  I like building silly things and putting them online. The code for this one is
+  <%= link_to "on GitHub", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %>,
+  MIT licensed, and pull requests are welcome.
 </p>
 
 <p class="home-badge">
