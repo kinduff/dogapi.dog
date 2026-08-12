@@ -52,6 +52,26 @@ namespace :images do
     puts "Done: #{totals[:imported]} imported, #{totals[:skipped]} skipped, #{totals[:errors]} failed"
   end
 
+  desc "Walk every source in turn until each breed has enough images: images:backfill[3]"
+  task :backfill, [:limit] => :environment do |_task, args|
+    limit = (args[:limit].presence || 3).to_i
+
+    BreedImages::SOURCE_ORDER.each do |source|
+      short = breeds_short_of(limit)
+
+      if short.empty?
+        puts "Every breed has #{limit} images; nothing left for #{source}"
+        break
+      end
+
+      puts "#{source}: #{short.size} breeds with fewer than #{limit} images"
+      totals = import_each(short, source, limit)
+      puts "#{source}: #{totals[:imported]} imported, #{totals[:skipped]} skipped, #{totals[:errors]} failed"
+    end
+
+    puts "#{Breed.where.associated(:breed_images).distinct.count}/#{Breed.count} breeds have images"
+  end
+
   desc "Delete stored images that fall below the current quality floor"
   task prune: :environment do
     removed = 0
@@ -100,5 +120,41 @@ namespace :images do
       source: args[:source].presence || BreedImages::DEFAULT_SOURCE,
       limit: (args[:limit].presence || 3).to_i
     )
+  end
+
+  # Breeds that are short of the target, not just the ones with nothing: the
+  # limit is how many images a breed should end up with.
+  def breeds_short_of(limit)
+    Breed.left_joins(:breed_images)
+      .group(:id)
+      .having("COUNT(breed_images.id) < ?", limit)
+      .order(:name)
+      .to_a
+  end
+
+  def import_each(breeds, source, limit)
+    totals = Hash.new(0)
+
+    breeds.each_with_index do |breed, index|
+      # A long run must survive one breed going wrong, whatever the reason.
+      begin
+        result = BreedImages::Importer.call(breed, source: source, limit: limit)
+      rescue => e
+        totals[:errors] += 1
+        warn "[#{index + 1}/#{breeds.size}] #{breed.name}: #{e.class}: #{e.message}"
+        next
+      end
+
+      totals[:imported] += result.imported.size
+      totals[:skipped] += result.skipped.size
+      totals[:errors] += result.errors.size
+
+      puts "[#{index + 1}/#{breeds.size}] #{breed.name}: #{result.summary}"
+      result.errors.each { |error| warn "  #{error}" }
+
+      sleep import_delay unless index == breeds.size - 1
+    end
+
+    totals
   end
 end

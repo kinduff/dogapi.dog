@@ -24,8 +24,9 @@ RSpec.describe BreedImages::Importer do
   # The importer walks the adapter's candidate enumerator, pulling more only
   # when it still needs images.
   def stub_adapter(*candidates)
-    adapter = instance_double(BreedImages::WikimediaCommons, candidates: candidates.each)
-    allow(BreedImages::WikimediaCommons).to receive(:new).and_return(adapter)
+    default = BreedImages.adapter_for(BreedImages::DEFAULT_SOURCE)
+    adapter = instance_double(default, candidates: candidates.each)
+    allow(default).to receive(:new).and_return(adapter)
   end
 
   def stub_download(url: "https://upload.wikimedia.org/akita.jpg", body: image_bytes)
@@ -204,7 +205,8 @@ RSpec.describe BreedImages::Importer do
   end
 
   it "records an adapter failure instead of raising" do
-    allow(BreedImages::WikimediaCommons).to receive(:new).and_raise(BreedImages::Downloader::Error, "503 from Commons")
+    allow(BreedImages.adapter_for(BreedImages::DEFAULT_SOURCE))
+      .to receive(:new).and_raise(BreedImages::Downloader::Error, "503 from Commons")
 
     expect(result.imported).to be_empty
     expect(result.errors.join).to include("503 from Commons")

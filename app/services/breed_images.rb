@@ -3,11 +3,20 @@
 # Imports pictures of breeds from external sources into Active Storage.
 module BreedImages
   SOURCES = {
+    "wikipedia_lead" => "BreedImages::WikipediaLead",
+    "commons_category" => "BreedImages::CommonsCategory",
     "wikimedia_commons" => "BreedImages::WikimediaCommons",
+    "openverse" => "BreedImages::Openverse",
     "manual" => "BreedImages::Manual"
   }.freeze
 
-  DEFAULT_SOURCE = "wikimedia_commons"
+  # In order of how much human judgement went into the pictures they return:
+  # the one photo an article was built around, then a category somebody filed
+  # files into, then a full text search, then everything Flickr has. A breed
+  # short of images is walked down this list until it has enough.
+  SOURCE_ORDER = %w[wikipedia_lead commons_category wikimedia_commons openverse].freeze
+
+  DEFAULT_SOURCE = "wikipedia_lead"
 
   class << self
     def adapter_for(source)
