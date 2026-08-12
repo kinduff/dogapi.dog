@@ -39,9 +39,9 @@ class BreedImage < ApplicationRecord
     return unless variant.nil? || VARIANTS.key?(variant.to_sym)
 
     with_url_options do
-      representation = variant.nil? ? file : file.variant(variant.to_sym).processed
+      url = variant.nil? ? file.url : variant_url(variant.to_sym)
 
-      public_host_url(representation.url)
+      public_host_url(url)
     end
   end
 
@@ -56,6 +56,23 @@ class BreedImage < ApplicationRecord
   end
 
   private
+
+  # `variant.processed` costs one query per variant per image, even when the
+  # variant records are already loaded, because it looks the record up by
+  # digest. Since imports pre-process every size, the loaded records almost
+  # always hold the answer; processing is only the fallback.
+  def variant_url(name)
+    variant = file.variant(name)
+    blob = preloaded_variant_record(variant)&.image&.blob
+
+    (blob || variant.processed).url
+  end
+
+  def preloaded_variant_record(variant)
+    return unless file.blob.association(:variant_records).loaded?
+
+    file.blob.variant_records.find { |record| record.variation_digest == variant.variation.digest }
+  end
 
   # The Disk service builds URLs from a route, so it needs a host. Inside a
   # request Active Storage sets this itself, but rake tasks and jobs do not

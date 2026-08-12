@@ -8,19 +8,27 @@ module Api
       before_action :cache_publicly
 
       def index
-        jsonapi_paginate(Breed.order(:name)) do |paginated|
+        jsonapi_paginate(breeds.order(:name)) do |paginated|
           render jsonapi: paginated
         end
       end
 
       def show
-        @breed = Breed.find_by(id: params.fetch(:id))
+        @breed = breeds.find_by(id: params.fetch(:id))
 
         if @breed.nil?
           head :not_found
         else
           render jsonapi: @breed
         end
+      end
+
+      private
+
+      # The serializer renders the group and every image URL, so both are
+      # preloaded: otherwise a full page is a query per breed and per image.
+      def breeds
+        Breed.includes(:group, breed_images: {file_attachment: {blob: {variant_records: {image_attachment: :blob}}}})
       end
     end
   end
