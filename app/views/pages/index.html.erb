@@ -1,6 +1,9 @@
 <% content_for :javascripts do %>
   <%= javascript_include_tag "api_docs", defer: true %>
+  <%= javascript_include_tag "home_hero", defer: true %>
 <% end %>
+
+<%= render "pages/hero", breed: @hero_breed, pool: @hero_pool if @hero_breed %>
 
 <p class="home-lead">
   Hi, I'm <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.

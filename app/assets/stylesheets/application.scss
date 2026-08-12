@@ -726,6 +726,118 @@ details.api-fields {
 }
 
 // Homepage
+//
+// The picture at the top is a live API response with its own controls, so it
+// is styled as a card rather than as an illustration.
+.home-hero {
+    margin: 1.4rem 0 1.6rem;
+}
+
+.home-hero-frame {
+    background: #f6f8fa;
+    border-radius: 4px;
+    display: block;
+    line-height: 0;
+    overflow: hidden;
+    position: relative;
+
+    &:hover .home-hero-image {
+        transform: scale(1.02);
+    }
+}
+
+.home-hero-image {
+    // A fixed box means swapping the picture never moves the page, whatever
+    // shape the next dog arrives in.
+    aspect-ratio: 3 / 2;
+    display: block;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.4s ease, opacity 0.2s ease;
+    width: 100%;
+}
+
+.home-hero-spinner {
+    background: rgba(255, 255, 255, 0.75);
+    inset: 0;
+    position: absolute;
+
+    &::after {
+        animation: home-hero-spin 0.8s linear infinite;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+        border-radius: 50%;
+        border-top-color: var(--theme);
+        content: "";
+        height: 1.6rem;
+        left: calc(50% - 0.8rem);
+        position: absolute;
+        top: calc(50% - 0.8rem);
+        width: 1.6rem;
+    }
+}
+
+@keyframes home-hero-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.home-hero-caption {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: space-between;
+    margin-top: 0.7rem;
+}
+
+.home-hero-facts {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.home-hero-name {
+    font-size: 1.15em;
+    line-height: 1.2;
+}
+
+.home-hero-actions {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+}
+
+// The two URLs the card just used, in the same voice as the request lines in
+// the docs.
+.home-hero-request {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+    gap: 0.3rem 0.7rem;
+    margin: 0.5rem 0 1rem;
+
+    code {
+        overflow-wrap: anywhere;
+    }
+}
+
+.home-hero-note {
+    font-size: 0.85em;
+    margin-top: 0.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-hero-image {
+        transition: none;
+    }
+
+    .home-hero-spinner::after {
+        animation-duration: 2s;
+    }
+}
+
 .home-lead {
     font-size: 1.15em;
     margin-top: 1.2rem;

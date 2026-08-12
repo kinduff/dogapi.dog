@@ -64,6 +64,64 @@ RSpec.describe "Homepage" do
     end
   end
 
+  describe "the picture at the top" do
+    let(:group) { create(:group, name: "Working Group") }
+    let!(:akita) { create(:breed, name: "Akita", group: group, life: {min: 10, max: 12}) }
+
+    it "loads the picture from the image endpoint rather than from an asset" do
+      create(:breed_image, breed: akita)
+
+      get "/"
+
+      expect(response.body).to include("/api/v2/breeds/#{akita.id}/image?size=large")
+    end
+
+    it "names the dog it is showing and links to its page" do
+      create(:breed_image, breed: akita)
+
+      get "/"
+
+      expect(rendered_text.squish).to include("Akita", "Working Group · 10–12 years")
+      expect(response.body).to include('href="/breeds/akita"')
+    end
+
+    # The button is the only part that needs the script, so the rest of the
+    # card has to stand on its own.
+    it "renders a real dog without javascript" do
+      create(:breed_image, breed: akita)
+
+      get "/"
+
+      expect(response.body).to include("data-hero-shuffle", "hidden")
+      expect(response.body).to include("home_hero")
+    end
+
+    it "hands the shuffle button breeds that actually have a picture" do
+      create(:breed_image, breed: akita)
+      create(:breed, name: "Pictureless", group: group)
+
+      get "/"
+
+      pool = JSON.parse(CGI.unescapeHTML(response.body[/data-hero-pool="([^"]+)"/, 1]))
+
+      expect(pool).to contain_exactly({"id" => akita.id, "path" => "/breeds/akita"})
+    end
+
+    it "shows the one tag that does the same thing" do
+      create(:breed_image, breed: akita)
+
+      get "/"
+
+      expect(rendered_text).to include('<img src="https://dogapi.dog/api/v2/breeds/image">')
+    end
+
+    it "is left out entirely when nothing has been imported yet" do
+      get "/"
+
+      expect(response.body).not_to include("data-hero-pool")
+    end
+  end
+
   context "with an empty database" do
     before { get "/" }
 

@@ -3,3 +3,4 @@
 //= link application.js
 //= link api_docs.js
 //= link breed_gallery.js
+//= link home_hero.js
