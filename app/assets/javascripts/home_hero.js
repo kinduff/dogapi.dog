@@ -22,20 +22,24 @@
 
     var pages = parseInt(hero.getAttribute("data-hero-pages"), 10) || 1;
     var size = parseInt(hero.getAttribute("data-hero-size"), 10) || 8;
-    var current = null;
+    // Which page the server rendered, so the first press does not ask for the
+    // dogs already on screen.
+    var current = parseInt(hero.getAttribute("data-hero-page"), 10) || null;
     var busy = false;
 
     function query(page) {
       return PATH + "?filter[has_images]=true&page[size]=" + size + "&page[number]=" + page + "&include=group";
     }
 
+    // Any page but the one on screen: drawn from the other pages and shifted
+    // past the current one, so a press always changes the dogs. With few pages
+    // a retry would land on the same one too often to feel like a button.
     function pick() {
-      var next = 1 + Math.floor(Math.random() * pages);
-      // One retry is enough to make repeats rare without looping on a short
-      // collection.
-      if (next === current && pages > 1) next = 1 + Math.floor(Math.random() * pages);
+      if (pages < 2) return 1;
 
-      return next;
+      var next = 1 + Math.floor(Math.random() * (pages - 1));
+
+      return next >= current ? next + 1 : next;
     }
 
     function lifeSpan(life) {

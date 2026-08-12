@@ -3,7 +3,8 @@
     in the same order, and the shuffle button asks for another page. Without
     JavaScript it is a grid of real dogs that link to their pages. %>
 <% query = {"filter[has_images]" => "true", "page[size]" => size, "page[number]" => page} %>
-<section class="home-hero" data-hero data-hero-pages="<%= pages %>" data-hero-size="<%= size %>">
+<section class="home-hero" data-hero data-hero-pages="<%= pages %>" data-hero-size="<%= size %>"
+         data-hero-page="<%= page %>">
   <ul class="home-hero-grid" data-hero-grid>
     <% breeds.each do |breed| %>
       <li class="home-hero-card">

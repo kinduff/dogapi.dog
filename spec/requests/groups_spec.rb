@@ -75,7 +75,6 @@ RSpec.describe "Groups pages" do
       expect(response.body).to include("/docs/api-v2#get-groups-id")
     end
 
-
     it "404s on an unknown group" do
       get "/groups/not-a-group"
 

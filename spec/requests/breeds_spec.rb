@@ -80,7 +80,6 @@ RSpec.describe "Breeds pages" do
       expect(response.body).to include("https://dogapi.dog/api/v2/breeds?page[number]=1")
       expect(response.body).to include("/docs/api-v2#get-breeds")
     end
-
   end
 
   describe "GET /breeds/:id" do
