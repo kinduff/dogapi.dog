@@ -10,6 +10,8 @@ RSpec.describe "API reference pages" do
   end
 
   describe "GET /docs/api-v2" do
+    let!(:breed) { create(:breed, group: create(:group)) }
+
     before { get "/docs/api-v2" }
 
     it "renders" do
@@ -73,8 +75,24 @@ RSpec.describe "API reference pages" do
       expect(response.body).to include('data-param="id"', 'data-in="path"')
     end
 
-    it "prefills a path parameter with the documented example" do
-      expect(response.body).to include('data-default="f9643a80-af1d-422a-9f15-18d466822053"')
+    it "prefills a path parameter with an id that exists" do
+      expect(response.body).to include(%(data-default="#{breed.id}"))
+      expect(response.body).to include(%(data-default="#{breed.group_id}"))
+    end
+
+    it "puts that same id in the copyable request" do
+      expect(rendered_text).to include("curl -s \"https://dogapi.dog/api/v2/breeds/#{breed.id}\"")
+    end
+
+    it "falls back to the documented example when nothing exists yet" do
+      Rails.cache.clear
+      Breed.delete_all
+      Group.delete_all
+
+      get "/docs/api-v2"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("f9643a80-af1d-422a-9f15-18d466822053")
     end
 
     it "lets the curl example be copied" do

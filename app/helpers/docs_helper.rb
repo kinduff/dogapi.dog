@@ -47,7 +47,7 @@ module DocsHelper
   # A copy-pasteable request for an operation, with path parameters filled in
   # from the documented example when there is one.
   def api_curl(document, operation)
-    path = operation.path.gsub(/\{(\w+)\}/) { api_example_id(operation) || "{#{$1}}" }
+    path = operation.path.gsub(/\{(\w+)\}/) { api_sample_id(operation) || "{#{$1}}" }
     query = operation.parameters.select { |param| param.in == "query" }
 
     url = "#{document.base_url}#{path}"
@@ -71,7 +71,7 @@ module DocsHelper
   # What a try-it field starts with: the documented example for a path id, the
   # declared default for a query parameter, otherwise blank.
   def api_try_default(_document, operation, parameter)
-    return api_example_id(operation) if parameter.in == "path"
+    return api_sample_id(operation) if parameter.in == "path"
 
     parameter.constraints.find { |constraint| constraint.start_with?("default ") }&.delete_prefix("default ")
   end
@@ -95,6 +95,15 @@ module DocsHelper
     return example unless data.is_a?(Array) && data.size > keep
 
     example.merge("data" => data.first(keep))
+  end
+
+  # An id that exists right now, so a copied request or a prefilled field
+  # actually resolves. Falls back to the documented example when the table is
+  # empty, which only happens on a fresh install.
+  def api_sample_id(operation)
+    resource = operation.path[%r{\A/(\w+)/\{id\}}, 1]&.singularize
+
+    (resource && sample_ids[resource]) || api_example_id(operation)
   end
 
   private

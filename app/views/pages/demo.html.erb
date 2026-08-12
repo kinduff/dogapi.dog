@@ -111,9 +111,9 @@
       base: "/api/v2",
       path: "/breeds/{id}",
       intro: "A single breed by id. Copy an id from the breeds response above and paste it here.",
-      params: [{name: "id", in: "path", default: "", hint: "a breed id"}],
+      params: [{name: "id", in: "path", default: sample_ids["breed"], hint: "a breed id"}],
       snippet: <<~JS.strip %>
-        const id = "68f47c5a-5115-47cd-9849-e45d3c378f12";
+        const id = "#{sample_ids["breed"] || "paste-a-breed-id-here"}";
         const response = await fetch(
           `https://dogapi.dog/api/v2/breeds/${id}`
         );
@@ -147,9 +147,9 @@
       base: "/api/v2",
       path: "/groups/{id}",
       intro: "A single group by id, taken from the groups response above.",
-      params: [{name: "id", in: "path", default: "", hint: "a group id"}],
+      params: [{name: "id", in: "path", default: sample_ids["group"], hint: "a group id"}],
       snippet: <<~JS.strip %>
-        const id = "31f2682c-7c1e-4a4b-b7e6-c9e2e0c50dfd";
+        const id = "#{sample_ids["group"] || "paste-a-group-id-here"}";
         const response = await fetch(
           `https://dogapi.dog/api/v2/groups/${id}`
         );

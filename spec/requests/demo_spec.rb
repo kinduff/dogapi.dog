@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "Demo page" do
+  let!(:breed) { create(:breed, name: "Akita", group: create(:group, name: "Working")) }
+
   before { get "/demo" }
 
   def rendered_text
@@ -45,5 +47,39 @@ RSpec.describe "Demo page" do
 
   it "links back to the reference" do
     expect(response.body).to include(%(href="/docs"))
+  end
+
+  describe "example ids" do
+    it "prefills the single record panels with an id that exists" do
+      expect(response.body).to include(%(data-default="#{breed.id}"))
+      expect(response.body).to include(%(data-default="#{breed.group_id}"))
+    end
+
+    it "uses that same id in the copyable snippet" do
+      expect(rendered_text).to include(%(const id = "#{breed.id}"))
+    end
+
+    it "invents no ids of its own" do
+      # Scoped to the page body: the layout carries the Umami site id, which is
+      # a uuid but not a record.
+      main = response.body[%r{<main.*</main>}m]
+      uuids = main.scan(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/).uniq
+
+      expect(uuids).to match_array([breed.id, breed.group_id])
+    end
+  end
+
+  context "with an empty database" do
+    before do
+      Rails.cache.clear
+      Breed.delete_all
+      Group.delete_all
+      get "/demo"
+    end
+
+    it "still renders, with a placeholder instead of a broken id" do
+      expect(response).to have_http_status(:ok)
+      expect(rendered_text).to include("paste-a-breed-id-here")
+    end
   end
 end
