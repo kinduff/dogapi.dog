@@ -116,15 +116,54 @@ nav {
         margin-right: 10px;
     }
 
+    // Four links fit on two lines on a phone, which is shorter than four rows
+    // of one link each and leaves the page itself above the fold.
     @media (max-width: 600px) {
         ul {
-            display: block;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 1rem;
         }
 
         li {
-            padding: 10px 0;
-            display: block;
+            margin-right: 0;
+            padding: 0.2rem 0;
         }
+    }
+}
+
+footer {
+    margin-top: 3.2rem;
+    padding-bottom: 2rem;
+}
+
+nav.footer-nav {
+    border-top: 1px solid #e3e3e3;
+    display: grid;
+    gap: 1.2rem 2rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-top: 1.6rem;
+
+    h2 {
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+        margin: 0 0 0.4rem;
+        text-transform: uppercase;
+    }
+
+    ul {
+        display: block;
+    }
+
+    li {
+        display: block;
+        font-size: 0.9rem;
+        margin: 0 0 0.3rem;
+        padding: 0;
+    }
+
+    @media (max-width: 600px) {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 

@@ -38,14 +38,12 @@
       <p>
         The Dog API provides dog data as a service!
       </p>
-      <nav>
+      <nav aria-label="Main">
         <ul>
           <li><%= link_to_unless_current "Overview", root_path %></li>
-          <li><%= link_to_unless_current "Terms of Use", terms_path %></li>
           <li><%= link_to_unless_current "Breeds", breeds_path %></li>
           <li><%= link_to_unless_current "Groups", groups_path %></li>
           <li><%= link_to_unless_current "API Docs", docs_path %></li>
-          <li><%= link_to "GitHub ⧉", "https://github.com/kinduff/dogapi.dog", target: '_blank' %></li>
         </ul>
       </nav>
     </header>
@@ -53,6 +51,32 @@
       <%= yield %>
     </main>
     <footer>
+      <nav class="footer-nav" aria-label="Footer">
+        <div>
+          <h2>Browse</h2>
+          <ul>
+            <li><%= link_to_unless_current "Overview", root_path %></li>
+            <li><%= link_to_unless_current "Breeds", breeds_path %></li>
+            <li><%= link_to_unless_current "Groups", groups_path %></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Documentation</h2>
+          <ul>
+            <li><%= link_to_unless_current "API Docs", docs_path %></li>
+            <li><%= link_to_unless_current "API v2", api_v2_path %></li>
+            <li><%= link_to_unless_current "API v1 (deprecated)", api_v1_path %></li>
+          </ul>
+        </div>
+        <div>
+          <h2>About</h2>
+          <ul>
+            <li><%= link_to_unless_current "Terms of Use", terms_path %></li>
+            <li><%= link_to "GitHub ⧉", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %></li>
+            <li><%= link_to "Sitemap", sitemap_path %></li>
+          </ul>
+        </div>
+      </nav>
       <p><small>Dog API by kinduff, providing Dog Data since 2016 - <%= ENV['GIT_COMMIT']&.slice(0, 7) %></small></p>
     </footer>
   </body>
