@@ -427,7 +427,7 @@
         "tags": [
           "Breeds"
         ],
-        "description": "Returns every breed, ordered by name and split into pages.\n\nPages hold up to 1000 records. A missing, zero, negative or oversized\n`page[size]` falls back to that maximum, so a plain request returns the\nwhole collection. Each breed links to the group it belongs to.\n\nResponses may be cached publicly for up to 5 minutes.",
+        "description": "Returns every breed, ordered by name and split into pages.\n\nPages hold up to 1000 records. A missing, zero, negative or oversized\n`page[size]` falls back to that maximum, so a plain request returns the\nwhole collection. Each breed links to the group it belongs to.\n\nMost breeds have no picture imported yet.\n`filter[has_images]=true` narrows the collection to the ones that do,\nwhich is what you want if you are putting photographs on a screen.\n\nResponses may be cached publicly for up to 5 minutes.",
         "parameters": [
           {
             "name": "page[number]",
@@ -449,6 +449,15 @@
               "maximum": 1000
             },
             "description": "Number of records per page (max 1000)"
+          },
+          {
+            "name": "filter[has_images]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Only breeds that have at least one picture"
           }
         ],
         "responses": {
