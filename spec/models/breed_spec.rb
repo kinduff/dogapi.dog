@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe Breed do
   it { is_expected.to belong_to(:group) }
   it { is_expected.to have_many(:breed_images).dependent(:destroy) }
+  it { is_expected.to have_many(:breed_enrichments).dependent(:destroy) }
 
   describe "#primary_image" do
     let(:breed) { create(:breed) }
@@ -40,6 +41,28 @@ RSpec.describe Breed do
       breed.female_weight_min = 25
 
       expect(breed.male_weight_min).to be_nil
+    end
+
+    it "writes the enrichment columns" do
+      breed.male_height_min = 55
+      breed.origin_country = "Thailand"
+      breed.coat_colors = %w[red black]
+      breed.traits_energy = 4
+
+      expect(breed.male_height).to eq("min" => 55)
+      expect(breed.origin).to eq("country" => "Thailand")
+      expect(breed.coat).to eq("colors" => %w[red black])
+      expect(breed.traits).to eq("energy" => 4)
+    end
+  end
+
+  describe "scopes" do
+    it "splits breeds by whether they have been enriched" do
+      enriched = create(:breed, enriched_at: Time.current)
+      untouched = create(:breed)
+
+      expect(described_class.enriched).to eq([enriched])
+      expect(described_class.unenriched).to eq([untouched])
     end
   end
 
