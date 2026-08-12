@@ -6,7 +6,8 @@ RSpec.describe "Pages" do
   paths = {
     "the overview" => "/",
     "the terms" => "/terms",
-    "the demo" => "/demo",
+    "the breeds" => "/breeds",
+    "the groups" => "/groups",
     "the docs index" => "/docs",
     "the v1 docs" => "/docs/api-v1",
     "the v2 docs" => "/docs/api-v2"

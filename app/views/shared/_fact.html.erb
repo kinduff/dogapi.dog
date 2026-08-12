@@ -1,0 +1,9 @@
+<%# A random fact, straight from the same table /api/v2/facts reads. %>
+<% if fact %>
+  <blockquote class="breed-fact">
+    <%= fact.body %>
+    <cite>
+      random fact from <%= link_to "GET /api/v2/facts", api_docs_url("get-facts") %>
+    </cite>
+  </blockquote>
+<% end %>

@@ -1,0 +1,27 @@
+<% page_heading @group.name %>
+<% content_for :description do %>
+  The <%= @breeds.size %> dog breeds in the <%= @group.name %>, with pictures,
+  life spans and weights, from the free Dog API.
+<% end %>
+<% content_for :canonical_path, group_path_for(@group) %>
+<% structured_data group_structured_data(@group, @breeds) %>
+
+<p>
+  <%= pluralize @breeds.size, "breed" %> in the <%= @group.name %>.
+  <%= link_to "All groups", groups_path %>.
+</p>
+
+<%= render "shared/fact", fact: @fact %>
+
+<% if @breeds.any? %>
+  <ul class="breed-grid">
+    <%= render partial: "shared/breed_card", collection: @breeds, as: :breed %>
+  </ul>
+<% else %>
+  <p class="api-note">No breeds in this group yet.</p>
+<% end %>
+
+<%= render "shared/api_panel",
+      anchor: "get-groups-id",
+      url: api_url("/groups/#{@group.id}"),
+      payload: api_payload(@group, GroupSerializer) %>

@@ -757,103 +757,55 @@ details.api-fields {
     line-height: 1;
 }
 
-// Image gallery
-.image-intro {
-    margin: 0.8rem 0 1rem;
-}
+// Breed browsing
+.breed-fact {
+    background: #f6f8fa;
+    border-left: 0.3rem solid var(--theme);
+    border-radius: 0 3px 3px 0;
+    margin: 1.2rem 0;
+    padding: 0.8rem 1rem;
 
-.image-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    list-style: none;
-    margin: 0 0 0.6rem;
-    padding: 0;
-
-    li {
-        background: #f6f8fa;
-        border-radius: 3px;
+    cite {
         color: var(--text-alt);
-        font-size: 0.8em;
-        padding: 0.25rem 0.6rem;
-    }
-
-    strong {
-        color: var(--text-main);
-        font-size: 1.15em;
-    }
-}
-
-// One chip per licence in the collection, because what an image may be used
-// for matters as much as how many there are.
-.image-licenses {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    list-style: none;
-    margin: 0 0 0.6rem;
-    padding: 0;
-
-    li {
-        align-items: baseline;
-        border: 1px solid var(--background-element);
-        border-radius: 999px;
-        display: inline-flex;
-        font-size: 0.75em;
-        gap: 0.35rem;
-        padding: 0.15rem 0.6rem;
-    }
-}
-
-.image-license-name {
-    font-family: monospace;
-}
-
-.image-meter {
-    background: var(--background-element);
-    border-radius: 999px;
-    display: block;
-    height: 0.4rem;
-    overflow: hidden;
-
-    > span {
-        background: var(--theme);
         display: block;
-        height: 100%;
+        font-size: 0.75em;
+        font-style: normal;
+        margin-top: 0.4rem;
     }
 }
 
-.image-groups {
-    display: grid;
-    gap: 0.15rem 1.4rem;
-    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-    list-style: none;
-    margin: 0.8rem 0 1rem;
-    padding: 0;
-
-    li {
-        align-items: center;
-        display: grid;
-        font-size: 0.8em;
-        gap: 0.6rem;
-        grid-template-columns: minmax(6rem, 10rem) 1fr max-content;
-    }
-}
-
-.image-group-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.image-filters {
+.breed-search {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0 0 0.8rem;
+    gap: 0.5rem;
+    margin: 1.2rem 0 0.8rem;
+
+    input {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        flex: 1 1 14rem;
+        font-family: inherit;
+        font-size: 0.9em;
+        padding: 0.4rem 0.6rem;
+    }
 }
 
-.image-filter {
+.breed-search-label {
+    flex-basis: 100%;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.breed-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.8rem 0 1.2rem;
+}
+
+.breed-chip {
     background: #f6f8fa;
     border-radius: 999px;
     color: var(--text-alt);
@@ -863,43 +815,44 @@ details.api-fields {
 
     &:hover {
         background: var(--background-element);
+        color: var(--text-main);
     }
 }
 
-.image-filter-on {
-    background: var(--theme);
-    color: var(--text-inverted);
-
-    &:hover {
-        background: var(--theme-dark);
-    }
-}
-
-.image-grid {
+.breed-grid {
     display: grid;
-    gap: 0.7rem;
+    gap: 0.8rem;
     grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
     list-style: none;
-    margin: 0 0 1.5rem;
+    margin: 1rem 0 1.5rem;
     padding: 0;
 }
 
-.image-card {
-    display: flex;
-    flex-direction: column;
+.breed-card {
     min-width: 0;
 }
 
-.image-media {
+.breed-card-link {
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+
+    &:hover .breed-card-name {
+        text-decoration: underline;
+    }
+
+    &:hover .breed-thumb {
+        outline: 2px solid var(--theme);
+    }
+}
+
+.breed-media {
     line-height: 0;
     position: relative;
 }
 
-.image-thumb-link {
-    display: block;
-}
-
-.image-thumb {
+.breed-thumb {
     aspect-ratio: 1;
     background: #f6f8fa;
     border-radius: 3px;
@@ -909,14 +862,10 @@ details.api-fields {
     height: auto;
     object-fit: cover;
     width: 100%;
-
-    &:hover {
-        outline: 2px solid var(--theme);
-    }
 }
 
 // Placeholder for a breed nothing has been imported for yet.
-.image-thumb-empty {
+.breed-thumb-empty {
     align-items: center;
     background: repeating-linear-gradient(
         45deg,
@@ -929,39 +878,22 @@ details.api-fields {
     font-size: 1.5rem;
     justify-content: center;
     opacity: 0.7;
-
-    &:hover {
-        outline: 0;
-    }
 }
 
-// The breed's other pictures, sat on the corner of the main one so a card is
-// the same height whether or not there are any.
-.image-extras {
-    bottom: 3px;
-    display: flex;
-    gap: 2px;
-    left: 3px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+// How many pictures a breed has, when it has more than one.
+.breed-count {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 999px;
+    bottom: 4px;
+    color: #fff;
+    font-size: 0.65rem;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
     position: absolute;
-
-    img {
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        border-radius: 2px;
-        display: block;
-        height: 1.5rem;
-        object-fit: cover;
-        width: 1.5rem;
-
-        &:hover {
-            border-color: var(--theme);
-        }
-    }
+    right: 4px;
 }
 
-.image-card-name {
+.breed-card-name {
     font-size: 0.85em;
     font-weight: 600;
     line-height: 1.3;
@@ -969,9 +901,81 @@ details.api-fields {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.breed-card-meta {
+    font-size: 0.7em;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.breed-pagination {
+    align-items: center;
+    display: flex;
+    gap: 0.8rem;
+    margin: 1.2rem 0 2rem;
+}
+
+.breed-lead {
+    font-size: 1.1em;
+}
+
+.breed-hero {
+    margin: 1.2rem 0;
+
+    img {
+        border-radius: 3px;
+        display: block;
+        height: auto;
+        max-height: 30rem;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    figcaption {
+        margin-top: 0.4rem;
+    }
+}
+
+.breed-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0 0 1.4rem;
+    padding: 0;
+
+    img {
+        border-radius: 3px;
+        display: block;
+        height: 4rem;
+        object-fit: cover;
+        width: 4rem;
+
+        &:hover {
+            outline: 2px solid var(--theme);
+        }
+    }
+}
+
+.group-list {
+    list-style: none;
+    margin: 1.2rem 0;
+    padding: 0;
+}
+
+.group-row {
+    border-top: 1px solid var(--background-element);
+    padding: 0.8rem 0;
+
+    h2 {
+        font-size: 1.2rem;
+        margin: 0;
+    }
 
     a {
-        color: inherit;
         text-decoration: none;
 
         &:hover {
@@ -980,11 +984,36 @@ details.api-fields {
     }
 }
 
-.image-card-meta,
-.image-card-credit {
-    font-size: 0.7em;
-    line-height: 1.3;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.group-row-head {
+    align-items: baseline;
+    display: flex;
+    gap: 0.6rem;
+    justify-content: space-between;
+}
+
+.group-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+
+    img {
+        border-radius: 3px;
+        display: block;
+        height: 3rem;
+        object-fit: cover;
+        width: 3rem;
+
+        &:hover {
+            outline: 2px solid var(--theme);
+        }
+    }
+}
+
+.api-panel {
+    border-top: 1px solid var(--background-element);
+    margin-top: 2.5rem;
+    padding-top: 0.5rem;
 }

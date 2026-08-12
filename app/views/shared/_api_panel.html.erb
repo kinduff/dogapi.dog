@@ -1,0 +1,30 @@
+<%#
+  Every browsing page says which request would return what it is showing, and
+  links to that operation in the reference.
+%>
+<section class="api-panel">
+  <h2 id="api">
+    <a class="api-anchor" href="#api" aria-hidden="true"></a>
+    This page, as API data
+  </h2>
+
+  <p>
+    Everything above came from <code><%= url %></code>. No key, no sign up.
+    <%= link_to "See it in the reference", api_docs_url(anchor) %>.
+  </p>
+
+  <%= render "pages/api_code",
+        label: "Request",
+        language: "shell",
+        id: "#{anchor}-panel-curl",
+        content: %(curl -s "#{url}") %>
+
+  <% if defined?(payload) && payload.present? %>
+    <%= render "pages/api_code",
+          label: defined?(payload_label) ? payload_label : "Response",
+          language: "json",
+          id: "#{anchor}-panel-json",
+          content: api_json(payload),
+          tall: true %>
+  <% end %>
+</section>

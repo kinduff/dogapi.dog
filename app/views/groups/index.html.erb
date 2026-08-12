@@ -1,0 +1,45 @@
+<% page_heading "Breed Groups" %>
+<% content_for :description do %>
+  The <%= @groups.size %> dog breed groups in the free Dog API, and the breeds
+  that belong to each one.
+<% end %>
+<% content_for :canonical_path, groups_path %>
+
+<p>
+  Every breed belongs to one group. These are the nine the API knows, the same
+  ones <code>/api/v2/groups</code> returns.
+</p>
+
+<%= render "shared/fact", fact: @fact %>
+
+<ul class="group-list">
+  <% @groups.each do |group| %>
+    <li class="group-row">
+      <div class="group-row-head">
+        <h2><%= link_to group.name, group_path_for(group) %></h2>
+        <span class="api-muted"><%= pluralize @counts.fetch(group.id, 0), "breed" %></span>
+      </div>
+
+      <% previews = @previews.fetch(group.id, []) %>
+      <% if previews.any? %>
+        <ul class="group-previews">
+          <% previews.each do |image| %>
+            <li>
+              <a href="<%= breed_path_for(image.breed) %>" title="<%= image.breed.name %>">
+                <img src="<%= image.url_for(:thumb) %>" alt="<%= image.breed.name %>" loading="lazy">
+              </a>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="api-muted">No pictures imported for this group yet.</p>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<%= render "shared/api_panel",
+      anchor: "get-groups",
+      url: api_url("/groups"),
+      payload_label: "Response, trimmed to two records",
+      payload: api_collection_payload(@groups, GroupSerializer) %>

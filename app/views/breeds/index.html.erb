@@ -1,0 +1,66 @@
+<% page_heading @query.present? ? %(Breeds matching "#{@query}") : "Dog Breeds" %>
+<% content_for :description do %>
+  Browse all <%= @stats[:breeds] %> dog breeds in the free Dog API: pictures,
+  life spans, weights and the breed group each one belongs to.
+<% end %>
+<% content_for :canonical_path, breeds_canonical_path(@page, @query) %>
+<%# A search result is one of endless variations of the same list. %>
+<% content_for :robots, "noindex, follow" if @query.present? %>
+
+<p>
+  All <%= number_with_delimiter @stats[:breeds] %> breeds the API knows, with
+  their pictures, life spans and weights. Every page here is built from the
+  public API, and shows you the request it used.
+</p>
+
+<%= render "shared/fact", fact: @fact %>
+
+<form class="breed-search" method="get" action="<%= breeds_path %>" role="search">
+  <label class="breed-search-label" for="breed-q">Find a breed</label>
+  <input type="search" id="breed-q" name="q" value="<%= @query %>"
+         placeholder="Akita, Beagle, Terrier…" autocomplete="off">
+  <button type="submit" class="api-button">Search</button>
+  <% if @query.present? %>
+    <%= link_to "Clear", breeds_path, class: "api-button api-button-quiet" %>
+  <% end %>
+</form>
+
+<% if @query.present? %>
+  <p class="api-muted">
+    <%= pluralize @total, "breed" %> matching <strong><%= @query %></strong>.
+  </p>
+<% end %>
+
+<nav class="breed-groups" aria-label="Breed groups">
+  <% @groups.each do |group| %>
+    <%= link_to group.name, group_path_for(group), class: "breed-chip" %>
+  <% end %>
+</nav>
+
+<% if @breeds.empty? %>
+  <p class="api-note">No breeds here. Try another search.</p>
+<% else %>
+  <ul class="breed-grid">
+    <%= render partial: "shared/breed_card", collection: @breeds, as: :breed %>
+  </ul>
+
+  <% if @last_page > 1 %>
+    <nav class="breed-pagination" aria-label="Pages">
+      <% if @page > 1 %>
+        <%= link_to "← Previous", breeds_path(q: @query.presence, page: {number: @page - 1}), class: "api-button api-button-quiet" %>
+      <% end %>
+
+      <span class="api-muted">Page <%= @page %> of <%= @last_page %></span>
+
+      <% if @page < @last_page %>
+        <%= link_to "Next →", breeds_path(q: @query.presence, page: {number: @page + 1}), class: "api-button api-button-quiet" %>
+      <% end %>
+    </nav>
+  <% end %>
+<% end %>
+
+<%= render "shared/api_panel",
+      anchor: "get-breeds",
+      url: api_url("/breeds", "page[number]" => @page, "page[size]" => @per_page),
+      payload_label: "Response, trimmed to two records",
+      payload: api_collection_payload(@breeds, BreedSerializer) %>

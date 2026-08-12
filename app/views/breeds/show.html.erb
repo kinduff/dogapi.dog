@@ -1,0 +1,107 @@
+<% page_heading @breed.name %>
+<% content_for :description do %><%= breed_meta_description(@breed) %><% end %>
+<% content_for :canonical_path, breed_path_for(@breed) %>
+<% content_for :og_type, "article" %>
+<% if (hero = @breed.breed_images.first) %>
+  <% content_for :og_image, hero.url_for(:large) %>
+<% end %>
+<% structured_data breed_structured_data(@breed) %>
+
+<p class="breed-lead">
+  <%= @breed.name %> belongs to the
+  <%= link_to @breed.group.name, group_path_for(@breed.group) %>.
+  <%= "Hypoallergenic." if @breed.hypoallergenic %>
+</p>
+
+<% images = @breed.breed_images.to_a %>
+<% if images.any? %>
+  <figure class="breed-hero">
+    <a href="<%= images.first.url_for %>" target="_blank" rel="noopener">
+      <img src="<%= images.first.url_for(:large) %>" alt="<%= @breed.name %>"
+           width="1200" height="1200" loading="eager">
+    </a>
+    <figcaption class="api-muted">
+      <%= images.first.author.presence || "Unknown author" %> ·
+      <% if images.first.license_url.present? %>
+        <%= link_to images.first.license, images.first.license_url, target: "_blank", rel: "noopener nofollow" %>
+      <% else %>
+        <%= images.first.license %>
+      <% end %>
+      · <%= link_to "source", images.first.attribution[:source_url], target: "_blank", rel: "noopener nofollow" %>
+    </figcaption>
+  </figure>
+
+  <% if images.size > 1 %>
+    <ul class="breed-gallery">
+      <% images.drop(1).each do |image| %>
+        <li>
+          <a href="<%= image.url_for %>" target="_blank" rel="noopener"
+             title="<%= image_credit(image) %>">
+            <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>" loading="lazy">
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% else %>
+  <p class="api-note">
+    No picture for this breed yet. Images are imported from Wikimedia Commons,
+    and this one has not turned up a usable photo.
+  </p>
+<% end %>
+
+<dl class="api-facts">
+  <dt>Group</dt>
+  <dd><%= link_to @breed.group.name, group_path_for(@breed.group) %></dd>
+
+  <% if (life = breed_life_span(@breed)) %>
+    <dt>Life span</dt>
+    <dd><%= life %></dd>
+  <% end %>
+
+  <% if (weight = breed_weight(@breed, :male)) %>
+    <dt>Male weight</dt>
+    <dd><%= weight %></dd>
+  <% end %>
+
+  <% if (weight = breed_weight(@breed, :female)) %>
+    <dt>Female weight</dt>
+    <dd><%= weight %></dd>
+  <% end %>
+
+  <dt>Hypoallergenic</dt>
+  <dd><%= @breed.hypoallergenic ? "Yes" : "No" %></dd>
+
+  <dt>Id</dt>
+  <dd><code><%= @breed.id %></code></dd>
+</dl>
+
+<% if @breed.description.present? %>
+  <p><%= @breed.description %></p>
+<% end %>
+
+<%= render "shared/fact", fact: @fact %>
+
+<% if @siblings.any? %>
+  <h2 id="group">
+    <a class="api-anchor" href="#group" aria-hidden="true"></a>
+    More from the <%= @breed.group.name %>
+  </h2>
+
+  <ul class="breed-grid">
+    <%= render partial: "shared/breed_card", collection: @siblings, as: :breed %>
+  </ul>
+
+  <p><%= link_to "Every breed in this group →", group_path_for(@breed.group) %></p>
+<% end %>
+
+<%= render "shared/api_panel",
+      anchor: "get-breeds-id",
+      url: api_url("/breeds/#{@breed.id}"),
+      payload: api_payload(@breed, BreedSerializer) %>
+
+<p class="api-muted">
+  The picture itself also has an endpoint:
+  <code><%= api_url("/breeds/#{@breed.id}/image") %></code>, which redirects
+  straight to the file. <%= link_to "See it in the reference", api_docs_url("get-breeds-id-image") %>.
+</p>

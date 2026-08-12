@@ -1,0 +1,20 @@
+<%# One breed in a grid: its first picture, or a placeholder saying there is none yet. %>
+<li class="breed-card">
+  <a class="breed-card-link" href="<%= breed_path_for(breed) %>">
+    <div class="breed-media">
+      <% image = breed.breed_images.first %>
+      <% if image %>
+        <img class="breed-thumb" src="<%= image.url_for(:medium) %>" alt="<%= breed.name %>"
+             width="600" height="600" loading="lazy">
+        <% if breed.breed_images.size > 1 %>
+          <span class="breed-count"><%= breed.breed_images.size %></span>
+        <% end %>
+      <% else %>
+        <span class="breed-thumb breed-thumb-empty" aria-hidden="true">🐾</span>
+      <% end %>
+    </div>
+
+    <span class="breed-card-name"><%= breed.name %></span>
+    <span class="breed-card-meta api-muted"><%= breed.group&.name %></span>
+  </a>
+</li>

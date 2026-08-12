@@ -9,18 +9,24 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐶</text></svg>">
 
+    <link rel="canonical" href="<%= canonical_url %>">
+    <% if content_for?(:robots) %>
+      <meta name="robots" content="<%= content_for(:robots) %>">
+    <% end %>
+
     <meta name="title" content="<%= page_title %>">
-    <meta name="description" content="The Dog API provides a wealth of information on dog breeds, groups, and fun facts. Access and integrate this data into your website or application with our easy-to-use JSON API.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://dogapi.dog">
+    <meta name="description" content="<%= page_description %>">
+    <meta property="og:type" content="<%= content_for?(:og_type) ? content_for(:og_type) : "website" %>">
+    <meta property="og:url" content="<%= canonical_url %>">
     <meta property="og:title" content="<%= page_title %>">
-    <meta property="og:description" content="The Dog API provides a wealth of information on dog breeds, groups, and fun facts. Access and integrate this data into your website or application with our easy-to-use JSON API.">
-    <meta property="og:image" content="<%= image_url 'social.jpg' %>">
+    <meta property="og:description" content="<%= page_description %>">
+    <meta property="og:image" content="<%= page_image %>">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://dogapi.dog">
+    <meta property="twitter:url" content="<%= canonical_url %>">
     <meta property="twitter:title" content="<%= page_title %>">
-    <meta property="twitter:description" content="The Dog API provides a wealth of information on dog breeds, groups, and fun facts. Access and integrate this data into your website or application with our easy-to-use JSON API.">
-    <meta property="twitter:image" content="<%= image_url 'social.jpg' %>">
+    <meta property="twitter:description" content="<%= page_description %>">
+    <meta property="twitter:image" content="<%= page_image %>">
+    <%= yield :structured_data %>
 
     <script defer src="https://good.lasagna.pizza/script.js" data-website-id="7980a315-6a16-4996-ac59-da18143b0eec"></script>
     <%= javascript_include_tag :application, integrity: true %>
@@ -36,8 +42,8 @@
         <ul>
           <li><%= link_to_unless_current "Overview", root_path %></li>
           <li><%= link_to_unless_current "Terms of Use", terms_path %></li>
-          <li><%= link_to_unless_current "Demo", demo_path %></li>
-          <li><%= link_to_unless_current "Images", images_path %></li>
+          <li><%= link_to_unless_current "Breeds", breeds_path %></li>
+          <li><%= link_to_unless_current "Groups", groups_path %></li>
           <li><%= link_to_unless_current "API Docs", docs_path %></li>
           <li><%= link_to "GitHub ⧉", "https://github.com/kinduff/dogapi.dog", target: '_blank' %></li>
         </ul>

@@ -12,8 +12,12 @@ Rails.application.routes.draw do
   root to: "pages#index"
   get "/terms", to: "pages#terms", as: :terms
   get "/docs", to: "pages#docs", as: :docs
-  get "/demo", to: "pages#demo", as: :demo
-  get "/images", to: "pages#images", as: :images
+  resources :breeds, only: %i[index show]
+  resources :groups, only: %i[index show]
+
+  # The demo and the gallery both became the breeds pages.
+  get "/demo", to: redirect("/breeds", status: 301)
+  get "/images", to: redirect("/breeds", status: 301)
   get "/docs/api-v1", to: "pages#api_v1", as: :api_v1
   get "/docs/api-v2", to: "pages#api_v2", as: :api_v2
 

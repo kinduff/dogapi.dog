@@ -33,8 +33,8 @@ RSpec.describe "Homepage" do
       expect(rendered_text).to include("3", "1", "breeds", "groups", "dog facts")
     end
 
-    it "sends people to the docs and the demo" do
-      expect(response.body).to include('href="/docs"', 'href="/demo"')
+    it "sends people to the docs and the breeds" do
+      expect(response.body).to include('href="/docs"', 'href="/breeds"')
     end
 
     it "lets a visitor call the api without leaving the page" do
@@ -71,5 +71,13 @@ RSpec.describe "Homepage" do
       expect(response).to have_http_status(:ok)
       expect(rendered_text).to include("Try it")
     end
+  end
+
+  # The script hides this box when it renders an image response instead of
+  # text, and it went missing here once.
+  it "gives the try it panel the hook the script writes to" do
+    get "/"
+
+    expect(response.body).to include("data-api-body-box")
   end
 end
