@@ -9,8 +9,6 @@ module Browsable
 
   included do
     before_action :load_fact
-
-    helper_method :breed_path_for, :group_path_for
   end
 
   private
@@ -57,8 +55,4 @@ module Browsable
       }
     end
   end
-
-  def breed_path_for(breed) = breed_path(breed.name.parameterize.presence || breed.id)
-
-  def group_path_for(group) = group_path(group.name.parameterize.presence || group.id)
 end

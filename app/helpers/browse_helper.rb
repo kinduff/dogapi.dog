@@ -17,6 +17,12 @@ module BrowseHelper
     payload.merge("meta" => {"pagination" => {"records" => records.respond_to?(:size) ? records.size : nil}.compact})
   end
 
+  # Pages are linked by slug, and fall back to the API's own id for anything
+  # whose name does not survive being parameterized.
+  def breed_path_for(breed) = breed_path(breed.name.parameterize.presence || breed.id)
+
+  def group_path_for(group) = group_path(group.name.parameterize.presence || group.id)
+
   def api_url(path, params = {})
     query = params.compact.map { |key, value| "#{key}=#{value}" }.join("&")
 
