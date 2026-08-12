@@ -27,6 +27,14 @@ namespace :storage do
       disposition: :inline
     )
     puts "URL: #{url}"
+
+    # The API hands these URLs out as they are, so the bucket has to serve them
+    # to a client carrying no credentials at all.
+    if service.try(:public?)
+      response = Net::HTTP.get_response(URI.parse(url))
+      puts "Anonymous GET: #{response.code} #{response.message}, body #{response.body.inspect}"
+      warn "The bucket is not serving public URLs, check that it is set to Public" unless response.is_a?(Net::HTTPSuccess)
+    end
   ensure
     if service && key
       service.delete(key)
