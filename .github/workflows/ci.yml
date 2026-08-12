@@ -73,6 +73,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      # Active Storage resizes breed images and reads their dimensions through
+      # libvips. Without it Rails leaves the transformer unset and every
+      # variant raises.
+      - name: Install libvips
+        run: sudo apt-get update && sudo apt-get install -yq --no-install-recommends libvips42
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:

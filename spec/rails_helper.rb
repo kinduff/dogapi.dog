@@ -30,6 +30,23 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
+# Image variants and dimensions both go through libvips. When it is missing,
+# Rails quietly leaves the transformer unset and roughly thirty specs fail with
+# `undefined method 'new' for nil`, which says nothing about the cause.
+if ActiveStorage.variant_transformer.nil? || !ActiveStorage.variant_processor.in?(%i[vips mini_magick])
+  abort <<~MESSAGE
+    Active Storage cannot process image variants, so the breed image specs
+    would fail with errors that say nothing about why.
+
+      variant_processor:   #{ActiveStorage.variant_processor.inspect} (expected :vips)
+      variant_transformer: #{ActiveStorage.variant_transformer.inspect} (nil means libvips is missing)
+
+    Install libvips:
+      Debian/Ubuntu: sudo apt-get install libvips42
+      macOS:         brew install vips
+  MESSAGE
+end
+
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
