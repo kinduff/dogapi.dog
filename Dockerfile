@@ -17,7 +17,7 @@ ENV LANG=C.UTF-8 \
 WORKDIR /usr/src/app
 
 RUN apt-get update -qq \
-  && apt-get install -yq --no-install-recommends libpq5 \
+  && apt-get install -yq --no-install-recommends libpq5 libvips42 \
   && rm -rf /var/lib/apt/lists/*
 
 # Build stage: compilers and headers live here and are thrown away.

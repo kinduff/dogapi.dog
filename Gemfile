@@ -5,7 +5,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.6"
 
+gem "aws-sdk-s3", "~> 1.199", require: false
 gem "bootsnap", "~> 1.25"
+gem "image_processing", "~> 1.14"
 gem "jsonapi.rb", "~> 2.0"
 gem "pg", "~> 1.4"
 gem "puma", "~> 8.0"
@@ -38,4 +40,5 @@ end
 group :test do
   gem "shoulda-matchers", "~> 7.0"
   gem "simplecov", "~> 1.1", require: false
+  gem "webmock", "~> 3.25"
 end

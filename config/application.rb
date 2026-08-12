@@ -35,9 +35,8 @@ module DogapiDog
     #
     config.time_zone = "Europe/Madrid"
 
-    # Nothing generates image variants, so the image_processing gem (and the
-    # libvips/imagemagick binaries it needs) are not installed.
-    config.active_storage.variant_processor = :disabled
+    # Breed images are resized and converted to WebP through libvips.
+    config.active_storage.variant_processor = :vips
 
     # Don't generate system test files.
     config.generators.system_tests = nil
