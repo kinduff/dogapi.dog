@@ -26,7 +26,10 @@
           <% previews.each do |image| %>
             <li>
               <a href="<%= breed_path_for(image.breed) %>" title="<%= image.breed.name %>">
-                <img src="<%= image.url_for(:thumb) %>" alt="<%= image.breed.name %>" loading="lazy">
+                <%# A 200px thumbnail in a 48px box: enough for any screen, and
+                    the size stops the row from jumping while it loads. %>
+                <img src="<%= image.url_for(:thumb) %>" alt="<%= image.breed.name %>"
+                     width="200" height="200" loading="lazy">
               </a>
             </li>
           <% end %>

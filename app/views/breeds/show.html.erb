@@ -52,7 +52,8 @@
              data-gallery-item
              data-image-id="<%= image.id %>"
              data-large="<%= image.url_for(:large) %>">
-            <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>" loading="lazy">
+            <img src="<%= image.url_for(:thumb) %>" alt="<%= @breed.name %>"
+                 width="200" height="200" loading="lazy">
           </a>
         </li>
       <% end %>

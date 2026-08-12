@@ -33,6 +33,19 @@ RSpec.describe "Breeds pages" do
       expect(response.body).to include(%(<img class="breed-thumb"), "dog.webp")
     end
 
+    # A card is about 170px wide, and the medium file it used to load is more
+    # than twice the bytes of the square thumbnail that fits it. The big one
+    # stays available for dense screens.
+    it "fills the grid with thumbnails, not the medium files" do
+      create(:breed_image, breed: akita)
+
+      get "/breeds"
+
+      # Signed disk URLs carry an expiry, so two of them built moments apart
+      # never match as strings. The shape of the srcset is the stable part.
+      expect(response.body).to include(" 200w,", " 600w", %(width="200" height="200"))
+    end
+
     it "searches by name" do
       get "/breeds", params: {q: "bea"}
 

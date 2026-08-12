@@ -4,8 +4,13 @@
     <div class="breed-media">
       <% image = breed.breed_images.first %>
       <% if image %>
-        <img class="breed-thumb" src="<%= image.url_for(:medium) %>" alt="<%= breed.name %>"
-             width="600" height="600" loading="lazy">
+        <%# The thumbnail is the square crop this card is already shaped like,
+            and less than half the bytes of the medium file it used to load.
+            The medium one stays in the srcset for denser screens. %>
+        <img class="breed-thumb" src="<%= image.url_for(:thumb) %>"
+             srcset="<%= image.url_for(:thumb) %> 200w, <%= image.url_for(:medium) %> 600w"
+             sizes="(max-width: 600px) 30vw, 11rem"
+             alt="<%= breed.name %>" width="200" height="200" loading="lazy">
         <% if breed.breed_images.size > 1 %>
           <span class="breed-count"><%= breed.breed_images.size %></span>
         <% end %>
