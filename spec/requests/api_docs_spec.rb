@@ -63,7 +63,7 @@ RSpec.describe "API reference pages" do
     end
 
     it "offers a try it form per operation" do
-      expect(response.body.scan("data-api-try").size).to eq(5)
+      expect(response.body.scan("data-api-try").size).to eq(7)
     end
 
     it "points the forms at this origin rather than the canonical host" do

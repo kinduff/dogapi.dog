@@ -38,7 +38,8 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
                 hypoallergenic: false,
                 life: {min: 15, max: 20},
                 male_weight: {min: 50, max: 100},
-                female_weight: {min: 50, max: 100}
+                female_weight: {min: 50, max: 100},
+                images: []
               },
               relationships: {
                 group: {
@@ -55,7 +56,8 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
                 hypoallergenic: false,
                 life: {min: 10, max: 14},
                 male_weight: {min: 30, max: 40},
-                female_weight: {min: 25, max: 35}
+                female_weight: {min: 25, max: 35},
+                images: []
               },
               relationships: {
                 group: {
@@ -103,7 +105,23 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
               hypoallergenic: false,
               life: {min: 15, max: 20},
               male_weight: {min: 50, max: 100},
-              female_weight: {min: 50, max: 100}
+              female_weight: {min: 50, max: 100},
+              images: [
+                {
+                  id: "6d1e1b0c-0f0b-4b4a-9c4c-8e1f4b7f7f52",
+                  url: "https://images.dogapi.dog/caucasian-shepherd-dog.jpg",
+                  thumb: "https://images.dogapi.dog/caucasian-shepherd-dog-thumb.webp",
+                  medium: "https://images.dogapi.dog/caucasian-shepherd-dog-medium.webp",
+                  large: "https://images.dogapi.dog/caucasian-shepherd-dog-large.webp",
+                  attribution: {
+                    author: "Magdalena Niemiec",
+                    license: "CC BY-SA 3.0",
+                    license_url: "https://creativecommons.org/licenses/by-sa/3.0/",
+                    source: "wikimedia_commons",
+                    source_url: "https://commons.wikimedia.org/wiki/File:Caucasian_Shepherd_Dog.jpg"
+                  }
+                }
+              ]
             },
             relationships: {
               group: {
@@ -123,6 +141,74 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
 
       response(404, "no breed with that id") do
         let(:id) { SecureRandom.uuid }
+
+        run_test!
+      end
+    end
+  end
+
+  path "/breeds/{id}/image" do
+    get("get breed image") do
+      tags "Breeds"
+      description <<~TEXT.strip
+        Redirects to a picture of the breed, so the URL can be used directly in
+        an `<img>` tag. Returns 404 when the breed has no images yet.
+
+        Images come from Wikimedia Commons and are served under the licence of
+        their author. The credit for each one is in the `images` attribute of
+        the breed itself, and it has to be displayed alongside the picture.
+      TEXT
+
+      parameter name: :id, in: :path, required: true,
+        schema: {type: :string, format: :uuid},
+        description: "Breed id"
+      parameter name: :size, in: :query, required: false,
+        schema: {type: :string, enum: %w[thumb medium large full], default: "medium"},
+        description: "Which size to redirect to. `full` is the original file. An unknown size falls back to `medium`."
+      parameter name: :random, in: :query, required: false,
+        schema: {type: :boolean, default: false},
+        description: "Redirect to any of the breed's images instead of the first one"
+
+      response(302, "redirect to the image file") do
+        let(:id) { create(:breed_image).breed_id }
+        let(:size) { "medium" }
+        let(:random) { false }
+
+        run_test!
+      end
+
+      response(404, "the breed has no images, or does not exist") do
+        let(:id) { create(:breed).id }
+        let(:size) { "medium" }
+        let(:random) { false }
+
+        run_test!
+      end
+    end
+  end
+
+  path "/breeds/image" do
+    get("get a random breed image") do
+      tags "Breeds"
+      description <<~TEXT.strip
+        Redirects to a picture of a randomly chosen breed. Returns 404 while no
+        images have been imported.
+      TEXT
+
+      parameter name: :size, in: :query, required: false,
+        schema: {type: :string, enum: %w[thumb medium large full], default: "medium"},
+        description: "Which size to redirect to. `full` is the original file."
+
+      response(302, "redirect to the image file") do
+        before { create(:breed_image) }
+
+        let(:size) { "medium" }
+
+        run_test!
+      end
+
+      response(404, "no images have been imported") do
+        let(:size) { "medium" }
 
         run_test!
       end

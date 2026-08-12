@@ -27,7 +27,12 @@ Rails.application.routes.draw do
 
     namespace :v2 do
       resources :facts, only: :index
-      resources :breeds, only: %i[index show]
+      resources :breeds, only: %i[index show] do
+        # Redirects to an image file instead of returning JSON, so an <img>
+        # tag can point straight at the API.
+        get :image, on: :member
+        get :image, on: :collection, action: :random_image
+      end
       resources :groups, only: %i[index show]
     end
   end

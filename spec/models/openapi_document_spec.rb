@@ -29,7 +29,7 @@ RSpec.describe OpenapiDocument do
     it "lists every operation exactly once" do
       paths = document.sections.flat_map { |section| section[:operations] }.map(&:path)
 
-      expect(paths).to contain_exactly("/breeds", "/breeds/{id}", "/groups", "/groups/{id}", "/facts")
+      expect(paths).to contain_exactly("/breeds", "/breeds/image", "/breeds/{id}", "/breeds/{id}/image", "/groups", "/groups/{id}", "/facts")
     end
   end
 
@@ -63,7 +63,7 @@ RSpec.describe OpenapiDocument do
 
   describe "#models" do
     it "lists the reusable schemas" do
-      expect(document.models).to contain_exactly("Range", "PaginationMeta", "Breed", "Group", "Fact")
+      expect(document.models).to contain_exactly("Range", "PaginationMeta", "BreedImage", "Breed", "Group", "Fact")
     end
 
     it "leaves out the envelope wrappers" do

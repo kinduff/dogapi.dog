@@ -69,9 +69,33 @@ def relationship_collection_schema(type)
   }
 end
 
+BREED_IMAGE_SCHEMA = {
+  type: :object,
+  description: "A picture of the breed, in every size the API serves. " \
+               "The attribution must be shown wherever the image is used.",
+  properties: {
+    id: {type: :string, format: :uuid},
+    url: {type: :string, format: :uri, description: "The original file, as imported"},
+    thumb: {type: :string, format: :uri, description: "Square 200x200 WebP crop"},
+    medium: {type: :string, format: :uri, description: "WebP, longest side 600px"},
+    large: {type: :string, format: :uri, description: "WebP, longest side 1200px"},
+    attribution: {
+      type: :object,
+      properties: {
+        author: {type: :string, example: "Magdalena Niemiec"},
+        license: {type: :string, example: "CC BY-SA 3.0"},
+        license_url: {type: :string, format: :uri},
+        source: {type: :string, example: "wikimedia_commons"},
+        source_url: {type: :string, format: :uri, description: "Page the image was taken from"}
+      }
+    }
+  }
+}.freeze
+
 V2_SCHEMAS = {
   Range: RANGE_SCHEMA,
   PaginationMeta: PAGINATION_META_SCHEMA,
+  BreedImage: BREED_IMAGE_SCHEMA,
   Breed: {
     type: :object,
     properties: {
@@ -88,7 +112,12 @@ V2_SCHEMAS = {
           life: {allOf: [{"$ref": "#/components/schemas/Range"}], description: "Life expectancy in years"},
           male_weight: {allOf: [{"$ref": "#/components/schemas/Range"}], description: "Male weight in kilograms"},
           female_weight: {allOf: [{"$ref": "#/components/schemas/Range"}], description: "Female weight in kilograms"},
-          hypoallergenic: {type: :boolean, example: false}
+          hypoallergenic: {type: :boolean, example: false},
+          images: {
+            type: :array,
+            description: "Pictures of the breed, empty when none have been imported yet",
+            items: {"$ref": "#/components/schemas/BreedImage"}
+          }
         }
       },
       relationships: {

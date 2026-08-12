@@ -73,6 +73,62 @@
           }
         }
       },
+      "BreedImage": {
+        "type": "object",
+        "description": "A picture of the breed, in every size the API serves. The attribution must be shown wherever the image is used.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The original file, as imported"
+          },
+          "thumb": {
+            "type": "string",
+            "format": "uri",
+            "description": "Square 200x200 WebP crop"
+          },
+          "medium": {
+            "type": "string",
+            "format": "uri",
+            "description": "WebP, longest side 600px"
+          },
+          "large": {
+            "type": "string",
+            "format": "uri",
+            "description": "WebP, longest side 1200px"
+          },
+          "attribution": {
+            "type": "object",
+            "properties": {
+              "author": {
+                "type": "string",
+                "example": "Magdalena Niemiec"
+              },
+              "license": {
+                "type": "string",
+                "example": "CC BY-SA 3.0"
+              },
+              "license_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "source": {
+                "type": "string",
+                "example": "wikimedia_commons"
+              },
+              "source_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Page the image was taken from"
+              }
+            }
+          }
+        }
+      },
       "Breed": {
         "type": "object",
         "properties": {
@@ -124,6 +180,13 @@
               "hypoallergenic": {
                 "type": "boolean",
                 "example": false
+              },
+              "images": {
+                "type": "array",
+                "description": "Pictures of the breed, empty when none have been imported yet",
+                "items": {
+                  "$ref": "#/components/schemas/BreedImage"
+                }
               }
             }
           },
@@ -415,7 +478,8 @@
                             "female_weight": {
                               "min": 50,
                               "max": 100
-                            }
+                            },
+                            "images": []
                           },
                           "relationships": {
                             "group": {
@@ -444,7 +508,8 @@
                             "female_weight": {
                               "min": 25,
                               "max": 35
-                            }
+                            },
+                            "images": []
                           },
                           "relationships": {
                             "group": {
@@ -527,7 +592,23 @@
                           "female_weight": {
                             "min": 50,
                             "max": 100
-                          }
+                          },
+                          "images": [
+                            {
+                              "id": "6d1e1b0c-0f0b-4b4a-9c4c-8e1f4b7f7f52",
+                              "url": "https://images.dogapi.dog/caucasian-shepherd-dog.jpg",
+                              "thumb": "https://images.dogapi.dog/caucasian-shepherd-dog-thumb.webp",
+                              "medium": "https://images.dogapi.dog/caucasian-shepherd-dog-medium.webp",
+                              "large": "https://images.dogapi.dog/caucasian-shepherd-dog-large.webp",
+                              "attribution": {
+                                "author": "Magdalena Niemiec",
+                                "license": "CC BY-SA 3.0",
+                                "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+                                "source": "wikimedia_commons",
+                                "source_url": "https://commons.wikimedia.org/wiki/File:Caucasian_Shepherd_Dog.jpg"
+                              }
+                            }
+                          ]
                         },
                         "relationships": {
                           "group": {
@@ -552,6 +633,96 @@
           },
           "404": {
             "description": "no breed with that id"
+          }
+        }
+      }
+    },
+    "/breeds/{id}/image": {
+      "get": {
+        "summary": "get breed image",
+        "tags": [
+          "Breeds"
+        ],
+        "description": "Redirects to a picture of the breed, so the URL can be used directly in\nan `<img>` tag. Returns 404 when the breed has no images yet.\n\nImages come from Wikimedia Commons and are served under the licence of\ntheir author. The credit for each one is in the `images` attribute of\nthe breed itself, and it has to be displayed alongside the picture.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Breed id"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "thumb",
+                "medium",
+                "large",
+                "full"
+              ],
+              "default": "medium"
+            },
+            "description": "Which size to redirect to. `full` is the original file. An unknown size falls back to `medium`."
+          },
+          {
+            "name": "random",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Redirect to any of the breed's images instead of the first one"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "redirect to the image file"
+          },
+          "404": {
+            "description": "the breed has no images, or does not exist"
+          }
+        }
+      }
+    },
+    "/breeds/image": {
+      "get": {
+        "summary": "get a random breed image",
+        "tags": [
+          "Breeds"
+        ],
+        "description": "Redirects to a picture of a randomly chosen breed. Returns 404 while no\nimages have been imported.",
+        "parameters": [
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "thumb",
+                "medium",
+                "large",
+                "full"
+              ],
+              "default": "medium"
+            },
+            "description": "Which size to redirect to. `full` is the original file."
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "redirect to the image file"
+          },
+          "404": {
+            "description": "no images have been imported"
           }
         }
       }
