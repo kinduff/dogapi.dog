@@ -98,7 +98,7 @@
 
       image.src = URL.createObjectURL(blob);
       image.hidden = false;
-      bodyBox.hidden = true;
+      if (bodyBox) bodyBox.hidden = true;
 
       var size = Math.round(blob.size / 1024);
       show(
@@ -118,7 +118,7 @@
       var kind = response.ok ? "2xx" : String(response.status).charAt(0) + "xx";
 
       if (image) image.hidden = true;
-      bodyBox.hidden = false;
+      if (bodyBox) bodyBox.hidden = false;
       show(form, "api-status-" + kind, response.status + " " + response.statusText + " · " + elapsed + " ms");
 
       var contentType = response.headers.get("content-type");
