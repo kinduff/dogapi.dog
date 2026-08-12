@@ -14,10 +14,11 @@ module BreedEnrichments
 
     # `raw` is what the model actually answered, kept whole so a wrong value can
     # be traced back past the validator.
-    def initialize(breed, validation, raw:, model: BreedEnrichments.model, dry_run: false, overwrite: false)
+    def initialize(breed, validation, raw:, usage: {}, model: BreedEnrichments.model, dry_run: false, overwrite: false)
       @breed = breed
       @validation = validation
       @raw = raw
+      @usage = usage
       @model = model
       @dry_run = dry_run
       @overwrite = overwrite
@@ -44,7 +45,9 @@ module BreedEnrichments
       @breed.breed_enrichments.new(
         model: @model,
         confidence: @raw["confidence"],
-        payload: @validation.payload.merge("changes" => changes),
+        # What the run cost, kept alongside what it produced so a catalogue
+        # wide run can be priced afterwards rather than estimated.
+        payload: @validation.payload.merge("changes" => changes, "usage" => @usage),
         raw_response: @raw,
         rejections: rejections,
         applied_at: changes.present? ? Time.current : nil

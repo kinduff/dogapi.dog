@@ -178,6 +178,17 @@ namespace :breeds do
       filled = Breed.where("#{column}::text NOT IN ('{}', '[]', 'null')").count
       puts format("  %-15s %3d/%d", column, filled, total)
     end
+
+    runs = BreedEnrichment.count
+    next if runs.zero?
+
+    usage = BreedEnrichment.pluck(Arel.sql("payload -> 'usage'")).compact
+    tokens = %w[input_tokens output_tokens].to_h do |field|
+      [field, usage.sum { |entry| entry[field].to_i }]
+    end
+    searches = usage.sum { |entry| entry.dig("server_tool_use", "web_search_requests").to_i }
+
+    puts "\n#{runs} runs: #{tokens["input_tokens"]} tokens in, #{tokens["output_tokens"]} out, #{searches} web searches"
   end
 
   desc "List the runs a human should look at: low confidence, rejections or corrections"

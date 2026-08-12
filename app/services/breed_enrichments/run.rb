@@ -24,6 +24,7 @@ module BreedEnrichments
         @breed,
         validation,
         raw: answer.attributes,
+        usage: answer.usage,
         model: @model,
         dry_run: @dry_run,
         overwrite: @overwrite
