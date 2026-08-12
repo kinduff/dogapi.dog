@@ -134,12 +134,30 @@ module BrowseHelper
     [parts.join(" "), colors.to_sentence].compact_blank.join(" · ")
   end
 
-  # Ratings render as a bar rather than a bare number, since the number only
-  # means anything against the 1 to 5 scale.
-  def breed_rating_bar(value)
+  # The four numbers people came for, pulled out of the details list so they
+  # can be read at a glance rather than found in a table.
+  def breed_stats(breed)
+    [
+      breed_stat("📏", "Height", breed_height(breed, :male), breed_height(breed, :female)),
+      breed_stat("⚖️", "Weight", breed_weight(breed, :male), breed_weight(breed, :female)),
+      breed_stat("🎂", "Life span", breed_life_span(breed)),
+      breed_stat("🐾", "Exercise", breed_exercise(breed))
+    ].compact
+  end
+
+  def breed_stat(icon, label, value, female = nil)
+    value ||= female
     return if value.blank?
 
-    "#{"●" * value}#{"○" * (5 - value)}"
+    # Both sexes are only worth the space when they actually differ.
+    note = "♀ #{female}" if female.present? && female != value
+
+    {icon: icon, label: label, value: note ? "♂ #{value}" : value, note: note}
+  end
+
+  def breed_exercise(breed)
+    minutes = breed.traits_exercise_minutes
+    "#{minutes} min/day" if minutes.present?
   end
 
   def breed_ratings(breed)
@@ -147,5 +165,20 @@ module BrowseHelper
       value = breed.traits[name.to_s]
       [name.to_s.humanize, value] if value.present?
     end
+  end
+
+  # A rating means nothing without the scale it sits on, so it renders as five
+  # segments rather than as the bare number.
+  def breed_rating_segments(value)
+    Array.new(5) { |index| index < value.to_i }
+  end
+
+  # The host, not the page title: a row of "akc.org, fci.be, wikipedia.org"
+  # says where the facts came from in a glance, where a row of full titles is
+  # three lines of text nobody reads.
+  def breed_source_label(source)
+    URI.parse(source["url"]).host.to_s.delete_prefix("www.").presence || source["url"]
+  rescue URI::InvalidURIError
+    source["url"]
   end
 end

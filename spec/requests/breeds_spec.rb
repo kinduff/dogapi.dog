@@ -107,11 +107,21 @@ RSpec.describe "Breeds pages" do
         "66–71 cm",
         "Japan (17th century)",
         "medium double",
-        "loyal and dignified",
-        "60 minutes a day",
+        "60 min/day",
         "Akita Inu",
         "AKC"
       )
+    end
+
+    it "shows each temperament word on its own and the ratings as segments" do
+      akita.update!(traits: {"energy" => 4, "temperament" => %w[loyal dignified]})
+
+      get "/breeds/akita"
+
+      expect(response.body).to include("<li>loyal</li>", "<li>dignified</li>")
+      # Four of the five segments filled, for a rating of four.
+      expect(response.body.scan('class="is-filled"').size).to eq(4)
+      expect(response.body).to include(%(aria-label="Energy: 4 out of 5"))
     end
 
     it "leaves the researched rows out for a breed nobody has enriched" do

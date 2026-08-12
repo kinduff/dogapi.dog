@@ -70,34 +70,39 @@
   </p>
 <% end %>
 
+<%# The measurements first and as cards: they are what most visitors opened
+    the page for, and they read badly as rows of a table. %>
+<% stats = breed_stats(@breed) %>
+<% if stats.any? %>
+  <ul class="breed-stats">
+    <% stats.each do |stat| %>
+      <li class="breed-stat">
+        <span class="breed-stat-icon" aria-hidden="true"><%= stat[:icon] %></span>
+        <span class="breed-stat-label"><%= stat[:label] %></span>
+        <span class="breed-stat-value"><%= stat[:value] %></span>
+        <% if stat[:note] %>
+          <span class="breed-stat-note"><%= stat[:note] %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @breed.traits_temperament.present? %>
+  <ul class="breed-tags">
+    <% @breed.traits_temperament.each do |trait| %>
+      <li><%= trait %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @breed.description.present? %>
+  <p class="breed-lead"><%= @breed.description %></p>
+<% end %>
+
 <dl class="api-facts">
   <dt>Group</dt>
   <dd><%= link_to @breed.group.name, group_path_for(@breed.group) %></dd>
-
-  <% if (life = breed_life_span(@breed)) %>
-    <dt>Life span</dt>
-    <dd><%= life %></dd>
-  <% end %>
-
-  <% if (weight = breed_weight(@breed, :male)) %>
-    <dt>Male weight</dt>
-    <dd><%= weight %></dd>
-  <% end %>
-
-  <% if (weight = breed_weight(@breed, :female)) %>
-    <dt>Female weight</dt>
-    <dd><%= weight %></dd>
-  <% end %>
-
-  <% if (height = breed_height(@breed, :male)) %>
-    <dt>Male height</dt>
-    <dd><%= height %></dd>
-  <% end %>
-
-  <% if (height = breed_height(@breed, :female)) %>
-    <dt>Female height</dt>
-    <dd><%= height %></dd>
-  <% end %>
 
   <% if (origin = breed_origin(@breed)) %>
     <dt>Origin</dt>
@@ -107,16 +112,6 @@
   <% if (coat = breed_coat(@breed)) %>
     <dt>Coat</dt>
     <dd><%= coat %></dd>
-  <% end %>
-
-  <% if @breed.traits_temperament.present? %>
-    <dt>Temperament</dt>
-    <dd><%= @breed.traits_temperament.to_sentence %></dd>
-  <% end %>
-
-  <% if @breed.traits_exercise_minutes.present? %>
-    <dt>Exercise</dt>
-    <dd><%= @breed.traits_exercise_minutes %> minutes a day</dd>
   <% end %>
 
   <% if @breed.other_names.any? %>
@@ -136,10 +131,6 @@
   <dd><code><%= @breed.id %></code></dd>
 </dl>
 
-<% if @breed.description.present? %>
-  <p><%= @breed.description %></p>
-<% end %>
-
 <%# Ratings are estimates researched from breed standards, so they are shown
     together with where they came from rather than as bare facts. %>
 <% ratings = breed_ratings(@breed) %>
@@ -149,22 +140,32 @@
     Traits
   </h2>
 
-  <dl class="api-facts breed-traits">
+  <ul class="breed-traits">
     <% ratings.each do |label, value| %>
-      <dt><%= label %></dt>
-      <dd><span class="breed-rating" title="<%= value %> out of 5"><%= breed_rating_bar(value) %></span></dd>
+      <li>
+        <span class="breed-trait-label"><%= label %></span>
+        <span class="breed-trait-bar" role="img" aria-label="<%= label %>: <%= value %> out of 5">
+          <% breed_rating_segments(value).each do |filled| %>
+            <span class="<%= "is-filled" if filled %>"></span>
+          <% end %>
+        </span>
+      </li>
     <% end %>
-  </dl>
+  </ul>
 
-  <p class="api-muted">
-    Ratings run from 1 to 5 against dogs in general, and are estimates rather
-    than measurements.
-    <% if @breed.sources.any? %>
-      Researched from
-      <%= safe_join(@breed.sources.map { |source|
-            link_to(source["title"].presence || URI.parse(source["url"]).host, source["url"],
-                    target: "_blank", rel: "noopener nofollow")
-          }, ", ") %>.
+  <p class="api-muted breed-scale">
+    Every rating runs from 1 to 5 against dogs in general, so a 3 is an average
+    dog rather than an average <%= @breed.name %>. They are researched
+    estimates, not measurements.
+  </p>
+<% end %>
+
+<% if @breed.sources.any? %>
+  <p class="breed-sources">
+    <span>Researched from</span>
+    <% @breed.sources.each do |source| %>
+      <%= link_to breed_source_label(source), source["url"], title: source["title"],
+            class: "breed-chip", target: "_blank", rel: "noopener nofollow" %>
     <% end %>
   </p>
 <% end %>

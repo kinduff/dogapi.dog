@@ -240,13 +240,6 @@ blockquote {
     }
 }
 
-// The dots carry the 1 to 5 scale on their own, so they get to be wider than
-// the surrounding text rather than louder than it.
-.breed-rating {
-    letter-spacing: 0.15em;
-    white-space: nowrap;
-}
-
 .api-toc {
     border-left: 0.2rem solid var(--background-element);
     margin: 2rem 0;
@@ -1128,4 +1121,150 @@ details.api-fields {
     border-top: 1px solid var(--background-element);
     margin-top: 2.5rem;
     padding-top: 0.5rem;
+}
+
+// Breed measurements, as cards rather than as rows of a table. Four across on
+// a desktop, two on a phone, which is where the numbers stay readable.
+.breed-stats {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    list-style: none;
+    margin: 1.4rem 0;
+    padding: 0;
+
+    @media (max-width: 600px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.breed-stat {
+    background: #f6f8fa;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    padding: 0.7rem 0.8rem;
+}
+
+.breed-stat-icon {
+    font-size: 1.1rem;
+}
+
+.breed-stat-label {
+    color: var(--text-alt);
+    font-size: 0.62em;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+}
+
+.breed-stat-value {
+    font-size: 0.95em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.breed-stat-note {
+    color: #666;
+    font-size: 0.7em;
+    white-space: nowrap;
+}
+
+// Temperament words. Short enough to read as a row of labels, and there are
+// never more than six of them.
+.breed-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0 0 1.2rem;
+    padding: 0;
+
+    li {
+        background: #fff;
+        border: 1px solid var(--theme-light);
+        border-radius: 999px;
+        color: var(--theme);
+        font-size: 0.75em;
+        padding: 0.15rem 0.7rem;
+    }
+}
+
+.breed-lead {
+    font-size: 1.05em;
+}
+
+// Five segments rather than a number: the scale is the point, and an empty
+// segment says as much as a filled one.
+.breed-traits {
+    background: #f6f8fa;
+    border-radius: 6px;
+    display: grid;
+    // A fixed label column keeps every bar on the same left edge, so the
+    // ratings can be compared down the column rather than read one by one.
+    grid-template-columns: repeat(2, minmax(0, 1fr) auto);
+    gap: 0.55rem 1.4rem;
+    list-style: none;
+    margin: 1.2rem 0;
+    padding: 1rem 1.2rem;
+
+    @media (max-width: 600px) {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    li {
+        display: contents;
+    }
+}
+
+.breed-trait-label {
+    align-self: center;
+    color: var(--text-alt);
+    font-size: 0.72em;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.breed-trait-bar {
+    align-self: center;
+    display: flex;
+    gap: 3px;
+
+    span {
+        background: #dfe4e9;
+        border-radius: 999px;
+        height: 0.45rem;
+        width: 0.75rem;
+    }
+
+    .is-filled {
+        background: var(--theme);
+    }
+}
+
+.breed-scale {
+    margin-top: 0.4rem;
+}
+
+.breed-sources {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.8em;
+    margin: 1.4rem 0 0;
+
+    span {
+        color: var(--text-alt);
+    }
+
+    .breed-chip {
+        font-size: 0.9em;
+        max-width: 16rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
