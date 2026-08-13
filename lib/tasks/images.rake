@@ -158,13 +158,29 @@ namespace :images do
     reviewed = BreedImage.where.not(score: nil)
     puts "#{reviewed.count}/#{BreedImage.count} images reviewed"
 
-    reviewed.group(:score).count.sort.reverse_each do |score, count|
-      puts "  #{score.to_s.rjust(2)}/10  #{"#" * [count, 60].min} #{count}"
+    counts = reviewed.group(:score).count
+    # Scaled to the tallest row rather than to the count, which turned every
+    # row past sixty images into the same sixty hashes.
+    widest = counts.values.max.to_i
+    total = counts.values.sum
+
+    counts.sort.reverse_each do |score, count|
+      bar = "#" * (widest.zero? ? 0 : (count * 50.0 / widest).ceil)
+      share = total.zero? ? 0 : (count * 100.0 / total).round
+      puts "  #{score.to_s.rjust(2)}/10  #{bar.ljust(50)} #{count.to_s.rjust(5)}  #{share.to_s.rjust(2)}%"
     end
 
-    unreviewable = Breed.where.associated(:breed_images).distinct.count -
+    good = counts.select { |score, _| score >= BreedImages::Reviewer::GOOD_ENOUGH }.values.sum
+    puts "#{good} of #{total} images are good enough to lead a breed page"
+
+    # A picture nobody has looked at sorts behind every scored one, whatever
+    # it shows, so an unreviewed leftover is worth naming.
+    unscored = BreedImage.where(reviewed_at: nil).count
+    puts "#{unscored} images have never been reviewed" if unscored.positive?
+
+    without = Breed.where.associated(:breed_images).distinct.count -
       Breed.joins(:breed_images).where(breed_images: {score: BreedImages::Reviewer::GOOD_ENOUGH..}).distinct.count
-    puts "#{unreviewable} breeds have no image scoring #{BreedImages::Reviewer::GOOD_ENOUGH}/10 or better"
+    puts "#{without} breeds have no image scoring #{BreedImages::Reviewer::GOOD_ENOUGH}/10 or better"
   end
 
   desc "Delete stored images that fall below the current quality floor"
