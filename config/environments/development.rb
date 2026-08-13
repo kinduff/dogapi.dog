@@ -59,6 +59,10 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  # Sidekiq when Redis is around, so a local run behaves like production;
+  # inline otherwise, so a checkout with nothing running still works.
+  config.active_job.queue_adapter = ENV["REDIS_URL"].present? ? :sidekiq : :inline
+
   # Highlight code that triggered redirect in logs.
   config.action_dispatch.verbose_redirect_logs = true
 

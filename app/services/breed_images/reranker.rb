@@ -27,6 +27,29 @@ module BreedImages
 
     def self.call(...) = new(...).call
 
+    # Ordering a breed's pictures by the scores they already carry, without
+    # asking the model anything. A run does this at the end; a job that scores
+    # one picture at a time does it once the last of them lands.
+    def self.reorder!(breed)
+      breed.with_lock do
+        images = breed.breed_images.reload.to_a
+        ordered = images.sort_by.with_index { |image, index| sort_key(image, index) }
+
+        ordered.each_with_index do |image, index|
+          image.update_column(:position, index + 1) unless image.position == index + 1
+        end
+
+        ordered.first
+      end
+    end
+
+    # Best score first; a picture nobody could score keeps its place behind the
+    # ones that were, rather than being promoted by an empty column. Ties fall
+    # back to the order they were imported in, so a rerun is stable.
+    def self.sort_key(image, index)
+      [image.score.nil? ? 1 : 0, -image.score.to_i, index]
+    end
+
     def initialize(breed, force: false, model: BreedImages.review_model, client: BreedImages.review_client)
       @breed = breed
       @force = force
@@ -65,21 +88,8 @@ module BreedImages
       @result.errors << "#{@breed.name} (#{image.source_id}): #{e.message}"
     end
 
-    # Best score first; a picture nobody could score keeps its place behind the
-    # ones that were, rather than being promoted by an empty column. Ties fall
-    # back to the order they were imported in, so a rerun is stable.
-    def reorder(images)
-      ordered = images.sort_by.with_index do |image, index|
-        [image.score.nil? ? 1 : 0, -image.score.to_i, index]
-      end
-
-      BreedImage.transaction do
-        ordered.each_with_index do |image, index|
-          image.update_column(:position, index + 1) unless image.position == index + 1
-        end
-      end
-
-      @result.primary = ordered.first
+    def reorder(_images)
+      @result.primary = self.class.reorder!(@breed)
     end
   end
 end

@@ -40,6 +40,47 @@ services:
       - traefik.port=80
       - com.centurylinklabs.watchtower.enable=true
       - com.centurylinklabs.watchtower.lifecycle.post-update=bin/after_deploy
+  # Two workers rather than one: what limits an import is Wikimedia's patience,
+  # what limits a review is the model's rate limit, and the two numbers are
+  # nothing alike. Neither is behind Traefik — they take no requests.
+  worker-images:
+    image: kinduff/dogapi.dog:latest
+    restart: unless-stopped
+    command: bundle exec sidekiq -q images -c 2
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis
+      - DATABASE_URL=postgres://postgres:postgres@postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - internal
+    links:
+      - postgres:postgres
+      - redis:redis
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+  worker-reviews:
+    image: kinduff/dogapi.dog:latest
+    restart: unless-stopped
+    command: bundle exec sidekiq -q reviews -q default -c 8
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis
+      - DATABASE_URL=postgres://postgres:postgres@postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - internal
+    links:
+      - postgres:postgres
+      - redis:redis
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
   postgres:
     image: postgres:13
     restart: unless-stopped

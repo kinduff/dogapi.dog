@@ -72,6 +72,31 @@ namespace :images do
     puts "#{Breed.where.associated(:breed_images).distinct.count}/#{Breed.count} breeds have images"
   end
 
+  desc "Queue the backfill instead of running it here: images:backfill_async[10]"
+  task :backfill_async, [:limit] => :environment do |_task, args|
+    limit = (args[:limit].presence || 3).to_i
+    breeds = breeds_short_of(limit)
+    first_source = BreedImages::SOURCE_ORDER.first
+
+    # One job per breed, not per breed and source: each job walks its breed on
+    # to the next source itself, so the queue holds hundreds of jobs rather
+    # than thousands, and a breed never asks two sources at once.
+    breeds.each { |breed| BreedImageImportJob.perform_later(breed.id, first_source, limit) }
+
+    puts "Queued #{breeds.size} breeds for #{limit} images each, starting at #{first_source}"
+    puts "Each imported image is queued for review as it lands"
+  end
+
+  desc "Queue a review of every unscored image: images:rerank_async[force]"
+  task :rerank_async, [:force] => :environment do |_task, args|
+    force = args[:force].present?
+    scope = force ? BreedImage.all : BreedImage.where(reviewed_at: nil)
+
+    scope.find_each { |image| BreedImageReviewJob.perform_later(image.id, force: force) }
+
+    puts "Queued #{scope.count} images for review"
+  end
+
   desc "Score one breed's images and put the best first: images:rerank[Akita,force]"
   task :rerank, %i[breed force] => :environment do |_task, args|
     name = args[:breed] or abort("Usage: rails images:rerank[BreedName]")

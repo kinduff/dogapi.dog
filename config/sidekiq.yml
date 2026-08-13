@@ -1,0 +1,13 @@
+# Defaults for a worker started without arguments. The image queues are meant
+# to be run by their own processes with their own concurrency, because what
+# limits them is somebody else's rate limit rather than this machine:
+#
+#   sidekiq -q images -c 2      # Wikimedia and Openverse, kept deliberately slow
+#   sidekiq -q reviews -c 8     # the model, which is happy with more
+#
+# See docker-compose.yml, which runs exactly those two.
+:concurrency: 5
+:queues:
+  - default
+  - images
+  - reviews
