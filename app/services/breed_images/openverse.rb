@@ -22,7 +22,7 @@ module BreedImages
     # what it does expose: photographs, big ones, and nothing tagged as an
     # illustration.
     PAGE_SIZE = 20
-    MAX_PAGES = 3
+    MAX_PAGES = 8
 
     OPEN_TIMEOUT = 5
     READ_TIMEOUT = 15

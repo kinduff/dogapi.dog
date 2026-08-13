@@ -17,6 +17,11 @@ module BreedImages
 
     PAGE_SIZE = 50
 
+    # How many pages of files to walk in one category before moving on. A
+    # breed's category rarely holds more than a couple of hundred files, and
+    # the ones past that are the overflow nobody sorted.
+    MAX_PAGES = 3
+
     # Commons keeps its categories in namespace 14.
     CATEGORY_NAMESPACE = 14
 
@@ -26,7 +31,7 @@ module BreedImages
 
     # How many subcategories of a breed's category to descend into. Deeper
     # levels drift off the breed ("Dogs by country", "Dog shows in Poland").
-    MAX_SUBCATEGORIES = 5
+    MAX_SUBCATEGORIES = 10
 
     # Commons' own review processes. A file in one of these has been judged a
     # good photograph by somebody other than its author, so it goes first.
@@ -125,18 +130,33 @@ module BreedImages
       titles.reject { |title| title.match?(REJECTED_TITLES) }
     end
 
-    # Files in the category, with the assessed ones first: `categories` is
-    # asked for alongside the imageinfo so the sort costs no extra request.
+    # Files in the category, a page at a time, with the assessed ones first
+    # within each page: `categories` is asked for alongside the imageinfo so
+    # the sort costs no extra request.
+    #
+    # Sorting within the page rather than across the whole category is the
+    # point of pagination here: a caller that stops after ten never pays for
+    # the second page, and one that wants fifty still gets them.
     def members(title)
-      body = get_json(members_uri(title))
-      pages = pages_from(body)
-
-      pages.sort_by { |page| assessed?(page) ? 0 : 1 }
+      to_enum(:each_member, title)
     end
 
-    def members_uri(title)
-      api_uri(
-        ENDPOINT,
+    def each_member(title)
+      continuation = nil
+
+      MAX_PAGES.times do
+        body = get_json(members_uri(title, continuation))
+        pages = pages_from(body).sort_by { |page| assessed?(page) ? 0 : 1 }
+
+        pages.each { |page| yield page }
+
+        continuation = body["continue"]
+        break if continuation.blank?
+      end
+    end
+
+    def members_uri(title, continuation = nil)
+      params = {
         generator: "categorymembers",
         gcmtitle: title,
         gcmtype: "file",
@@ -144,7 +164,10 @@ module BreedImages
         prop: "imageinfo|categories",
         iiprop: IMAGE_INFO_PROPS,
         clcategories: ASSESSED_CATEGORIES.join("|")
-      )
+      }
+      params.merge!(continuation.symbolize_keys) if continuation.present?
+
+      api_uri(ENDPOINT, params)
     end
 
     # `clcategories` filters the categories reported to the ones asked about,
