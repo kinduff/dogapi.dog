@@ -19,16 +19,33 @@ Breed pictures are imported into Active Storage, resized to WebP, and served
 with the attribution their licence requires. `libvips` must be installed
 locally for the variants.
 
-Four sources are tried in turn, in order of how much human judgement went into
-what they return: the photo a breed's Wikipedia article leads with, then the
-files in its Wikimedia Commons category, then a Commons search, then the
-openly licensed photographs [Openverse](https://openverse.org) indexes.
+Five sources are tried in turn, in order of how much human judgement went into
+what they return: the photo a breed's Wikipedia article leads with, then every
+other picture that article and its translations use, then the files in its
+Wikimedia Commons category, then a Commons search, then the openly licensed
+photographs [Openverse](https://openverse.org) indexes.
 
 ```bash
-rails images:backfill            # walk every source until each breed has three
+rails "images:backfill[10]"      # walk every source until each breed has ten
 rails "images:import[Akita]"     # one breed, one source
 rails images:stats               # coverage so far
 rails images:reprocess           # rebuild missing variants
+```
+
+Both the importing and the scoring are mostly spent waiting on somebody else's
+API, so long runs belong on Sidekiq rather than in a terminal:
+
+```bash
+rails "images:backfill_async[10]"   # a job per breed, chained through the sources
+rails images:rerank_async           # a job per unscored picture
+```
+
+Two workers handle them, because Wikimedia's patience and the model's rate
+limit are nothing alike — see `docker-compose.yml`:
+
+```bash
+bundle exec sidekiq -q images -c 2
+bundle exec sidekiq -q reviews -q default -c 8
 ```
 
 A breed's first image is the one the API and the site show on their own, so a
