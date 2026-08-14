@@ -8,7 +8,7 @@ ruby "3.3.6"
 gem "anthropic", "~> 1.16", require: false
 gem "aws-sdk-s3", "~> 1.199", require: false
 gem "bootsnap", "~> 1.25"
-gem "image_processing", "~> 1.14"
+gem "image_processing", "~> 2.0"
 gem "jsonapi.rb", "~> 2.0"
 gem "pg", "~> 1.4"
 gem "puma", "~> 8.0"
