@@ -107,7 +107,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.25.0)
       msgpack (~> 1.5)
-    brakeman (7.1.2)
+    brakeman (8.0.6)
       racc
     builder (3.3.0)
     cgi (0.5.2)
@@ -433,7 +433,7 @@ DEPENDENCIES
   anthropic (~> 1.16)
   aws-sdk-s3 (~> 1.199)
   bootsnap (~> 1.25)
-  brakeman (~> 7.1)
+  brakeman (~> 8.0)
   debug (~> 1.11)
   dotenv-rails (~> 3.1)
   factory_bot_rails (~> 6.2)
