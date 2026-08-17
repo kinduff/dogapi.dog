@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.3.6"
 
-gem "anthropic", "~> 1.16", require: false
+gem "anthropic", "~> 1.62", require: false
 gem "aws-sdk-s3", "~> 1.199", require: false
 gem "bootsnap", "~> 1.25"
 gem "image_processing", "~> 1.14"
