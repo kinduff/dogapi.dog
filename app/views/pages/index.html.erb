@@ -4,16 +4,16 @@
 
 <% content_for :description do %>
   A free JSON API with <%= number_with_delimiter @counts[:breeds] %> dog breeds,
-  <%= @counts[:groups] %> breed groups and <%= number_with_delimiter @counts[:facts] %> dog facts,
-  with pictures. No key, no sign up, nothing to pay.
+  <%= @counts[:groups] %> breed groups, <%= number_with_delimiter @counts[:facts] %> dog facts,
+  and <%= number_with_delimiter @counts[:images] %> pictures. No key, no sign up, nothing to pay.
 <% end %>
 
 <%= render "pages/hero", breeds: @hero_breeds if @hero_breeds.any? %>
 
 <%# The heading says what the site is rather than repeating its name, which
     the header above it already carries. The dogs still open the page. %>
-<%= page_heading "Dog breeds, groups and facts as a free JSON API",
-      title: "Free JSON API for Dog Breeds, Groups and Facts" %>
+<%= page_heading "Dog breeds, groups, facts and pictures as a free JSON API",
+      title: "Free JSON API for Dog Breeds, Pictures, Groups and Facts" %>
 
 <p class="home-lead">
   Hi, I'm <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.
@@ -33,7 +33,8 @@
   Right now it holds <strong><%= number_with_delimiter @counts[:breeds] %></strong>
   breeds with their life spans and weights,
   <strong><%= number_with_delimiter @counts[:groups] %></strong> breed groups,
-  and <strong><%= number_with_delimiter @counts[:facts] %></strong> dog facts.
+  <strong><%= number_with_delimiter @counts[:facts] %></strong> dog facts,
+  and <strong><%= number_with_delimiter @counts[:images] %></strong> pictures of dogs.
   It answers about 60,000 requests on an average day, from universities,
   bootcamps, home labs and a lot of people poking at it on a Saturday.
 </p>

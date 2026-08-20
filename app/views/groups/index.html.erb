@@ -1,7 +1,7 @@
-<%= page_heading "Breed Groups", title: "Dog Breed Groups - All #{@groups.size} Groups Explained" %>
+<%= page_heading "Breed Groups", title: "Dog Breed Groups - All #{@groups.size} Groups with Pictures" %>
 <% content_for :description do %>
-  The <%= @groups.size %> dog breed groups in the free Dog API, and the breeds
-  that belong to each one.
+  The <%= @groups.size %> dog breed groups in the free Dog API, with pictures,
+  and the breeds that belong to each one.
 <% end %>
 <% content_for :canonical_path, groups_path %>
 <% breadcrumb_structured_data([["Breed Groups", groups_path]]) %>

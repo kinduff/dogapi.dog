@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  DEFAULT_DESCRIPTION = "The Dog API provides a wealth of information on dog breeds, groups, and fun facts. " \
-                        "Access and integrate this data into your website or application with our easy-to-use JSON API."
+  DEFAULT_DESCRIPTION = "The Dog API provides a wealth of information on dog breeds, groups, fun facts, and " \
+                        "pictures. Access and integrate this data into your website or application with our " \
+                        "easy-to-use JSON API."
 
   # Descriptions long enough to say something and short enough to survive a
   # search result, which cuts somewhere around 160 characters.
