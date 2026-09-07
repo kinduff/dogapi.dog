@@ -26,7 +26,7 @@ gem "umami-ruby", "~> 0.1.3"
 gem "honeybadger", "~> 6.9"
 
 group :development, :test do
-  gem "brakeman", "~> 7.1", require: false
+  gem "brakeman", "~> 8.0", require: false
   gem "debug", "~> 1.11", platforms: %i[mri mingw x64_mingw]
   gem "factory_bot_rails", "~> 6.2"
   gem "rspec-rails", "~> 8.0"
