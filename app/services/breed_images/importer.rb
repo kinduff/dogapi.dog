@@ -90,6 +90,11 @@ module BreedImages
       # asked for them too, but a manual entry has nobody to ask.
       blob.analyze unless blob.analyzed?
 
+      unless decodable?(blob)
+        blob.purge
+        return @result.errors << "#{@breed.name} (#{candidate.source_id}): file is corrupt or truncated"
+      end
+
       breed_image = @breed.breed_images.build(candidate.to_attributes.merge(position: next_position))
       breed_image.file.attach(blob)
 
@@ -98,8 +103,18 @@ module BreedImages
         raise ActiveRecord::RecordInvalid, breed_image
       end
 
-      preprocess(breed_image)
-      @result.imported << breed_image
+      @result.imported << breed_image if preprocess(breed_image)
+    end
+
+    # libvips tolerates a broken file by default: a truncated JPEG analyzes
+    # fine, since the header still carries its dimensions, and may even come
+    # out of the variants as a picture with a grey bottom half. Only a strict
+    # decode of the whole file tells the two apart.
+    def decodable?(blob)
+      blob.open { |file| Vips::Image.new_from_file(file.path, fail: true).avg }
+      true
+    rescue Vips::Error
+      false
     end
 
     # The same photo can surface twice under different Commons titles.
@@ -114,10 +129,16 @@ module BreedImages
     end
 
     # Build the variants now so the first API request does not pay for them.
+    # A file that fails here (a truncated JPEG, say, which still carries its
+    # dimensions in the header) would fail again on every request that falls
+    # back to processing on demand, so it is dropped instead of kept.
     def preprocess(breed_image)
       BreedImage::VARIANTS.each_key { |name| breed_image.file.variant(name).processed }
+      true
     rescue => e
-      @result.errors << "#{@breed.name} (#{breed_image.source_id}): variant processing failed: #{e.message}"
+      breed_image.destroy
+      @result.errors << "#{@breed.name} (#{breed_image.source_id}): variant processing failed, dropped: #{e.message}"
+      false
     end
   end
 end

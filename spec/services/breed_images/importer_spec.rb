@@ -59,6 +59,26 @@ RSpec.describe BreedImages::Importer do
     expect(BreedImage::VARIANTS.keys).to all(satisfy { |name| image.file.variant(name).send(:processed?) })
   end
 
+  it "refuses a truncated file" do
+    stub_adapter(candidate)
+    stub_download(body: image_bytes[0, image_bytes.bytesize / 2])
+
+    expect(result.imported).to be_empty
+    expect(result.errors).to contain_exactly(a_string_including("corrupt or truncated"))
+    expect(breed.reload.breed_images).to be_empty
+    expect(ActiveStorage::Blob.count).to eq(0)
+  end
+
+  it "drops an image whose variants cannot be built" do
+    stub_adapter(candidate)
+    stub_download
+    allow_any_instance_of(ActiveStorage::VariantWithRecord).to receive(:processed).and_raise(Vips::Error, "boom")
+
+    expect(result.imported).to be_empty
+    expect(result.errors).to contain_exactly(a_string_including("variant processing failed, dropped"))
+    expect(breed.reload.breed_images).to be_empty
+  end
+
   it "numbers positions from the highest existing one" do
     existing = create(:breed_image, breed: breed, position: 7)
     existing.file.attach(
