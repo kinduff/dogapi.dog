@@ -23,6 +23,7 @@ gem "sidekiq", "~> 8.1"
 gem "sprockets-rails", "~> 3.4"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "umami-ruby", "~> 0.1.3"
+gem "honeybadger", "~> 6.9"
 
 group :development, :test do
   gem "brakeman", "~> 7.1", require: false

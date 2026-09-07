@@ -151,6 +151,9 @@ GEM
     globalid (1.4.0)
       activesupport (>= 6.1)
     hashdiff (1.2.1)
+    honeybadger (6.9.1)
+      logger
+      ostruct
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -220,6 +223,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
+    ostruct (0.6.3)
     parallel (2.1.0)
     parser (3.3.12.0)
       ast (~> 2.4.1)
@@ -437,6 +441,7 @@ DEPENDENCIES
   debug (~> 1.11)
   dotenv-rails (~> 3.1)
   factory_bot_rails (~> 6.2)
+  honeybadger (~> 6.9)
   image_processing (~> 1.14)
   jsonapi.rb (~> 2.0)
   pg (~> 1.4)
