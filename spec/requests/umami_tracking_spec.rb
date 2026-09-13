@@ -35,6 +35,15 @@ RSpec.describe "Umami tracking" do
       )
     end
 
+    it "sends only endpoint and status as event data" do
+      get "/api/v2/facts"
+
+      payload = ActiveJob::Base.queue_adapter.enqueued_jobs.last["arguments"].first
+
+      expect(payload["data"]).to include("endpoint" => "/api/v2/facts", "status" => 200)
+      expect(payload["data"].keys).not_to include("method", "controller", "action", "api_version")
+    end
+
     it "still serves the request when building the payload fails" do
       allow(Rails.application.config).to receive(:umami_website_id).and_raise("boom")
 

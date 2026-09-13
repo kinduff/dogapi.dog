@@ -12,7 +12,7 @@ module UmamiTrackable
   def track_api_request
     return unless umami_enabled?
 
-    UmamiEventJob.perform_later(event_payload(build_event_data))
+    UmamiEventJob.perform_later(event_payload)
   rescue => e
     Rails.logger.error "Error preparing Umami tracking: #{e.message}"
   end
@@ -22,44 +22,24 @@ module UmamiTrackable
       Rails.application.config.umami_website_id.present?
   end
 
-  def build_event_data
-    {
-      event_name: "api_request",
-      endpoint: request.path,
-      method: request.method,
-      controller: controller_name,
-      action: action_name,
-      api_version: extract_api_version,
-      status: response.status,
-      ip_address: request.remote_ip,
-      referer: request.referer
-    }
-  end
-
-  def event_payload(data)
+  # Every key in `data` becomes its own event_data row in Umami, indexed six
+  # ways over. Endpoint and status are the two anyone has ever queried; method,
+  # controller, action and version are all readable from the endpoint string.
+  def event_payload
     {
       hostname: request.host,
       language: extract_language,
       referrer: request.referer || "",
       screen: "",
-      title: "API: #{data[:endpoint]}",
+      title: "API: #{request.path}",
       url: request.original_url,
       website: Rails.application.config.umami_website_id,
-      name: data[:event_name],
+      name: "api_request",
       data: {
-        endpoint: data[:endpoint],
-        method: data[:method],
-        controller: data[:controller],
-        action: data[:action],
-        api_version: data[:api_version],
-        status: data[:status]
+        endpoint: request.path,
+        status: response.status
       }
     }
-  end
-
-  def extract_api_version
-    match = request.path.match(/\/api\/v(\d+)/)
-    match ? "v#{match[1]}" : "unknown"
   end
 
   def extract_language
