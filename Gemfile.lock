@@ -374,7 +374,7 @@ GEM
       logger (>= 1.7.0)
       rack (>= 3.2.0)
       redis-client (>= 0.29.0)
-    simplecov (1.1.0)
+    simplecov (1.2.0)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -462,7 +462,7 @@ DEPENDENCIES
   sassc-rails (~> 2.1)
   shoulda-matchers (~> 7.0)
   sidekiq (~> 8.1)
-  simplecov (~> 1.1)
+  simplecov (~> 1.2)
   sprockets-rails (~> 3.4)
   standard (~> 1.56)
   tzinfo-data
