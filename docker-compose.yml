@@ -12,6 +12,7 @@ services:
       - REDIS_URL=redis://redis
       - DATABASE_URL=postgres://postgres:postgres@postgres
       - RAILS_SERVE_STATIC_FILES=true
+      - PROMETHEUS_EXPORTER_HOST=metrics
     healthcheck:
       test:
         [
@@ -52,6 +53,7 @@ services:
     environment:
       - REDIS_URL=redis://redis
       - DATABASE_URL=postgres://postgres:postgres@postgres
+      - PROMETHEUS_EXPORTER_HOST=metrics
     depends_on:
       - postgres
       - redis
@@ -71,6 +73,7 @@ services:
     environment:
       - REDIS_URL=redis://redis
       - DATABASE_URL=postgres://postgres:postgres@postgres
+      - PROMETHEUS_EXPORTER_HOST=metrics
     depends_on:
       - postgres
       - redis
@@ -81,6 +84,18 @@ services:
       - redis:redis
     labels:
       - com.centurylinklabs.watchtower.enable=true
+  # prometheus_exporter collector. Puma and Sidekiq push here, Alloy scrapes it
+  # by the prometheus.* labels. Internal network only, no public route.
+  metrics:
+    image: kinduff/dogapi.dog:latest
+    restart: unless-stopped
+    command: bundle exec prometheus_exporter -b 0.0.0.0 -p 9394
+    networks:
+      - internal
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - prometheus.scrape=true
+      - prometheus.port=9394
   postgres:
     image: postgres:13
     restart: unless-stopped
