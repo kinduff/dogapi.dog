@@ -48,6 +48,9 @@ class BreedImage < ApplicationRecord
     return unless file.attached?
     return unless variant.nil? || VARIANTS.key?(variant.to_sym)
 
+    blob = variant.nil? ? file.blob : preloaded_variant_blob(variant.to_sym)
+    return public_blob_url(blob) if blob && public_blob_url?(blob)
+
     with_url_options do
       url = variant.nil? ? file.url : variant_url(variant.to_sym)
 
@@ -96,6 +99,31 @@ class BreedImage < ApplicationRecord
     file.blob.variant_records.find { |record| record.variation_digest == variant.variation.digest }
   end
 
+  def preloaded_variant_blob(name)
+    preloaded_variant_record(file.variant(name))&.image&.blob
+  end
+
+  # A public bucket behind a CDN serves every blob at `<host>/<key>`, so the
+  # URL can be written down without a trip through the storage service. That
+  # trip costs a few hundred microseconds per URL, which adds up to most of a
+  # full breeds page. Any other setup still asks the service.
+  def public_blob_url?(blob)
+    return false if public_host.blank?
+
+    defined?(ActiveStorage::Service::S3Service) && blob.service.is_a?(ActiveStorage::Service::S3Service)
+  end
+
+  def public_blob_url(blob)
+    "#{public_host}/#{blob.key}"
+  end
+
+  def public_host
+    host = ENV["S3_PUBLIC_HOST"].presence
+    return if host.nil?
+
+    host.start_with?("http") ? host.delete_suffix("/") : "https://#{host}"
+  end
+
   # The Disk service builds URLs from a route, so it needs a host. Inside a
   # request Active Storage sets this itself, but rake tasks and jobs do not
   # have one. Bucket services ignore it.
@@ -111,11 +139,11 @@ class BreedImage < ApplicationRecord
   # only knows the bucket's own host. Swapping the host keeps the path, which
   # is all the CDN needs.
   def public_host_url(url)
-    host = ENV["S3_PUBLIC_HOST"].presence
+    host = public_host
     return url if host.nil? || url.blank?
 
     uri = URI.parse(url)
-    replacement = URI.parse(host.start_with?("http") ? host : "https://#{host}")
+    replacement = URI.parse(host)
     uri.scheme = replacement.scheme
     uri.host = replacement.host
     uri.port = replacement.port

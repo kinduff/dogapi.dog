@@ -25,10 +25,15 @@ module Api
 
       private
 
-      # `?include=breeds` renders full breeds, images and all, so the same
-      # preloading the breeds endpoint needs applies here.
+      # The `breeds` relationship only needs ids, so a plain index preloads the
+      # breeds and nothing else. `?include=breeds` renders full breeds, images
+      # and all, so the same preloading the breeds endpoint needs applies then.
       def groups
-        Group.includes(breeds: [:group, {breed_images: {file_attachment: {blob: {variant_records: {image_attachment: :blob}}}}}])
+        if jsonapi_include.include?("breeds")
+          Group.includes(breeds: [:group, {breed_images: {file_attachment: {blob: {variant_records: {image_attachment: :blob}}}}}])
+        else
+          Group.includes(:breeds)
+        end
       end
     end
   end

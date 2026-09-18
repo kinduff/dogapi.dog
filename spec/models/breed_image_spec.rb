@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "active_storage/service/s3_service"
 
 RSpec.describe BreedImage do
   subject(:breed_image) { build(:breed_image) }
@@ -125,6 +126,33 @@ RSpec.describe BreedImage do
       allow(ENV).to receive(:[]).with("S3_PUBLIC_HOST").and_return("cdn.dogapi.dog")
 
       expect(breed_image.url_for).to start_with("https://cdn.dogapi.dog/")
+    end
+
+    context "with a public bucket" do
+      let!(:variant_blob) { breed_image.file.variant(:thumb).processed.image.blob }
+
+      # The blobs are written through the test Disk service, then looked up as
+      # if they lived on S3. Building the service needs no network.
+      let(:s3) { ActiveStorage::Service::S3Service.new(bucket: "dogs", region: "us-east-1", access_key_id: "x", secret_access_key: "x") }
+
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with("S3_PUBLIC_HOST").and_return("cdn.dogapi.dog")
+        allow(ActiveStorage::Blob).to receive(:services).and_return("test" => s3)
+      end
+
+      it "writes the original url from the key without asking the service" do
+        blob = breed_image.file.blob
+        expect(blob).not_to receive(:url)
+
+        expect(breed_image.url_for).to eq("https://cdn.dogapi.dog/#{blob.key}")
+      end
+
+      it "writes a preloaded variant url from its key" do
+        loaded = described_class.with_files.find(breed_image.id)
+
+        expect(loaded.url_for(:thumb)).to eq("https://cdn.dogapi.dog/#{variant_blob.key}")
+      end
     end
   end
 
