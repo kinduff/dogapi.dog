@@ -10,7 +10,7 @@ class SitemapsController < ApplicationController
   # behind them does, so they carry the date of the newest record; the rest
   # only change when the site itself is edited, and say nothing.
   DATA_BACKED_PATHS = ["/", "/breeds", "/groups"].freeze
-  STATIC_PATHS = ["/docs", "/docs/api-v1", "/docs/api-v2", "/terms"].freeze
+  STATIC_PATHS = ["/docs", "/teach", "/docs/api-v1", "/docs/api-v2", "/terms"].freeze
 
   def show
     @urls = urls

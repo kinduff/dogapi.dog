@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   root to: "pages#index"
   get "/terms", to: "pages#terms", as: :terms
   get "/docs", to: "pages#docs", as: :docs
+  get "/teach", to: "pages#teach", as: :teach
   # A breed page is linked by the slug its name parameterizes to, so fixing a
   # misspelled name moves the page. Ahead of the resource, which would answer
   # for the old slug with a 404 of its own.

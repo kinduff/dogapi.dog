@@ -22,6 +22,10 @@ class PagesController < ApplicationController
   def docs
   end
 
+  def teach
+    @counts = DataCounts.call
+  end
+
   def api_v1
     @document = OpenapiDocument.load("v1")
   end

@@ -1,0 +1,209 @@
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "api_docs", defer: true %>
+<% end %>
+<%= page_heading "Teaching with the Dog API", title: "Dog API for Teaching - Free Coding Exercises for the Classroom" %>
+<% content_for :description do %>
+  A free dog API for teaching: no key, CORS open, stable since 2016. Classroom
+  coding exercises with starter code in JavaScript, Python and curl.
+<% end %>
+<% breadcrumb_structured_data([["Teaching with the Dog API", teach_path]]) %>
+<% teach_structured_data %>
+<% api = "https://dogapi.dog/api/v2" %>
+<% breed_id = sample_ids["breed"] || "BREED_ID" %>
+
+<p>
+  A lot of the people who use this API are students. I see it linked from
+  Canvas, Google Classroom, Moodle, Schoology, Colab notebooks, The Odin Project
+  and at least one hiring take-home. This page is for whoever wrote those
+  lessons, and for whoever is about to write the next one.
+</p>
+
+<p>
+  It has <%= number_with_delimiter @counts[:breeds] %> breeds,
+  <%= @counts[:groups] %> groups, <%= number_with_delimiter @counts[:facts] %>
+  facts and <%= number_with_delimiter @counts[:images] %> pictures. Small enough
+  to understand in an afternoon, big enough to need pagination.
+</p>
+
+<h2 id="stability">
+  <a class="api-anchor" href="#stability" aria-hidden="true"></a>
+  Why it's safe to build a course on
+</h2>
+
+<ul>
+  <li><strong>It's been running since 2016</strong>, and I'm not going anywhere.</li>
+  <li><strong>No key, no sign-up.</strong> Nobody spends the first twenty minutes of a lesson making an account, and nobody leaks a key in a public repo or a screen share.</li>
+  <li><strong>CORS is open.</strong> <code>fetch()</code> works from a static page, a CodePen, a notebook or <code>localhost</code>, no proxy needed.</li>
+  <li><strong>Versions don't vanish.</strong> When v2 shipped, v1 kept answering, and it still does. Your old slides keep working.</li>
+  <li><strong>The rate limit is generous.</strong> <%= Rack::Attack::REQUESTS_PER_MINUTE %> requests per minute per IP, which a whole room sharing one connection stays well under. No monthly quota to run out of halfway through a term.</li>
+  <li><strong>It's free</strong>, for classes, workshops, tutorials and videos, paid or not.</li>
+</ul>
+
+<p>
+  <strong>My promise:</strong> I won't remove an endpoint or change what an
+  existing endpoint returns in a way that breaks code written against it. New
+  things get added; old things stay. If something ever has to go, it will be
+  announced here well ahead of time, and the old version will keep answering
+  for at least a full school year after that.
+</p>
+
+<h2 id="beginner">
+  <a class="api-anchor" href="#beginner" aria-hidden="true"></a>
+  Beginner
+</h2>
+
+<h3 id="random-fact">
+  <a class="api-anchor" href="#random-fact" aria-hidden="true"></a>
+  Fetch a random fact
+</h3>
+
+<p>
+  <strong>Goal:</strong> make one request, read JSON, put a value on the page.
+  <code>GET /api/v2/facts</code> returns one random fact; <code>?limit=</code>
+  asks for up to 5. Then add a button that fetches another one.
+</p>
+
+<%= render "pages/api_code", label: "JavaScript", language: "javascript", id: "teach-fact-js", content: <<~JS %>
+  const res = await fetch("#{api}/facts");
+  const json = await res.json();
+  console.log(json.data[0].attributes.body);
+JS
+
+<%= render "pages/api_code", label: "Python", id: "teach-fact-py", content: <<~PY %>
+  import requests
+
+  res = requests.get("#{api}/facts")
+  print(res.json()["data"][0]["attributes"]["body"])
+PY
+
+<%= render "pages/api_code", label: "curl", language: "shell", id: "teach-fact-curl", content: <<~SH %>
+  curl "#{api}/facts?limit=3"
+SH
+
+<h3 id="random-dog">
+  <a class="api-anchor" href="#random-dog" aria-hidden="true"></a>
+  Show a random dog
+</h3>
+
+<p>
+  <strong>Goal:</strong> see an API answer without writing any JavaScript.
+  <code>GET /api/v2/breeds/image</code> redirects to a random dog picture, so an
+  <code>&lt;img&gt;</code> can point straight at it. <code>?size=</code> takes
+  <code>thumb</code>, <code>medium</code>, <code>large</code> or
+  <code>full</code>.
+</p>
+
+<%= render "pages/api_code", label: "HTML", language: "html", id: "teach-img-html", content: <<~HTML %>
+  <img src="#{api}/breeds/image?size=medium" alt="A random dog">
+HTML
+
+<%= render "pages/api_code", label: "Python", id: "teach-img-py", content: <<~PY %>
+  import requests
+
+  res = requests.get("#{api}/breeds/image", allow_redirects=False)
+  print(res.headers["Location"])
+PY
+
+<%= render "pages/api_code", label: "curl", language: "shell", id: "teach-img-curl", content: <<~SH %>
+  curl -sI "#{api}/breeds/image" | grep -i location
+SH
+
+<h2 id="intermediate">
+  <a class="api-anchor" href="#intermediate" aria-hidden="true"></a>
+  Intermediate
+</h2>
+
+<h3 id="paginate">
+  <a class="api-anchor" href="#paginate" aria-hidden="true"></a>
+  List breeds, one page at a time
+</h3>
+
+<p>
+  <strong>Goal:</strong> walk a paginated collection. <code>GET /api/v2/breeds</code>
+  takes <code>page[number]</code> and <code>page[size]</code>, and the response
+  carries <code>links.next</code> and <code>meta.pagination</code>. Follow
+  <code>next</code> until it's gone. <code>filter[has_images]=true</code> keeps
+  only breeds that have a picture.
+</p>
+
+<%= render "pages/api_code", label: "JavaScript", language: "javascript", id: "teach-pages-js", content: <<~JS %>
+  let url = "#{api}/breeds?page[size]=20&page[number]=1";
+  while (url) {
+    const json = await (await fetch(url)).json();
+    json.data.forEach((breed) => console.log(breed.attributes.name));
+    url = json.links.next;
+  }
+JS
+
+<%= render "pages/api_code", label: "Python", id: "teach-pages-py", content: <<~PY %>
+  import requests
+
+  url = "#{api}/breeds"
+  params = {"page[size]": 20, "page[number]": 1}
+  while url:
+      json = requests.get(url, params=params).json()
+      for breed in json["data"]:
+          print(breed["attributes"]["name"])
+      url, params = json["links"].get("next"), None
+PY
+
+<h3 id="relationships">
+  <a class="api-anchor" href="#relationships" aria-hidden="true"></a>
+  A breed and its group
+</h3>
+
+<p>
+  <strong>Goal:</strong> follow a relationship. <code>GET /api/v2/breeds/:id</code>
+  returns a breed whose <code>relationships.group.data.id</code> points at
+  <code>GET /api/v2/groups/:id</code>. Two requests, one join. Going the other
+  way, <code>GET /api/v2/groups/:id?include=breeds</code> brings every breed of
+  a group along in <code>included</code>. Ask for an id that doesn't exist too,
+  and handle the 404 without breaking the page.
+</p>
+
+<%= render "pages/api_code", label: "JavaScript", language: "javascript", id: "teach-rel-js", content: <<~JS %>
+  const breed = (await (await fetch("#{api}/breeds/#{breed_id}")).json()).data;
+  const groupId = breed.relationships.group.data.id;
+  const group = (await (await fetch(`#{api}/groups/${groupId}`)).json()).data;
+  console.log(`${breed.attributes.name} is in the ${group.attributes.name}`);
+JS
+
+<h2 id="projects">
+  <a class="api-anchor" href="#projects" aria-hidden="true"></a>
+  Project ideas
+</h2>
+
+<ul>
+  <li><strong>Breed quiz.</strong> Show a picture from <code>/api/v2/breeds/:id/image</code> and four breed names; the student guesses. <code>filter[has_images]=true</code> gives you the breeds worth asking about.</li>
+  <li><strong>Flashcards.</strong> Breed name on one side, description, origin and life span on the other.</li>
+  <li><strong>Comparison chart.</strong> Plot <code>life</code>, <code>male_weight</code> and <code>female_weight</code> across a group, then argue about what the ranges actually mean.</li>
+  <li><strong>"Which group?" sorter.</strong> Drag breeds into their groups, checked against <code>/api/v2/groups?include=breeds</code>.</li>
+  <li><strong>Take-home interview.</strong> "Build a page that lists breeds with search and pagination, shows a detail view with the breed's group and picture, and handles loading and error states." Small enough for an evening, with enough edges to talk about.</li>
+</ul>
+
+<p>
+  Every endpoint and parameter is in the <%= link_to "API v2 reference", api_v2_path %>,
+  with a try-it button on each one.
+</p>
+
+<h2 id="share">
+  <a class="api-anchor" href="#share" aria-hidden="true"></a>
+  Share this with your class
+</h2>
+
+<p>
+  If you link students to the site, use this link. Course platforms strip the
+  referrer, so most classes show up to me as anonymous "direct" traffic. The
+  tags on the end let me see that a class came by, and nothing more: no
+  cookies, no accounts, nothing about your students.
+</p>
+
+<%= render "pages/api_code", label: "Link for your course", id: "teach-share-link", content: classroom_link %>
+
+<p>
+  And I'd really like to hear about your course: what you teach, who it's for,
+  what broke. Email me at <%= mail_to "dev@dogapi.dog" %> or open an issue on
+  <%= link_to "GitHub", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %>.
+  Knowing a class depends on something is the best reason I have to keep it
+  exactly the way it is.
+</p>
