@@ -25,6 +25,11 @@ and the attribution its source asks for.
 <% end -%>
 <% end -%>
 
+## Use it from an AI assistant (MCP)
+
+- [MCP server](https://dogapi.dog/mcp): a remote Model Context Protocol server (Streamable HTTP, no key) with read-only tools random_dog_facts, search_breeds, get_breed, list_groups, get_group and random_dog_image. Add it with `claude mcp add --transport http dogapi https://dogapi.dog/mcp`, or point any MCP client at the URL.
+- [Setup for Claude, Cursor and VS Code](<%= request.base_url %>/docs#mcp): config snippets for each client.
+
 ## Browse
 
 - [Breeds](<%= request.base_url %>/breeds): all <%= number_with_delimiter @counts[:breeds] %> breeds, each one a page carrying the API request that built it.

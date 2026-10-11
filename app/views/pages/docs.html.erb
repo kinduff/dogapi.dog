@@ -17,3 +17,54 @@
   <li><%= link_to "API V2", api_v2_path %></li>
   <li><%= link_to "API V1 (deprecated)", api_v1_path %></li>
 </ul>
+
+<h2 id="mcp">Use it from an AI assistant (MCP)</h2>
+
+<p>
+  The Model Context Protocol (MCP) is how AI assistants call outside tools.
+  Dog API runs an MCP server, so an assistant can look up breeds and groups,
+  fetch dog facts and show a credited picture on its own. Like the rest of the
+  API, it needs no key and no sign up.
+</p>
+
+<%= render "pages/api_code",
+      label: "Server URL",
+      id: "mcp-url",
+      content: "https://dogapi.dog/mcp" %>
+
+<p>
+  It offers six read-only tools: <code>random_dog_facts</code>,
+  <code>search_breeds</code>, <code>get_breed</code>, <code>list_groups</code>,
+  <code>get_group</code> and <code>random_dog_image</code>.
+</p>
+
+<h3>Claude Code</h3>
+
+<%= render "pages/api_code",
+      label: "Terminal",
+      language: "shell",
+      id: "mcp-claude-code",
+      content: "claude mcp add --transport http dogapi https://dogapi.dog/mcp" %>
+
+<h3>Claude Desktop and claude.ai</h3>
+
+<p>
+  In Settings, under Connectors, add a custom connector named Dog API with
+  <code>https://dogapi.dog/mcp</code> as its URL.
+</p>
+
+<h3>Cursor</h3>
+
+<%= render "pages/api_code",
+      label: ".cursor/mcp.json",
+      language: "json",
+      id: "mcp-cursor",
+      content: api_json({mcpServers: {dogapi: {url: "https://dogapi.dog/mcp"}}}) %>
+
+<h3>VS Code</h3>
+
+<%= render "pages/api_code",
+      label: ".vscode/mcp.json",
+      language: "json",
+      id: "mcp-vscode",
+      content: api_json({servers: {dogapi: {type: "http", url: "https://dogapi.dog/mcp"}}}) %>

@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   get "/images", to: redirect("/breeds", status: 301)
   get "/sitemap.xml", to: "sitemaps#show", as: :sitemap, defaults: {format: :xml}
   get "/llms.txt", to: "llms#show", as: :llms, defaults: {format: :text}
+  # Model Context Protocol, streamable HTTP transport, stateless.
+  match "/mcp", to: "mcp#handle", via: %i[get post delete], as: :mcp
   get "/docs/api-v1", to: "pages#api_v1", as: :api_v1
   get "/docs/api-v2", to: "pages#api_v2", as: :api_v2
 
