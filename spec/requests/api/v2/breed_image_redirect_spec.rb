@@ -70,6 +70,15 @@ RSpec.describe "Api::V2::Breeds image redirect" do
       expect(response.headers["Cache-Control"]).to include("public")
     end
 
+    it "never stores a random pick" do
+      create(:breed_image, breed: breed)
+
+      get "/api/v2/breeds/#{breed.id}/image", params: {random: "true"}
+
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Cache-Control"]).not_to include("public")
+    end
+
     it "returns 404 for a breed without images" do
       get "/api/v2/breeds/#{breed.id}/image"
 
@@ -105,6 +114,15 @@ RSpec.describe "Api::V2::Breeds image redirect" do
       get "/api/v2/breeds/image", params: {size: "large"}
 
       expect(redirected_key).to eq(key_of(image, :large))
+    end
+
+    it "is never stored" do
+      create(:breed_image, breed: breed)
+
+      get "/api/v2/breeds/image"
+
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Cache-Control"]).not_to include("public")
     end
 
     it "returns 404 when nothing has been imported yet" do

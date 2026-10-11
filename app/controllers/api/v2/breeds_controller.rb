@@ -30,12 +30,14 @@ module Api
         breed = Breed.find_by(id: params.fetch(:id))
         return head :not_found if breed.nil?
 
+        do_not_cache if random?
         redirect_to_image(random? ? breed.breed_images.with_files.sample : breed.primary_image)
       end
 
       # GET /api/v2/breeds/image
       # Redirects to a random image from any breed.
       def random_image
+        do_not_cache
         redirect_to_image(BreedImage.with_files.offset(rand(BreedImage.count)).first)
       end
 
