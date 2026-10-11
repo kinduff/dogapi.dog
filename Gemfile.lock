@@ -155,9 +155,7 @@ GEM
       ostruct
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    image_processing (1.14.0)
-      mini_magick (>= 4.9.5, < 6)
-      ruby-vips (>= 2.0.17, < 3)
+    image_processing (2.2.0)
     io-console (0.9.4)
     irb (1.18.0)
       pp (>= 0.6.0)
@@ -187,8 +185,6 @@ GEM
       net-pop
       net-smtp
     marcel (1.2.1)
-    mini_magick (5.4.0)
-      logger
     mini_mime (1.1.5)
     minitest (6.0.6)
       drb (~> 2.0)
@@ -447,7 +443,7 @@ DEPENDENCIES
   dotenv-rails (~> 3.1)
   factory_bot_rails (~> 6.2)
   honeybadger (~> 6.9)
-  image_processing (~> 1.14)
+  image_processing (~> 2.2)
   jsonapi.rb (~> 2.0)
   pg (~> 1.4)
   prometheus_exporter (~> 2.3)
@@ -461,6 +457,7 @@ DEPENDENCIES
   rspec-rails (~> 8.0)
   rswag-api (~> 2.8)
   rswag-specs (~> 2.8)
+  ruby-vips (~> 2.3)
   sassc-rails (~> 2.1)
   shoulda-matchers (~> 8.0)
   sidekiq (~> 8.1)
