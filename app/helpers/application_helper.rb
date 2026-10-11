@@ -147,7 +147,7 @@ module ApplicationHelper
       .gsub("&", "\\u0026")
 
     tag.script(
-      raw(json), # rubocop:disable Rails/OutputSafety
+      raw(json),
       type: "application/ld+json",
       nonce: content_security_policy_nonce
     )

@@ -11,7 +11,7 @@ module DocsHelper
       escaped = ERB::Util.html_escape(paragraph.strip)
       with_code = escaped.gsub(/`([^`]+)`/) { "<code>#{$1}</code>" }
 
-      tag.p(with_code.html_safe) # rubocop:disable Rails/OutputSafety
+      tag.p(with_code.html_safe)
     end
 
     safe_join(paragraphs)
@@ -33,7 +33,7 @@ module DocsHelper
     formatter = Rouge::Formatters::HTML.new if lexer
 
     lines = text.to_s.split("\n", -1).map do |line|
-      content = lexer ? formatter.format(lexer.lex(line)).html_safe : line # rubocop:disable Rails/OutputSafety
+      content = lexer ? formatter.format(lexer.lex(line)).html_safe : line
 
       tag.span(content, class: "code-line")
     end
