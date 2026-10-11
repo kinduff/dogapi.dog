@@ -4,16 +4,10 @@ module Umami
   class ClientWithUserAgent < Client
     private
 
-    def connection
-      @connection ||= Faraday.new(url: uri_base) do |faraday|
-        faraday.request :json
-        faraday.response :raise_error
-        faraday.adapter Faraday.default_adapter
-        faraday.headers["Authorization"] = "Bearer #{@access_token}" if @access_token
-        # Add User-Agent header for proper request tracking
-        faraday.headers["User-Agent"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-        faraday.options.timeout = request_timeout
-      end
+    # send_event defaults to "umami-ruby/VERSION"; send a browser string instead
+    # so events are tracked like a real visit.
+    def default_user_agent
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
     end
   end
 end
