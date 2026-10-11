@@ -37,10 +37,29 @@ class BreedsController < ApplicationController
       .where(group_id: @breed.group_id)
       .where.not(id: @breed.id)
       .order(:name)
-      .limit(12)
+      .limit(8)
+
+    @similar_size = similar_size(@breed)
   end
 
   private
+
+  # Breeds whose weight range overlaps this one, closest midpoint first, from
+  # any group but this one (the group already has its own row).
+  def similar_size(breed)
+    weights = [breed.male_weight_min, breed.male_weight_max, breed.female_weight_min, breed.female_weight_max].compact
+    return Breed.none if weights.empty?
+
+    min, max = weights.minmax
+    low = "LEAST((male_weight->>'min')::numeric, (female_weight->>'min')::numeric)"
+    high = "GREATEST((male_weight->>'max')::numeric, (female_weight->>'max')::numeric)"
+
+    breeds_scope
+      .where.not(group_id: breed.group_id)
+      .where("#{low} <= ? AND #{high} >= ?", max, min)
+      .order(Arel.sql(ActiveRecord::Base.sanitize_sql_array(["ABS((#{low} + #{high}) / 2 - ?), breeds.name", (min + max) / 2.0])))
+      .limit(6)
+  end
 
   def per_page
     requested = params.dig(:page, :size).to_i

@@ -1,5 +1,5 @@
-<% content_for :title, "#{@breed.name} Dog Breed - Size, Life Span and Pictures" %>
-<% content_for :description do %><%= breed_meta_description(@breed) %><% end %>
+<% content_for :title, breed_page_title(@breed) %>
+<% content_for :description do %><%= breed_page_description(@breed) %><% end %>
 <% content_for :canonical_path, breed_path_for(@breed) %>
 <% content_for :og_type, "article" %>
 <% if (hero = @breed.breed_images.first) %>
@@ -105,6 +105,9 @@
   </ul>
 <% end %>
 
+<%# Built only from the record, so it says nothing the data does not. %>
+<p class="breed-lead breed-summary"><%= breed_summary(@breed) %></p>
+
 <% if @breed.description.present? %>
   <p class="breed-lead"><%= @breed.description %></p>
 <% end %>
@@ -179,6 +182,22 @@
   </p>
 <% end %>
 
+<% faq = breed_faq(@breed) %>
+<% if faq.any? %>
+  <% structured_data breed_faq_structured_data(faq) %>
+  <h2 id="faq">
+    <a class="api-anchor" href="#faq" aria-hidden="true"></a>
+    <%= @breed.name %> FAQ
+  </h2>
+
+  <dl class="breed-faq">
+    <% faq.each do |question, answer| %>
+      <dt><%= question %></dt>
+      <dd><%= answer %></dd>
+    <% end %>
+  </dl>
+<% end %>
+
 <% if @siblings.any? %>
   <h2 id="group">
     <a class="api-anchor" href="#group" aria-hidden="true"></a>
@@ -190,6 +209,17 @@
   </ul>
 
   <p><%= link_to "Every breed in this group →", group_path_for(@breed.group) %></p>
+<% end %>
+
+<% if @similar_size.any? %>
+  <h2 id="similar-size">
+    <a class="api-anchor" href="#similar-size" aria-hidden="true"></a>
+    Similar in size
+  </h2>
+
+  <ul class="breed-grid">
+    <%= render partial: "shared/breed_card", collection: @similar_size, as: :breed %>
+  </ul>
 <% end %>
 
 <%= render "shared/api_panel",

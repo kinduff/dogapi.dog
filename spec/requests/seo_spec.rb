@@ -212,7 +212,7 @@ RSpec.describe "SEO metadata" do
     it "titles a breed page after the breed" do
       get "/breeds/akita"
 
-      expect(response.body).to include("<title>Akita Dog Breed - Size, Life Span and Pictures | Dog API</title>")
+      expect(response.body).to include("<title>Akita: Size, Life Span (10–14 years) | Dog API</title>")
     end
 
     it "trails back to the homepage" do
