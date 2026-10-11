@@ -19,7 +19,7 @@ RSpec.describe "API reference pages" do
     end
 
     it "titles the page after the document" do
-      expect(response.body).to include("<title>API V2 Reference - Parameters, Responses and Examples | Dog API</title>")
+      expect(response.body).to include("<title>Dog API Documentation (v2) - Dog Breeds, Facts and Images | Dog API</title>")
     end
 
     it "states the base url" do

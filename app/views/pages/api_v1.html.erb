@@ -1,1 +1,16 @@
-<%= render "pages/openapi", document: @document %>
+<% notice = capture do %>
+  <aside class="docs-deprecated" role="note">
+    <p>
+      <strong>v1 is deprecated.</strong> It still answers and I'm not switching
+      it off, but nothing new lands here.
+      <%= link_to "v2 is the version to build on", api_v2_path %> — it has
+      breeds, groups, facts and pictures, in JSON:API format.
+    </p>
+  </aside>
+<% end %>
+
+<%= render "pages/openapi", document: @document,
+      title: "Dog API v1 Docs (Deprecated) - Legacy Facts Endpoint",
+      description: "Legacy reference for v1 of the Dog API, which is deprecated. For new projects use v2, " \
+                   "with breeds, groups, facts and dog pictures.",
+      notice: notice %>

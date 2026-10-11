@@ -4,13 +4,21 @@
   <%= javascript_include_tag "api_docs", defer: true %>
 <% end %>
 
+<%# A version page can say more in its title and description than the
+    generic wording below, and can put a notice above everything else. %>
 <%= page_heading "#{document.title} - Docs",
-      title: "#{document.title} Reference - Parameters, Responses and Examples" %>
+      title: local_assigns[:title] || "#{document.title} Reference - Parameters, Responses and Examples" %>
 <% content_for :description do %>
-  Every <%= document.version %> endpoint of the free Dog API, with its
-  parameters, its responses and a request you can run from the page.
+  <% if local_assigns[:description] %>
+    <%= local_assigns[:description] %>
+  <% else %>
+    Every <%= document.version %> endpoint of the free Dog API, with its
+    parameters, its responses and a request you can run from the page.
+  <% end %>
 <% end %>
 <% breadcrumb_structured_data([["API Docs", docs_path], [document.title, request.path]]) %>
+
+<%= local_assigns[:notice] %>
 
 <%= api_text document.summary %>
 

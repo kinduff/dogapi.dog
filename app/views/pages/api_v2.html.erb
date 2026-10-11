@@ -1,1 +1,13 @@
-<%= render "pages/openapi", document: @document %>
+<% notice = capture do %>
+  <p class="docs-image-line">
+    Want a dog picture? <code>https://dogapi.dog/api/v2/breeds/image</code>
+    redirects to one, so it works as the <code>src</code> of an
+    <code>img</code> tag. Details in <a href="#endpoints">the reference below</a>.
+  </p>
+<% end %>
+
+<%= render "pages/openapi", document: @document,
+      title: "Dog API Documentation (v2) - Dog Breeds, Facts and Images",
+      description: "Docs for the free Dog API v2: dog breeds, breed groups, dog facts and dog images as JSON. " \
+                   "No API key. Every endpoint can be run from the page.",
+      notice: notice %>
