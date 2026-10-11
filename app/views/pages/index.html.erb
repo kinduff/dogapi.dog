@@ -85,6 +85,22 @@
   </div>
 </form>
 
+<h2 id="facts">
+  <a class="api-anchor" href="#facts" aria-hidden="true"></a>
+  Dog facts API
+</h2>
+
+<p>
+  That request is the facts endpoint. <code>/api/v2/facts</code> hands back a
+  random dog fact each time, and <code>?limit=</code> asks for up to five at once.
+  There are <%= number_with_delimiter @counts[:facts] %> of them, so repeats take a while.
+</p>
+
+<h2 id="images">
+  <a class="api-anchor" href="#images" aria-hidden="true"></a>
+  A dog image API in one tag
+</h2>
+
 <p>
   Pictures need even less than that. The image endpoint redirects straight to a
   file, so an <code>img</code> tag can point at it and nothing else is needed:
@@ -167,30 +183,51 @@
     data so a search engine quotes the same answer the page gives. %>
 <% faqs = {} %>
 
+<% faqs["Is the Dog API free?"] = capture do %>
+  Yes. There's no paid plan and no monthly quota. It's mostly used for learning
+  and for fun, and I've paid for it myself this long without it hurting. If you
+  feel like helping with the bill, you can
+  <%= link_to "buy me a coffee", "https://www.buymeacoffee.com/kinduff", target: "_blank", rel: "noopener" %>.
+<% end %>
+
 <% faqs["Do I need an API key?"] = capture do %>
   No, and I don't plan to require one. If that ever changes, whatever you've
   already built will keep working.
 <% end %>
 
-<% faqs["Why is it free?"] = capture do %>
-  Because it's mostly used for learning and for fun, and I've paid for it myself
-  this long without it hurting. If you feel like helping with the bill, you can
-  <%= link_to "buy me a coffee", "https://www.buymeacoffee.com/kinduff", target: "_blank", rel: "noopener" %>.
+<% faqs["Does it work from the browser?"] = capture do %>
+  Yes. The API sends CORS headers that allow any origin, so
+  <code>fetch()</code> from a static page, a CodePen or a local file works
+  without a proxy.
 <% end %>
 
-<% faqs["Why is V1 deprecated?"] = capture do %>
-  I wrote V1 without following any standard and it doesn't grow well. V2 follows
-  JSON:API and is where breeds, groups and anything new lives. V1 still answers,
-  and I'm not going to switch it off.
+<% faqs["How do I get a random dog picture?"] = capture do %>
+  Request <code>https://dogapi.dog/api/v2/breeds/image</code>. It redirects to a
+  picture of a random dog, so you can use it as the <code>src</code> of an
+  <code>img</code> tag directly.
+<% end %>
+
+<% faqs["What's the rate limit?"] = capture do %>
+  <%= Rack::Attack::REQUESTS_PER_MINUTE %> requests per minute per IP. A whole
+  classroom sharing one connection stays well under it.
+<% end %>
+
+<% faqs["Which version should I use?"] = capture do %>
+  <%= link_to "v2", api_v2_path %>. I wrote v1 without following any standard
+  and it doesn't grow well. v2 follows JSON:API and is where breeds, groups and
+  anything new lives. <%= link_to "v1", api_v1_path %> still answers, and I'm
+  not going to switch it off, but it's deprecated.
 <% end %>
 
 <% faqs["Where's the Slack button?"] = capture do %>
   I lost ownership of the Slack app to a policy change and couldn't get it back.
 <% end %>
 
-<% faqs["Who are you?"] = capture do %>
-  <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>.
-  I like building silly things and putting them online. The code for this one is
+<% faqs["Is this the official dogapi.dog?"] = capture do %>
+  Yes. It's mine,
+  <%= link_to "kinduff", "https://kinduff.com", target: "_blank", rel: "noopener" %>,
+  and I've run it since 2016. I like building silly things and putting them
+  online. The code is
   <%= link_to "on GitHub", "https://github.com/kinduff/dogapi.dog", target: "_blank", rel: "noopener" %>,
   MIT licensed, and pull requests are welcome.
 <% end %>
