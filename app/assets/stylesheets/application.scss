@@ -332,13 +332,16 @@ blockquote {
         text-transform: uppercase;
     }
 
+    // The global nav rules lay links out in a row; these are a list.
     ul {
+        display: block;
         list-style: none;
         margin: 0.3rem 0 0;
         padding: 0;
     }
 
     li {
+        display: block;
         margin: 0.15rem 0;
     }
 
