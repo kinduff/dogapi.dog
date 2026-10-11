@@ -1,19 +1,75 @@
-# 🐶 Dog API
+# Dog API
 
-The **Dog API** provides information on over 340 dog breeds, 20 breed groups, and fun facts. Our data is accurate and constantly updated. Easily integrate this information into your own website or application with our user-friendly API. Get started today and discover more about the world of dogs.
+[![CI](https://github.com/kinduff/dogapi.dog/actions/workflows/ci.yml/badge.svg)](https://github.com/kinduff/dogapi.dog/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## Getting Started
+A free JSON API about dogs: 283 breeds, 9 breed groups, 483 facts and about
+2,350 openly licensed breed photos. No API key, no sign-up, CORS open.
+Running at [dogapi.dog](https://dogapi.dog) since 2016.
 
-To get started with this API, you will need to have Ruby and Rails installed on your system. You will also need to have a PostgreSQL database set up and running.
+## Quick start
 
-Once you have these prerequisites installed, follow these steps:
+```bash
+curl "https://dogapi.dog/api/v2/facts?limit=2"
+curl "https://dogapi.dog/api/v2/breeds?page[size]=5"
+curl "https://dogapi.dog/api/v2/groups"
+```
 
-1. Clone this repository to your local machine
-2. Navigate to the project directory and run `bundle install` to install all necessary dependencies
-3. Set up the database by running `rails db:setup`
-4. Start the API server by running `rails server`
+Responses follow [JSON:API](https://jsonapi.org). `fetch()` works straight from
+a browser, a CodePen, a notebook or `localhost`; no proxy needed. The limit is
+300 requests per minute per IP.
 
-## Breed images
+## A random dog in one tag
+
+```html
+<img src="https://dogapi.dog/api/v2/breeds/image" alt="A random dog">
+```
+
+The URL redirects to a picture. Add `?size=thumb|medium|large|full`, or use
+`/api/v2/breeds/{id}/image` for a specific breed. Photos come from Wikimedia
+Commons and Openverse; each breed's attribution is in the API response.
+
+## Use it from an AI assistant (MCP)
+
+A remote [MCP](https://modelcontextprotocol.io) server lives at
+`https://dogapi.dog/mcp`, no key needed. Tools: `random_dog_facts`,
+`search_breeds`, `get_breed`, `list_groups`, `get_group`, `random_dog_image`.
+
+```bash
+claude mcp add --transport http dogapi https://dogapi.dog/mcp
+```
+
+Or in any client that takes JSON config:
+
+```json
+{ "mcpServers": { "dogapi": { "type": "http", "url": "https://dogapi.dog/mcp" } } }
+```
+
+## Docs
+
+- [API v2 reference](https://dogapi.dog/docs/api-v2), with an
+  [OpenAPI document](https://dogapi.dog/api-docs/v2/swagger.json) for Postman,
+  Insomnia or code generators
+- [API v1](https://dogapi.dog/docs/api-v1) still answers, so old tutorials keep working
+
+## Used in classrooms
+
+A lot of the traffic comes from students: assignments on Canvas, Google
+Classroom, Moodle and Schoology, Colab notebooks and The Odin Project. If you
+teach, [dogapi.dog/teach](https://dogapi.dog/teach) has ready-made exercises
+with starter code in JavaScript, Python and curl. Free for classes,
+workshops, tutorials and videos, paid or not.
+
+## Running it locally
+
+You need Ruby, PostgreSQL and `libvips` (for image variants).
+
+1. Clone this repository
+2. `bundle install`
+3. `rails db:setup`
+4. `rails server`
+
+### Breed images
 
 Breed pictures are imported into Active Storage, resized to WebP, and served
 with the attribution their licence requires. `libvips` must be installed
