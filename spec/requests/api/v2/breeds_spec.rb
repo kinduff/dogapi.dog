@@ -13,9 +13,9 @@ RSpec.describe "breeds", swagger_doc: "v2/swagger.json" do
         `page[size]` falls back to that maximum, so a plain request returns the
         whole collection. Each breed links to the group it belongs to.
 
-        Most breeds have no picture imported yet.
-        `filter[has_images]=true` narrows the collection to the ones that do,
-        which is what you want if you are putting photographs on a screen.
+        Every breed has at least one picture today.
+        `filter[has_images]=true` still narrows the collection to the ones that do,
+        so a screen of photographs never meets a breed without one.
 
         Responses may be cached publicly for up to 5 minutes.
       TEXT
