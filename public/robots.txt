@@ -1,6 +1,11 @@
 # See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
 
 User-agent: *
+# What the pages may be used for once fetched, in the vocabulary of
+# https://contentsignals.org: showing up in search, grounding an AI answer,
+# and training a model are all welcome. The breed pictures stay under the
+# licences their authors chose, whatever is said here.
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 # The API answers to clients rather than to crawlers, and the OpenAPI documents
