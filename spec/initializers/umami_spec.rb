@@ -25,37 +25,43 @@ RSpec.describe Umami::ClientWithUserAgent do
       Umami.reset if Umami.respond_to?(:reset)
     end
 
-    def load_initializer
-      stub_const("ENV", ENV.to_h.merge(
+    def load_initializer(env = {})
+      stub_const("ENV", ENV.to_h.except("UMAMI_USERNAME", "UMAMI_PASSWORD").merge(
         "UMAMI_URI_BASE" => "https://umami.example",
-        "UMAMI_USERNAME" => "someone",
-        "UMAMI_PASSWORD" => "secret",
         "UMAMI_WEBSITE_ID" => "site"
-      ))
+      ).merge(env).compact)
       load Rails.root.join("config/initializers/umami.rb")
     end
 
-    it "boots with tracking off when the login carries no token" do
-      stub_request(:post, "https://umami.example/api/auth/login").to_return(status: 200, body: "{}")
-
-      expect { load_initializer }.not_to raise_error
-      expect(Rails.application.config.umami_client).to be_nil
-    end
-
-    it "boots with tracking off when umami cannot be reached" do
-      stub_request(:post, "https://umami.example/api/auth/login").to_timeout
-
-      expect { load_initializer }.not_to raise_error
-      expect(Rails.application.config.umami_client).to be_nil
-    end
-
-    it "builds the client when the login works" do
-      stub_request(:post, "https://umami.example/api/auth/login")
-        .to_return(status: 200, body: {token: "abc"}.to_json)
-
+    # WebMock refuses any request that is not stubbed, so a login attempt here
+    # would fail the example on its own.
+    it "builds the client without logging in" do
       load_initializer
 
       expect(Rails.application.config.umami_client).to be_a(described_class)
+      expect(a_request(:any, /umami\.example/)).not_to have_been_made
+    end
+
+    it "sends events without credentials or a token" do
+      request = stub_request(:post, "https://umami.example/api/send").to_return(status: 200, body: "{}")
+      load_initializer
+
+      Rails.application.config.umami_client.send_event({website: "site", url: "/api/v2/breeds", hostname: "dogapi.dog"})
+
+      expect(request.with { |sent| sent.headers.keys.none? { |name| name.casecmp?("Authorization") } }).to have_been_requested
+    end
+
+    it "leaves tracking off without a website to report to" do
+      load_initializer("UMAMI_WEBSITE_ID" => nil)
+
+      expect(Rails.application.config.umami_client).to be_nil
+    end
+
+    it "boots with tracking off when the client cannot be built" do
+      allow(described_class).to receive(:new).and_raise(Umami::ConfigurationError, "no")
+
+      expect { load_initializer }.not_to raise_error
+      expect(Rails.application.config.umami_client).to be_nil
     end
   end
 end
