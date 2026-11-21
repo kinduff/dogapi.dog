@@ -8,7 +8,18 @@ class PagesController < ApplicationController
   # Six across, three down: one screenful of dogs.
   HERO_SIZE = 18
 
+  # Where a program that fetched the front page should look next. Relation
+  # names are the registered ones, from RFC 8288 and RFC 9727.
+  DISCOVERY_LINKS = {
+    "api-catalog" => "/.well-known/api-catalog",
+    "service-desc" => "/api-docs/v2/swagger.json",
+    "service-doc" => "/docs/api-v2",
+    "describedby" => "/llms.txt"
+  }.freeze
+
   helper_method :sample_ids
+
+  before_action :link_to_machine_readable_resources, only: :index
 
   def index
     @fact = Fact.random.first
@@ -35,6 +46,12 @@ class PagesController < ApplicationController
   end
 
   private
+
+  # Set before rendering, so the stylesheet and script preloads Rails adds
+  # while rendering join these rather than replace them.
+  def link_to_machine_readable_resources
+    response.headers["Link"] = DISCOVERY_LINKS.map { |relation, path| %(<#{path}>; rel="#{relation}") }.join(", ")
+  end
 
   # How many breeds have a picture. Cached because only an import moves it, and
   # the grid only needs it to pick where to start.

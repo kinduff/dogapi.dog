@@ -70,7 +70,18 @@ module MarkdownNegotiation
     response.body = page.to_s
     response.content_type = "#{MARKDOWN}; charset=utf-8"
     response.headers["X-Markdown-Tokens"] = page.tokens.to_s
-    # Preload hints for a stylesheet and a script this answer never uses.
-    response.headers.delete("Link")
+    drop_preload_links
+  end
+
+  # Preload hints are for a stylesheet and a script this answer never uses.
+  # Any other link, such as where the API is described, still holds.
+  def drop_preload_links
+    links = response.headers["Link"].to_s.split(/,\s*(?=<)/).reject { |link| link.match?(/rel="?preload/) }
+
+    if links.any?
+      response.headers["Link"] = links.join(", ")
+    else
+      response.headers.delete("Link")
+    end
   end
 end

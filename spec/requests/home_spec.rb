@@ -138,4 +138,45 @@ RSpec.describe "Homepage" do
 
     expect(response.body).to include("data-api-body-box")
   end
+
+  describe "the link headers" do
+    def links
+      response.headers["Link"].split(/,\s*(?=<)/)
+    end
+
+    it "point a program at the api catalog, the openapi document, the docs and llms.txt" do
+      get "/"
+
+      expect(links).to include(
+        '</.well-known/api-catalog>; rel="api-catalog"',
+        '</api-docs/v2/swagger.json>; rel="service-desc"',
+        '</docs/api-v2>; rel="service-doc"',
+        '</llms.txt>; rel="describedby"'
+      )
+    end
+
+    it "point at things that exist" do
+      get "/"
+      paths = links.grep_v(/preload/).map { |link| link[/<([^>]+)>/, 1] }
+
+      paths.each do |path|
+        get path
+
+        expect(response).to have_http_status(:ok), "#{path} answered #{response.status}"
+      end
+    end
+
+    it "survive when the page is asked for as markdown, without the preloads" do
+      get "/", headers: {"Accept" => "text/markdown"}
+
+      expect(links).to include('</.well-known/api-catalog>; rel="api-catalog"')
+      expect(response.headers["Link"]).not_to include("preload")
+    end
+
+    it "stay off the other pages" do
+      get "/terms"
+
+      expect(response.headers["Link"].to_s).not_to include("api-catalog")
+    end
+  end
 end
