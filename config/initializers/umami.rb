@@ -23,7 +23,18 @@ if ENV["UMAMI_USERNAME"].present? && ENV["UMAMI_PASSWORD"].present?
   end
 
   Rails.application.config.umami_website_id = ENV["UMAMI_WEBSITE_ID"]
-  Rails.application.config.umami_client = Umami::ClientWithUserAgent.new
+  # Building the client logs in to Umami, over the network, while the app is
+  # booting. Analytics being down or refusing the login must cost the events
+  # and nothing else, so a failure here leaves tracking off rather than taking
+  # the site with it.
+  Rails.application.config.umami_client =
+    begin
+      Umami::ClientWithUserAgent.new
+    rescue => error
+      Rails.logger.error("Umami tracking is off, the client could not be built: #{error.class}: #{error.message}")
+      Honeybadger.notify(error) if defined?(Honeybadger)
+      nil
+    end
 else
   Rails.application.config.umami_client = nil
   Rails.application.config.umami_website_id = nil
