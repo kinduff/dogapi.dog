@@ -10,6 +10,9 @@ class McpController < ActionController::API
 
   PROTOCOL_VERSIONS = %w[2025-06-18 2025-03-26].freeze
   SERVER_VERSION = "1.0.0"
+  # Said in the handshake and in the server card, which must not disagree.
+  SERVER_INFO = {name: "dogapi.dog", title: "Dog API", version: SERVER_VERSION}.freeze
+  CAPABILITIES = {tools: {listChanged: false}}.freeze
   # Rate limiting counts requests, so a batch is capped or one request could
   # carry as many tool calls as it liked.
   MAX_BATCH = 10
@@ -90,8 +93,8 @@ class McpController < ActionController::API
 
     {
       protocolVersion: PROTOCOL_VERSIONS.include?(requested) ? requested : PROTOCOL_VERSIONS.first,
-      capabilities: {tools: {listChanged: false}},
-      serverInfo: {name: "dogapi.dog", title: "Dog API", version: SERVER_VERSION},
+      capabilities: CAPABILITIES,
+      serverInfo: SERVER_INFO,
       instructions: INSTRUCTIONS
     }
   end
