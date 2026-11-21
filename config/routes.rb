@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   get "/images", to: redirect("/breeds", status: 301)
   get "/sitemap.xml", to: "sitemaps#show", as: :sitemap, defaults: {format: :xml}
   get "/llms.txt", to: "llms#show", as: :llms, defaults: {format: :text}
+  # How an agent gets access: it does not need to. See AuthController.
+  get "/auth.md", to: "auth#show", as: :auth, defaults: {format: :md}
   # The list of APIs and where each one is described, RFC 9727.
   get "/.well-known/api-catalog", to: "api_catalogs#show", as: :api_catalog
   # Model Context Protocol, streamable HTTP transport, stateless.

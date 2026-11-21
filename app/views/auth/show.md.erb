@@ -1,0 +1,38 @@
+# Dog API auth.md
+
+> The Dog API needs no authentication. There is nothing to register for and no credential to obtain: send the request.
+
+## Audience
+
+This is for AI agents and other automated clients that want to use the Dog API at <%= request.base_url %>, either through its JSON API or through its MCP server.
+
+## Registration
+
+None. There is no account, no sign up form and no registration endpoint. Do not look for one, and do not ask the person you are working for to create an account: there is nowhere to create it.
+
+## Supported methods
+
+- **Anonymous access.** Every endpoint is a public, read-only `GET`. This is the only method, and it covers the whole API.
+
+There is no OAuth authorization server, no API key and no bearer token. For that reason this site publishes no OAuth metadata under `/.well-known/`.
+
+## Using credentials
+
+There are none to use. Send requests with no `Authorization` header and no key in the URL:
+
+```
+curl -s "<%= request.base_url %>/api/v2/facts?limit=1"
+```
+
+The MCP server at `<%= request.base_url %>/mcp` works the same way: Streamable HTTP, no key, read-only tools.
+
+## Limits
+
+Requests are capped at <%= Rack::Attack::REQUESTS_PER_MINUTE %> a minute per IP address. Past that the API answers `429`; wait and try again. If a legitimate use needs more, write to <%= @contact_email %>.
+
+## Where to go next
+
+- [API catalog](<%= request.base_url %>/.well-known/api-catalog): every API version and where it is described.
+- [OpenAPI document](<%= request.base_url %>/api-docs/v2/swagger.json): the v2 reference, machine readable.
+- [llms.txt](<%= request.base_url %>/llms.txt): the site in one page.
+- [Terms of use](<%= request.base_url %>/terms): what the data may be used for.
