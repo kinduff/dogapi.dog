@@ -33,6 +33,11 @@ Rails.application.routes.draw do
   get "/.well-known/api-catalog", to: "api_catalogs#show", as: :api_catalog
   # Model Context Protocol, streamable HTTP transport, stateless.
   match "/mcp", to: "mcp#handle", via: %i[get post delete], as: :mcp
+  # The server card: who the MCP server is and where to connect, readable
+  # before connecting. The first address is the one the specification
+  # reserves, the second is where older discovery tools look.
+  get "/mcp/server-card", to: "mcp_server_cards#show", as: :mcp_server_card
+  get "/.well-known/mcp/server-card.json", to: "mcp_server_cards#well_known", as: :well_known_mcp_server_card
   get "/docs/api-v1", to: "pages#api_v1", as: :api_v1
   get "/docs/api-v2", to: "pages#api_v2", as: :api_v2
 
